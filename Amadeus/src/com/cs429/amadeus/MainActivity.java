@@ -140,11 +140,9 @@ public class MainActivity extends Activity {
     }
 
     public void setUpButtonListenerForDemo() {
-
 	Button button = (Button) findViewById(R.id.calculate_button);
 	final Context context = this;
 	button.setOnClickListener(new OnClickListener() {
-
 	    @Override
 	    public void onClick(View arg0) {
 		EditText frequencyText = (EditText) findViewById(R.id.frequency_editText);
@@ -162,8 +160,6 @@ public class MainActivity extends Activity {
 		TextView noteTextView = (TextView) findViewById(R.id.note_textView);
 		noteTextView.setText(note);
 	    }
-
 	});
-
     }
 }
