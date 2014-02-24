@@ -1,0 +1,50 @@
+package com.cs429.amadeus.test;
+
+import java.io.File;
+
+import com.cs429.amadeus.*;
+
+import android.test.ActivityInstrumentationTestCase2;
+import android.widget.Button;
+
+public class RecordingTest extends
+		ActivityInstrumentationTestCase2<MainActivity> {
+
+	private MainActivity mActivity;
+	
+	private Button mStartStopButton;
+	private Button mPlaybackButton;
+	public RecordingTest() {
+		super(MainActivity.class);
+	}
+	@Override
+	public void setUp() throws Exception{
+		super.setUp();
+		
+	    setActivityInitialTouchMode(false);
+
+	    mActivity = getActivity();
+
+
+		mPlaybackButton = (Button)mActivity.findViewById(com.cs429.amadeus.R.id.playback);
+		mStartStopButton = (Button)mActivity.findViewById(com.cs429.amadeus.R.id.startstop);
+
+	}
+	
+	public void testTest() throws Exception{
+		assertTrue(true);
+	}
+	public void testTest1() throws Exception{
+		assertTrue(false);
+	}
+	public void testRecordMakesFile() throws Exception{
+		mStartStopButton.performClick();
+		
+		for(int i = 0; i< 10; i++); //No Op
+		
+		mStartStopButton.performClick();
+
+		File file = mActivity.getFileStreamPath("fileName");
+		assertTrue(file.exists());
+	}
+}
