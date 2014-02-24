@@ -11,7 +11,11 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity
 {
@@ -23,6 +27,7 @@ public class MainActivity extends Activity
 	private AudioRecord recorder;
 	private AudioTrack track;
 	private boolean isPlaying = false;
+	private NoteCalculator noteCalculator;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -51,8 +56,14 @@ public class MainActivity extends Activity
 				record();
 			}
 		});
-		thread.start();
+//		thread.start();
+		
+		//set up code for frequency to note demo
+		noteCalculator = new NoteCalculator();
+		setUpButtonListenerForDemo();
 	}
+	
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
@@ -91,5 +102,32 @@ public class MainActivity extends Activity
 			isPlaying = true;
 			playButton.setText("Pause");
 		}
+	}
+
+	public void setUpButtonListenerForDemo() {
+		
+		Button button = (Button) findViewById(R.id.calculate_button);
+		final Context context = this;
+		button.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+				EditText frequencyText = (EditText) findViewById(R.id.frequency_editText);
+				
+				if (frequencyText.getText().toString().isEmpty()) {
+					Toast.makeText(context, "Enter a number", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				
+				
+				String frequency = frequencyText.getText().toString();
+				double frequencyAsDouble = (double) Double.parseDouble(frequency);
+				String note = noteCalculator.calculateNote(frequencyAsDouble);
+				TextView noteTextView = (TextView) findViewById(R.id.note_textView);
+				noteTextView.setText(note);
+			}
+			
+		});
+		
 	}
 }
