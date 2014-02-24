@@ -78,14 +78,6 @@ public class MainActivity extends Activity {
 	    int numBytesRead = recorder.read(recorderBuffer, 0,
 		    RECORDER_BUFFER_SIZE);
 	    track.write(recorderBuffer, 0, numBytesRead);
-
-	    this.runOnUiThread(new Runnable() {
-		public void run() {
-		    double frequency = calculateFrequency(recorderBuffer);
-		    TextView frequencyMessage = (TextView) findViewById(R.id.frequency_message);
-		    frequencyMessage.setText("frequency: " + frequency);
-		}
-	    });
 	}
     }
 
