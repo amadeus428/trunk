@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="RecordingTest" project="Amadeus_Test" tests="1" started="1" failures="0" errors="0" ignored="0">
+  <testsuite name="samsung-samsung_sgh_i747-4f134b61" time="0.554">
+    <testsuite name="com.cs429.amadeus.test.RecordingTest" time="0.554">
+      <testcase name="testTest " classname="com.cs429.amadeus.test.RecordingTest" time="0.554"/>
+    </testsuite>
+  </testsuite>
+</testrun>

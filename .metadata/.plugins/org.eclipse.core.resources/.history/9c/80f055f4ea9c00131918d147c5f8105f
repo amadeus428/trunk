@@ -1,0 +1,17 @@
+package com.cs429.amadeus.test;
+
+import com.cs429.amadeus.MainActivity;
+
+import android.test.ActivityInstrumentationTestCase2;
+
+public class RecordingTest extends
+		ActivityInstrumentationTestCase2<MainActivity> {
+
+	public RecordingTest() {
+		super(MainActivity.class);
+	}
+	@Override
+	public void setUp() throws Exception{
+		super.setUp();
+	}
+}

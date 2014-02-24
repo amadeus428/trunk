@@ -1,0 +1,8 @@
+package com.cs429.amadeus.test;
+
+import android.test.ActivityInstrumentationTestCase2;
+
+public class RecordingTest extends
+		ActivityInstrumentationTestCase2<MainActivity> {
+
+}
