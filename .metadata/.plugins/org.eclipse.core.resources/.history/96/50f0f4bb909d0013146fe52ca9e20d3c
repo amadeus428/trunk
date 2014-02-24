@@ -30,9 +30,9 @@ public class RecordingTest extends ActivityInstrumentationTestCase2<MainActivity
 	    mActivity = getActivity();
 
 
-//		mPlaybackButton = (Button)mActivity.findViewById(com.cs429.amadeus.R.id.playback);
-//		mStartStopButton = (Button)mActivity.findViewById(com.cs429.amadeus.R.id.startstop);
-//		mFileNameField = (EditText)mActivity.findViewById(com.cs429.amadeus.R.id.fileNameField);
+		mPlaybackButton = (Button)mActivity.findViewById(com.cs429.amadeus.R.id.playback);
+		mStartStopButton = (Button)mActivity.findViewById(com.cs429.amadeus.R.id.startstop);
+		mFileNameField = (EditText)mActivity.findViewById(com.cs429.amadeus.R.id.fileNameField);
 	}
 	
 	public void testTextFieldNotEmpty() throws Exception{

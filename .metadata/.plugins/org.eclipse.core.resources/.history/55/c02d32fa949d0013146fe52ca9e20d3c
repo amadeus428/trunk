@@ -44,5 +44,4 @@
 	    android:gravity="center"
 	    android:paddingTop="20dp"
 	    android:textAppearance="?android:attr/textAppearanceLarge" />
-
 </LinearLayout>
