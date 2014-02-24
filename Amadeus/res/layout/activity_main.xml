@@ -6,10 +6,17 @@
     
     <Button
         android:id="@+id/play_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Play" 
-        android:onClick="pauseOrPlay"/>   
-
+        android:onClick="pauseOrPlay" />   
+        
+   	<TextView
+   	    android:id="@+id/frequency_message"
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+   	    android:layout_gravity="center"
+   	    android:textSize="50sp" />
+   	
 </LinearLayout>

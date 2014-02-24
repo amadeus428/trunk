@@ -2,7 +2,6 @@
 
 package com.cs429.amadeus;
 
-public final class BuildConfig
-{
-	public final static boolean DEBUG = true;
+public final class BuildConfig {
+    public final static boolean DEBUG = true;
 }
