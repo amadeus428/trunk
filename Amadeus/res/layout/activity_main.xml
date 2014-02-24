@@ -19,4 +19,29 @@
    	    android:layout_gravity="center"
    	    android:textSize="50sp" />
    	
+	<EditText
+	    android:id="@+id/frequency_editText"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:ems="10"
+	    android:hint="Enter a frequency"
+	    android:inputType="number|numberDecimal" >
+	
+	    <requestFocus />
+	</EditText>
+	
+	<Button
+	    android:id="@+id/calculate_button"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="Calculate Note" />
+	
+	<TextView
+	    android:id="@+id/note_textView"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center"
+	    android:gravity="center"
+	    android:paddingTop="20dp"
+	    android:textAppearance="?android:attr/textAppearanceLarge" />
 </LinearLayout>

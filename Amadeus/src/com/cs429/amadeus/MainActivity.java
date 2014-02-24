@@ -11,8 +11,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
     private static final int RECORDER_SAMPLE_RATE = 22050;
@@ -24,6 +28,7 @@ public class MainActivity extends Activity {
     private AudioTrack track;
     private boolean isPlaying = false;
     private byte[] recorderBuffer = new byte[RECORDER_BUFFER_SIZE];
+    private NoteCalculator noteCalculator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +52,11 @@ public class MainActivity extends Activity {
 	track = new AudioTrack(AudioManager.MODE_IN_COMMUNICATION,
 		RECORDER_SAMPLE_RATE, AudioFormat.CHANNEL_OUT_MONO,
 		RECORDER_AUDIO_ENCODING, maxJitter, AudioTrack.MODE_STREAM);
-	
+
+	// set up code for frequency to note demo
+	noteCalculator = new NoteCalculator();
+	setUpButtonListenerForDemo();
+
 	Thread thread = new Thread(new Runnable() {
 	    public void run() {
 		record();
@@ -66,11 +75,12 @@ public class MainActivity extends Activity {
 	recorder.startRecording();
 
 	while (true) {
-	    int numBytesRead = recorder.read(recorderBuffer, 0, RECORDER_BUFFER_SIZE);
+	    int numBytesRead = recorder.read(recorderBuffer, 0,
+		    RECORDER_BUFFER_SIZE);
 	    track.write(recorderBuffer, 0, numBytesRead);
-	    
+
 	    double frequency = calculateFrequency(recorderBuffer);
-	    TextView frequencyMessage = (TextView)findViewById(R.id.frequency_message);
+	    TextView frequencyMessage = (TextView) findViewById(R.id.frequency_message);
 	    frequencyMessage.setText("frequency: " + frequency);
 	}
     }
@@ -90,44 +100,70 @@ public class MainActivity extends Activity {
 	    playButton.setText("Pause");
 	}
     }
-    
-    private double calculateFrequency(byte[] audioBuffer)
-    {
+
+    private double calculateFrequency(byte[] audioBuffer) {
 	int bufferLen = audioBuffer.length;
-	
+
 	double[] micBufferData = new double[audioBuffer.length];
 	final int bytesPerSample = 2;
-    	final double amplification = 100.0;
-    	for (int index = 0, floatIndex = 0; index < bufferLen - bytesPerSample + 1; index += bytesPerSample, floatIndex++) {
-    	    double sample = 0;
-    	    for (int b = 0; b < bytesPerSample; b++) {
-    		int v = audioBuffer[index + b];
-    	        if (b < bytesPerSample - 1 || bytesPerSample == 1) {
-    	            v &= 0xFF;
-    	        }
-    	        sample += v << (b * 8);
-    	    }
-    	    
+	final double amplification = 100.0;
+	for (int index = 0, floatIndex = 0; index < bufferLen - bytesPerSample
+		+ 1; index += bytesPerSample, floatIndex++) {
+	    double sample = 0;
+	    for (int b = 0; b < bytesPerSample; b++) {
+		int v = audioBuffer[index + b];
+		if (b < bytesPerSample - 1 || bytesPerSample == 1) {
+		    v &= 0xFF;
+		}
+		sample += v << (b * 8);
+	    }
+
 	    double sample32 = amplification * (sample / 32768.0);
 	    micBufferData[floatIndex] = sample32;
-    	}
-    	
-    	Complex[] fftTempArray = new Complex[bufferLen];
-    	for (int i = 0; i < bufferLen; i++)
-    	{
-    	    fftTempArray[i] = new Complex(micBufferData[i], 0);   	    
-    	}
-    	
-    	Complex[] fftResults = FFT.fft(fftTempArray);
-    	double[] frequencies = new double[fftResults.length];
-    	for(int i = 0; i < fftResults.length; i++) {
-    	    frequencies[i] = ((1.0 * RECORDER_SAMPLE_RATE) / (1.0 * 900)) * i;
-    	    if(frequencies[i] > 1)
-    	    { 
-    		return frequencies[i];
-    	    }
-    	}
-    	
-    	return 0;
+	}
+
+	Complex[] fftTempArray = new Complex[bufferLen];
+	for (int i = 0; i < bufferLen; i++) {
+	    fftTempArray[i] = new Complex(micBufferData[i], 0);
+	}
+
+	Complex[] fftResults = FFT.fft(fftTempArray);
+	double[] frequencies = new double[fftResults.length];
+	for (int i = 0; i < fftResults.length; i++) {
+	    frequencies[i] = ((1.0 * RECORDER_SAMPLE_RATE) / (1.0 * 900)) * i;
+	    if (frequencies[i] > 1) {
+		return frequencies[i];
+	    }
+	}
+
+	return 0;
+    }
+
+    public void setUpButtonListenerForDemo() {
+
+	Button button = (Button) findViewById(R.id.calculate_button);
+	final Context context = this;
+	button.setOnClickListener(new OnClickListener() {
+
+	    @Override
+	    public void onClick(View arg0) {
+		EditText frequencyText = (EditText) findViewById(R.id.frequency_editText);
+
+		if (frequencyText.getText().toString().isEmpty()) {
+		    Toast.makeText(context, "Enter a number",
+			    Toast.LENGTH_SHORT).show();
+		    return;
+		}
+
+		String frequency = frequencyText.getText().toString();
+		double frequencyAsDouble = (double) Double
+			.parseDouble(frequency);
+		String note = noteCalculator.calculateNote(frequencyAsDouble);
+		TextView noteTextView = (TextView) findViewById(R.id.note_textView);
+		noteTextView.setText(note);
+	    }
+
+	});
+
     }
 }
