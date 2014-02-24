@@ -44,6 +44,8 @@ public class RecordingTest extends
 	}
 	public void testRecordMakesFile() throws Exception{
 		
+		
+		
 		//Get a random string to be used as a file name
 		Random rand = new Random(Calendar.getInstance().get(Calendar.SECOND));
 		
