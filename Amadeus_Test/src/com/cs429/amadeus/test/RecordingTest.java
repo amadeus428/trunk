@@ -10,17 +10,17 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class RecordingTest extends
-		ActivityInstrumentationTestCase2<MainActivity> {
-
+public class RecordingTest extends ActivityInstrumentationTestCase2<MainActivity> {
 	private MainActivity mActivity;
 	
 	private Button mStartStopButton;
 	private Button mPlaybackButton;
 	private EditText mFileNameField;
+	
 	public RecordingTest() {
 		super(MainActivity.class);
 	}
+	
 	@Override
 	public void setUp() throws Exception{
 		super.setUp();
@@ -43,6 +43,8 @@ public class RecordingTest extends
 		
 	}
 	public void testRecordMakesFile() throws Exception{
+		
+		
 		
 		//Get a random string to be used as a file name
 		Random rand = new Random(Calendar.getInstance().get(Calendar.SECOND));
