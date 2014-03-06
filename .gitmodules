@@ -1,6 +1,6 @@
 [submodule "PdCore/jni/libpd"]
-	path = PdCore/jni/libpd
+	path = pd-for-android/PdCore/jni/libpd
 	url = git://github.com/libpd/libpd.git
 [submodule "midi"]
-	path = midi
+	path = pd-for-android/midi
 	url = git://github.com/nettoyeurny/btmidi.git
