@@ -1,4 +1,4 @@
-package com.cs429.amadeus;
+package com.cs429.amadeus.helpers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
