@@ -14,6 +14,7 @@ import org.puredata.core.utils.IoUtils;
 
 
 
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -33,6 +34,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -75,8 +77,10 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		setVolumeControlStream(AudioManager.MODE_IN_COMMUNICATION);
+		setContentView(R.layout.staff_example);
+		FrameLayout frame = (FrameLayout)findViewById(R.id.frame_view);
+		frame.addView(new StaffView(this));
+		/*setVolumeControlStream(AudioManager.MODE_IN_COMMUNICATION);
 
 		AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
@@ -109,7 +113,7 @@ public class MainActivity extends Activity {
 
 		initSystemServices();
 		bindService(new Intent(this, PdService.class), pdConnection, BIND_AUTO_CREATE);
-		
+		*/
 	}
 	
 	@Override
