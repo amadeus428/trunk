@@ -1,6 +1,6 @@
 package com.cs429.amadeus.test.junit;
 
-import com.cs429.amadeus.NoteCalculator;
+import com.cs429.amadeus.helpers.NoteCalculator;
 
 import junit.framework.TestCase;
 

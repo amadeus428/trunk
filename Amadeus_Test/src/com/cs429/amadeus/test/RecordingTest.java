@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Random;
 
 import com.cs429.amadeus.*;
+import com.cs429.amadeus.activities.MainActivity;
 
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.Button;
