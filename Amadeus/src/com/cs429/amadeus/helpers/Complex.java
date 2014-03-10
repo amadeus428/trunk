@@ -1,4 +1,4 @@
-package com.cs429.amadeus;
+package com.cs429.amadeus.helpers;
 
 /*************************************************************************
  * Compilation: javac Complex.java Execution: java Complex
