@@ -7,7 +7,8 @@ import com.cs429.amadeus.Note;
 
 public class NoteCalculator {
 
-    private HashMap<Double, String> frequencyToNoteMap;
+    private static final double MAX_MIDI = 128;
+	private HashMap<Double, String> frequencyToNoteMap;
     private ArrayList<Double> noteFrequencies;
 /**
  * Deprecated
@@ -154,6 +155,10 @@ public class NoteCalculator {
     }
     
     public static Note getNoteFromMIDI(double midi){
+    	if(midi<0)
+    		return null;
+    	if(midi > MAX_MIDI)
+    		return null;
     	int midiInt = (int)Math.round(midi);
     	int octave = midiInt/12;
     	String noteName = midiTranslationArray[midiInt%12];

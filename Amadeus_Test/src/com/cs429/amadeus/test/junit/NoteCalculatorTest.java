@@ -1,31 +1,36 @@
 package com.cs429.amadeus.test.junit;
 
+import com.cs429.amadeus.Note;
 import com.cs429.amadeus.helpers.NoteCalculator;
 
 import junit.framework.TestCase;
 
 public class NoteCalculatorTest extends TestCase {
-
-	private NoteCalculator testCalculator;
+	Note testNoteA5;
+	Note testNoteMax;
 	@Override
 	public void setUp() throws Exception {
-		
-		testCalculator = new NoteCalculator();
+		testNoteA5 = new Note("A5");
+		testNoteMax = new Note("G10");
 	}
 
-	public void testCalculateNoteZero() {
-		assertEquals("C0", testCalculator.calculateNote(0));
+	public void testIntegerMidiValue() {
+		System.out.println(NoteCalculator.getNoteFromMIDI(69).toString());
+		assertEquals(testNoteA5, NoteCalculator.getNoteFromMIDI(69));
 	}
 	
-	public void testCalculateNote() {
-		assertEquals("G0", testCalculator.calculateNote(25));
+	public void testClosestNote() {
+		assertEquals(testNoteA5, NoteCalculator.getNoteFromMIDI(69.49));
 	}
 	
 	public void testCalculateNoteNegative() {
-		assertEquals("C0", testCalculator.calculateNote(-10));
+		assertEquals(null, NoteCalculator.getNoteFromMIDI(-1));
 	}
 	
 	public void testCalculateNoteMax() {
-		assertEquals("B8", testCalculator.calculateNote(8000));
+		assertEquals(testNoteMax, NoteCalculator.getNoteFromMIDI(127));
+	}
+	public void testAboveMax(){
+		assertEquals(null, NoteCalculator.getNoteFromMIDI(128));
 	}
 }
