@@ -153,7 +153,7 @@ public class NoteCalculator {
 	return frequencyToNoteMap.get(closestFreq);
     }
     
-    public static Note getNoteFromMIDI(double midi){
+    public static Note getNoteFromMIDI(float midi){
     	int midiInt = (int)Math.round(midi);
     	int octave = midiInt/12;
     	String noteName = midiTranslationArray[midiInt%12];

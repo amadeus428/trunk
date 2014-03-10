@@ -10,12 +10,15 @@ import org.puredata.core.PdBase;
 import org.puredata.core.PdListener;
 import org.puredata.core.utils.IoUtils;
 
+import com.cs429.amadeus.Note;
 import com.cs429.amadeus.R;
 import com.cs429.amadeus.R.drawable;
 import com.cs429.amadeus.R.id;
 import com.cs429.amadeus.R.layout;
 import com.cs429.amadeus.R.raw;
+import com.cs429.amadeus.StaffView;
 import com.cs429.amadeus.activities.MainActivity;
+import com.cs429.amadeus.helpers.NoteCalculator;
 
 import android.app.Fragment;
 import android.content.ComponentName;
@@ -32,12 +35,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class PureDataDemoFragment extends Fragment {
 	
+	StaffView staffView;
 	private PdUiDispatcher dispatcher;
 	private PdService pdService = null;
 	private final ServiceConnection pdConnection = new ServiceConnection() {
@@ -68,8 +73,6 @@ public class PureDataDemoFragment extends Fragment {
     public static PureDataDemoFragment newInstance() {
     	PureDataDemoFragment frag = new PureDataDemoFragment();
     	
-    	//add arguments to bundle here
-    	
     	return frag;
     }
 
@@ -89,8 +92,13 @@ public class PureDataDemoFragment extends Fragment {
     	
     	//call functions to set up listeners/things in heres
     	
+    	FrameLayout frame = (FrameLayout) getActivity().findViewById(R.id.demo_staffView);
+    	staffView = new StaffView(getActivity());
+		frame.addView(staffView);
+    	
     	initSystemServices();
 		getActivity().bindService(new Intent(getActivity(), PdService.class), pdConnection, getActivity().BIND_AUTO_CREATE);
+		
     }
     
     @Override
@@ -112,20 +120,14 @@ public class PureDataDemoFragment extends Fragment {
 		dispatcher.addListener("pitch", new PdListener.Adapter() {
 			@Override
 			public void receiveFloat(String source, final float x) {
-				updateTextView(x);
+				updateStaffView(x);
 			}
 		});
 	}
 	
-	private void updateTextView(float x) {
-		TextView tv = (TextView) getActivity().findViewById(R.id.textView1);
-		try {
-			tv.setText(x + "");
-		}
-		catch (NullPointerException e) {
-			//do nothing
-			//null pointer exceptions can happen when switching between fragments
-		}
+	private void updateStaffView(float x) {
+		Note note = NoteCalculator.getNoteFromMIDI(x);
+		staffView.makeDisplayNote(note);
 	}
 	
 	private void startPDService() {
