@@ -3,15 +3,21 @@ package com.cs429.amadeus.helpers;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.cs429.amadeus.Note;
+
 public class NoteCalculator {
 
     private HashMap<Double, String> frequencyToNoteMap;
     private ArrayList<Double> noteFrequencies;
-
+/**
+ * Deprecated
+ */
     public NoteCalculator() {
 	initializeFrequencyToNoteMap();
     }
-
+    /**
+     * Deprecated
+     */
     private void initializeFrequencyToNoteMap() {
 	frequencyToNoteMap = new HashMap<Double, String>();
 	noteFrequencies = new ArrayList<Double>();
@@ -130,7 +136,9 @@ public class NoteCalculator {
 	}
 
     }
-
+    /**
+     * Deprecated
+     */
     public String calculateNote(double frequency) {
 	double minDistance = Double.MAX_VALUE;
 	double closestFreq = 0;
@@ -144,4 +152,12 @@ public class NoteCalculator {
 
 	return frequencyToNoteMap.get(closestFreq);
     }
+    
+    public static Note getNoteFromMIDI(double midi){
+    	int midiInt = (int)Math.round(midi);
+    	int octave = midiInt/12;
+    	String noteName = midiTranslationArray[midiInt%12];
+    	return new Note(noteName.charAt(0), octave, noteName.length()>1);
+    }
+    private static String[] midiTranslationArray = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 }

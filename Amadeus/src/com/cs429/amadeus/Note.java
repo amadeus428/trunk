@@ -12,7 +12,7 @@ public class Note {
 	boolean isSharp;
 	
 	
-	public Note() {
+	public Note(String note) {
 	}
 
 	

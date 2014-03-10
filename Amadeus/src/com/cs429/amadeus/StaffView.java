@@ -44,10 +44,12 @@ public class StaffView extends View implements OnTouchListener {
 		noteBitmap = BitmapFactory.decodeResource(getResources(),
 				R.drawable.quarter_note_down);
 		this.setOnTouchListener(this);
-		
 
 	}
 
+	public void displayNote(String noteString){
+		
+	}
 	@Override
 	protected void onDraw(Canvas canvas) {
 		if (!isMeasured)
@@ -59,11 +61,17 @@ public class StaffView extends View implements OnTouchListener {
 			canvas.drawCircle(touchX, touchY, margin / 2, paint);
 		}
 		for (int i = 0; i < notes.size(); i++) {
-			drawNote(notes.get(i), canvas, i * 200);
+			drawNote(notes.get(i), canvas, (int) (i * 2 * margin));
 		}
 
+		if(displayNote!=null){
+			drawNote(displayNote, canvas, (int) (notes.size()*2*margin));
+		}
 	}
 
+	/*
+	 * If a note was clicked, this returns the index that it
+	 */
 	public int getClickedNoteIndex(MotionEvent event) {
 		for (int i = 0; i < notes.size(); i++) {
 			if (!(margin / 2.0 + margin * 2 * i < event.getX() && event.getX() < margin
@@ -146,11 +154,16 @@ public class StaffView extends View implements OnTouchListener {
 	private void insertNote(Note note) {
 		notes.add(note);
 	}
-
-	/*
- * 
- */
-	private int getVeritcalStaffCoordinate() {
+	private Note displayNote;
+	public void makeDisplayNote(Note note){
+		this.displayNote = note;
+		invalidate();
+	}
+	/**
+	 * 
+	 * @return
+	 */
+	private int getStaffStepsFromTopLine() {
 		int topOfStaff = (int) margin;
 
 		int interval = (int) Math
@@ -162,11 +175,11 @@ public class StaffView extends View implements OnTouchListener {
 
 	private Note getNote() {
 
-		int interval = getVeritcalStaffCoordinate();
+		int steps = getStaffStepsFromTopLine();
 
-		char noteLetter = getNoteLetterFromInterval(interval);
-		int octave = getOctave(interval);
-		boolean isSharp = getIsSharp(interval);
+		char noteLetter = getNoteLetterFromInterval(steps);
+		int octave = getOctave(steps);
+		boolean isSharp = getIsSharp(steps);
 
 		Note note = new Note(noteLetter, octave, isSharp);
 
