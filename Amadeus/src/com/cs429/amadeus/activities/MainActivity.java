@@ -132,19 +132,18 @@ public class MainActivity extends Activity {
     	// update the main content by replacing fragments
         //determine which fragment to fill content view
         //set arguments in bundle based on fragment
-        switch(position) {
-	        case 0:
-	        	fragment = HomeFragment.newInstance();
-	        	break;
-	        case 1:
-	        	fragment = RecordSoundFragment.newInstance();
-	        	break;
-	        case 2:
-	        	startSheetMusicActivity();
-	        	return;
-	        default:
-	        	//default case
-	        	fragment = HomeFragment.newInstance();
+        if (position == 0) {
+        	fragment = HomeFragment.newInstance();
+        }
+        else if (position == 1) {
+        	fragment = RecordSoundFragment.newInstance();
+        }
+        else if (position == 2) {
+        	startSheetMusicActivity();
+        	return;
+        }
+        else {
+        	fragment = HomeFragment.newInstance();
         }
 
         //create the bundle of arguments to send to new fragment
