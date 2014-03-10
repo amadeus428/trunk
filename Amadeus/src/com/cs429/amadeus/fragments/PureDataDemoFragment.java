@@ -36,7 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-public class RecordSoundFragment extends Fragment {
+public class PureDataDemoFragment extends Fragment {
 	
 	private PdUiDispatcher dispatcher;
 	private PdService pdService = null;
@@ -61,12 +61,12 @@ public class RecordSoundFragment extends Fragment {
 	
 	
 	
-	public RecordSoundFragment() {
+	public PureDataDemoFragment() {
         // Empty constructor required for fragment subclasses
     }
     
-    public static RecordSoundFragment newInstance() {
-    	RecordSoundFragment frag = new RecordSoundFragment();
+    public static PureDataDemoFragment newInstance() {
+    	PureDataDemoFragment frag = new PureDataDemoFragment();
     	
     	//add arguments to bundle here
     	

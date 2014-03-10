@@ -7,7 +7,7 @@
     
     <string-array name="navigation_drawer_items">
         <item>Home</item>
-        <item>Record Sound</item>
+        <item>Pure Data Demo</item>
         <item>Create Sheet Music</item>
     </string-array>
     <string name="drawer_open">Open navigation drawer</string>

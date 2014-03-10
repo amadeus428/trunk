@@ -2,12 +2,15 @@ package com.cs429.amadeus.fragments;
 
 import com.cs429.amadeus.R;
 import com.cs429.amadeus.R.layout;
+import com.cs429.amadeus.activities.MainActivity;
 
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
 public class HomeFragment extends Fragment {
 
@@ -36,6 +39,21 @@ public class HomeFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
     	super.onActivityCreated(savedInstanceState);
     	getActivity().setTitle("Home");
-    	//call functions to set up listeners/things in here
+
+    	final MainActivity parent = (MainActivity) getActivity();
+    	//set button listeners for navigation
+        ((Button) getActivity().findViewById(R.id.pd_demo_button)).setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				parent.replaceContentViewOnItemSelected(1);
+			}
+        });
+        
+        ((Button) getActivity().findViewById(R.id.sheet_music_button)).setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				parent.replaceContentViewOnItemSelected(2);
+			}
+        });
     }
 }
