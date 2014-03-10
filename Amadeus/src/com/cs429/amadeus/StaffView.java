@@ -1,9 +1,12 @@
 package com.cs429.amadeus;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
 import android.view.View;
 
@@ -19,12 +22,15 @@ public class StaffView extends View {
 	float margin;
 	float width;
 	float height; 
-
+	Rect eRect;
+	Bitmap note ;
 	public StaffView(Context context) {
 		super(context);
 		paint.setColor(Color.BLACK);
 		paint.setStrokeWidth(10);
 		updateMeasurements();
+		eRect = new Rect(0,0,100,100);
+		note = BitmapFactory.decodeResource(getResources(), R.drawable.quarter_note_down);
 	}
 
 	@Override
@@ -33,6 +39,7 @@ public class StaffView extends View {
 		for (int i = 1; i <= 5; i++) {
 			canvas.drawLine(leftEdge, i*margin, width, i*margin, paint);
 		}
+		canvas.drawBitmap(note, null, eRect, null);
 		Log.i("APP-DATA", "Width: "+width+", Height: "+height);
 	}
 
