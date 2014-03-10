@@ -15,45 +15,48 @@ import android.widget.Button;
 public class HomeFragment extends Fragment {
 
 	public HomeFragment() {
-        // Empty constructor required for fragment subclasses
-    }
-    
-    public static HomeFragment newInstance() {
-    	HomeFragment frag = new HomeFragment();
-    	
-    	//add arguments to bundle here
-    	
-    	return frag;
-    }
+		// Empty constructor required for fragment subclasses
+	}
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-    	
-        View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-        
-        return rootView;
-    }
-    
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-    	super.onActivityCreated(savedInstanceState);
-    	getActivity().setTitle("Home");
+	public static HomeFragment newInstance() {
+		HomeFragment frag = new HomeFragment();
 
-    	final MainActivity parent = (MainActivity) getActivity();
-    	//set button listeners for navigation
-        ((Button) getActivity().findViewById(R.id.pd_demo_button)).setOnClickListener(new OnClickListener(){
-			@Override
-			public void onClick(View arg0) {
-				parent.replaceContentViewOnItemSelected(1);
-			}
-        });
-        
-        ((Button) getActivity().findViewById(R.id.sheet_music_button)).setOnClickListener(new OnClickListener(){
-			@Override
-			public void onClick(View arg0) {
-				parent.replaceContentViewOnItemSelected(2);
-			}
-        });
-    }
+		// add arguments to bundle here
+
+		return frag;
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+
+		View rootView = inflater.inflate(R.layout.fragment_home, container,
+				false);
+
+		return rootView;
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		getActivity().setTitle("Home");
+
+		final MainActivity parent = (MainActivity) getActivity();
+		// set button listeners for navigation
+		((Button) getActivity().findViewById(R.id.pd_demo_button))
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						parent.replaceContentViewOnItemSelected(1);
+					}
+				});
+
+		((Button) getActivity().findViewById(R.id.sheet_music_button))
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View arg0) {
+						parent.replaceContentViewOnItemSelected(2);
+					}
+				});
+	}
 }

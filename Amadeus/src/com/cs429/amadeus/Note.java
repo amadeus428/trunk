@@ -25,10 +25,11 @@ public class Note {
 		return note + (isSharp ? "#" : "") + octave;
 
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj.getClass() == Note.class)
-			return this.toString().equals(((Note)obj).toString());
+			return this.toString().equals(((Note) obj).toString());
 		else
 			return false;
 	}

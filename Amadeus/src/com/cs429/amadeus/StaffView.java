@@ -47,9 +47,10 @@ public class StaffView extends View implements OnTouchListener {
 
 	}
 
-	public void displayNote(String noteString){
-		
+	public void displayNote(String noteString) {
+
 	}
+
 	@Override
 	protected void onDraw(Canvas canvas) {
 		if (!isMeasured)
@@ -64,8 +65,8 @@ public class StaffView extends View implements OnTouchListener {
 			drawNote(notes.get(i), canvas, (int) (i * 2 * margin));
 		}
 
-		if(displayNote!=null){
-			drawNote(displayNote, canvas, (int) (notes.size()*2*margin));
+		if (displayNote != null) {
+			drawNote(displayNote, canvas, (int) (notes.size() * 2 * margin));
 		}
 	}
 
@@ -154,11 +155,14 @@ public class StaffView extends View implements OnTouchListener {
 	private void insertNote(Note note) {
 		notes.add(note);
 	}
+
 	private Note displayNote;
-	public void makeDisplayNote(Note note){
+
+	public void makeDisplayNote(Note note) {
 		this.displayNote = note;
 		invalidate();
 	}
+
 	/**
 	 * 
 	 * @return
