@@ -1,5 +1,7 @@
 package com.cs429.amadeus;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,9 +10,16 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 
-public class StaffView extends View {
+public class StaffView extends View implements OnTouchListener {
+
+	private boolean isFingerDown;
+	private int touchX;
+	private int touchY;
+	private int touchType;
 
 	private int leftEdge;
 	private int rightEdge;
@@ -21,30 +30,77 @@ public class StaffView extends View {
 	Paint paint = new Paint();
 	float margin;
 	float width;
-	float height; 
+	float height;
 	Rect eRect;
-	Bitmap note ;
+	Bitmap noteBitmap;
+
+	ArrayList<Note> notes = new ArrayList<Note>(10);
+
 	public StaffView(Context context) {
 		super(context);
 		paint.setColor(Color.BLACK);
 		paint.setStrokeWidth(10);
 		updateMeasurements();
-		eRect = new Rect(0,0,100,100);
-		note = BitmapFactory.decodeResource(getResources(), R.drawable.quarter_note_down);
+		noteBitmap = BitmapFactory.decodeResource(getResources(),
+				R.drawable.quarter_note_down);
+		this.setOnTouchListener(this);
+		
+
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		if(!isMeasured) updateMeasurements();
+		if (!isMeasured)
+			updateMeasurements();
 		for (int i = 1; i <= 5; i++) {
-			canvas.drawLine(leftEdge, i*margin, width, i*margin, paint);
+			canvas.drawLine(leftEdge, i * margin, width, i * margin, paint);
 		}
-		canvas.drawBitmap(note, null, eRect, null);
-		Log.i("APP-DATA", "Width: "+width+", Height: "+height);
+		if (isFingerDown) {
+			canvas.drawCircle(touchX, touchY, margin / 2, paint);
+		}
+		for (int i = 0; i < notes.size(); i++) {
+			drawNote(notes.get(i), canvas, i * 200);
+		}
+
+	}
+
+	public int getClickedNoteIndex(MotionEvent event) {
+		for (int i = 0; i < notes.size(); i++) {
+			if (!(margin / 2.0 + margin * 2 * i < event.getX() && event.getX() < margin
+					* 2 * i + 3 / 2.0 * margin)) {
+				continue;
+			}
+
+			Note note = notes.get(i);
+			if (getNoteCoordinate(note) * margin / 2 + margin / 2.0 < event
+					.getY()
+					&& event.getY() < getNoteCoordinate(note) * margin / 2
+							+ margin * 3 / 2.0) {
+				return i;
+			} else {
+				break;
+			}
+		}
+
+		return -1;
+
+	}
+
+	public void drawNote(Note note, Canvas canvas, int xCoord) {
+		// canvas.drawCircle(xCoord, getNoteCoordinate(note)*margin/2 +margin,
+		// margin/2, paint);
+		eRect.set(xCoord,
+				(int) ((getNoteCoordinate(note) - 3) * margin / 2 + margin),
+				xCoord + 200,
+				(int) ((getNoteCoordinate(note) - 3) * margin / 2 + 6 * margin));
+		canvas.drawBitmap(noteBitmap, null, eRect, null);
 	}
 
 	boolean isMeasured = false;
+
 	private void updateMeasurements() {
+		eRect = new Rect(0, 0, 150, (int) (250));
+
 		xpad = (float) (getPaddingLeft() + getPaddingRight());
 		ypad = (float) (getPaddingLeft() + getPaddingRight());
 		leftEdge = this.getLeft();
@@ -56,4 +112,94 @@ public class StaffView extends View {
 		width = getWidth();
 	}
 
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		getTouchInfo(event);
+		int ind;
+
+		if (touchType != MotionEvent.ACTION_UP) {
+			isFingerDown = true;
+		} else {
+			isFingerDown = false;
+
+			if ((ind = getClickedNoteIndex(event)) != -1) {
+				notes.remove(ind);
+			} else {
+
+				Note noteType = getNote();
+
+				insertNote(noteType);
+			}
+		}
+
+		invalidate();
+		return true;
+	}
+
+	private void getTouchInfo(MotionEvent event) {
+		touchX = (int) event.getX();
+		touchY = (int) event.getY();
+		touchType = event.getAction();
+
+	}
+
+	private void insertNote(Note note) {
+		notes.add(note);
+	}
+
+	/*
+ * 
+ */
+	private int getVeritcalStaffCoordinate() {
+		int topOfStaff = (int) margin;
+
+		int interval = (int) Math
+				.round((((double) (touchY - topOfStaff)) / (margin / 2.0)));
+		Log.i("APPDATA", "Interval: " + interval);
+
+		return interval;
+	}
+
+	private Note getNote() {
+
+		int interval = getVeritcalStaffCoordinate();
+
+		char noteLetter = getNoteLetterFromInterval(interval);
+		int octave = getOctave(interval);
+		boolean isSharp = getIsSharp(interval);
+
+		Note note = new Note(noteLetter, octave, isSharp);
+
+		return note;
+	}
+
+	private boolean getIsSharp(int interval) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	// TODO This method suggests that the A in FACE on Treble is A5
+	private int getOctave(int interval) {
+		if (interval > 5)
+			return 4;
+		else
+			return 5;
+	}
+
+	private char getNoteLetterFromInterval(int interval) {
+		int numNoteNames = 7;
+		char letter = (char) ('A' + (('F' - 'A') - interval + numNoteNames)
+				% numNoteNames);
+		return letter;
+	}
+
+	// Assumes Treble
+	private int getNoteCoordinate(Note note) {
+		int thisOctave = 5;
+		int staffStepsAboveA5 = note.note - 'A' + 7
+				* (note.octave - thisOctave);
+		int staffSteps = 5 - staffStepsAboveA5;
+		Log.i("APPDATA", "Coord: " + staffSteps);
+		return staffSteps;
+	}
 }
