@@ -154,7 +154,7 @@ public class NoteCalculator {
 	return frequencyToNoteMap.get(closestFreq);
     }
     
-    public static Note getNoteFromMIDI(double midi){
+    public static Note getNoteFromMIDI(float midi){
     	if(midi<0)
     		return null;
     	if(midi > MAX_MIDI)
