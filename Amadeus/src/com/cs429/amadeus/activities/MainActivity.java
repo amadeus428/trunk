@@ -9,6 +9,7 @@ import com.cs429.amadeus.R.menu;
 import com.cs429.amadeus.R.string;
 import com.cs429.amadeus.fragments.HomeFragment;
 import com.cs429.amadeus.fragments.PureDataDemoFragment;
+import com.cs429.amadeus.fragments.TabSearchFragment;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -148,7 +149,11 @@ public class MainActivity extends Activity {
 		} else if (position == 2) {
 			startSheetMusicActivity();
 			return;
-		} else {
+		}
+		else if( position == 3){
+			fragment = TabSearchFragment.newInstance();
+		}
+		else {
 			fragment = HomeFragment.newInstance();
 		}
 
