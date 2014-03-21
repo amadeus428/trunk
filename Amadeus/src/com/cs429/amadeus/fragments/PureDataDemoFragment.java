@@ -113,7 +113,7 @@ public class PureDataDemoFragment extends Fragment
 	}
 
 	@Override
-	public void onDestroy()
+	public void onStop()
 	{
 		super.onDestroy();
 		getActivity().unbindService(pdConnection);
@@ -149,7 +149,8 @@ public class PureDataDemoFragment extends Fragment
 	{
 		Note note = NoteCalculator.getNoteFromMIDI((double)x);
 		staffLayout.addNote(note);
-		Toast.makeText(getActivity(), note.toString(), Toast.LENGTH_SHORT).show();
+		TextView noteRecorded = (TextView)getActivity().findViewById(R.id.note_recorded);
+		noteRecorded.setText("Note recorded: " + note.toString());
 	}
 
 	private void startPDService()
