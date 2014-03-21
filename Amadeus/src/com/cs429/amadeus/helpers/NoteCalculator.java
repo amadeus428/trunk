@@ -1,3 +1,4 @@
+
 package com.cs429.amadeus.helpers;
 
 import java.util.ArrayList;
@@ -5,7 +6,8 @@ import java.util.HashMap;
 
 import com.cs429.amadeus.Note;
 
-public class NoteCalculator {
+public class NoteCalculator
+{
 
 	private static final double MAX_MIDI = 128;
 	private HashMap<Double, String> frequencyToNoteMap;
@@ -14,14 +16,16 @@ public class NoteCalculator {
 	/**
 	 * Deprecated
 	 */
-	public NoteCalculator() {
+	public NoteCalculator()
+	{
 		initializeFrequencyToNoteMap();
 	}
 
 	/**
 	 * Deprecated
 	 */
-	private void initializeFrequencyToNoteMap() {
+	private void initializeFrequencyToNoteMap()
+	{
 		frequencyToNoteMap = new HashMap<Double, String>();
 		noteFrequencies = new ArrayList<Double>();
 
@@ -134,7 +138,8 @@ public class NoteCalculator {
 		frequencyToNoteMap.put(7458.62, "A#8/Bb8");
 		frequencyToNoteMap.put(7902.13, "B8");
 
-		for (double currFreq : frequencyToNoteMap.keySet()) {
+		for (double currFreq : frequencyToNoteMap.keySet())
+		{
 			noteFrequencies.add(currFreq);
 		}
 
@@ -143,12 +148,15 @@ public class NoteCalculator {
 	/**
 	 * Deprecated
 	 */
-	public String calculateNote(double frequency) {
+	public String calculateNote(double frequency)
+	{
 		double minDistance = Double.MAX_VALUE;
 		double closestFreq = 0;
-		for (double currFreq : noteFrequencies) {
+		for (double currFreq : noteFrequencies)
+		{
 			double currDistance = Math.abs(currFreq - frequency);
-			if (currDistance < minDistance) {
+			if(currDistance < minDistance)
+			{
 				minDistance = currDistance;
 				closestFreq = currFreq;
 			}
@@ -157,17 +165,17 @@ public class NoteCalculator {
 		return frequencyToNoteMap.get(closestFreq);
 	}
 
-	public static Note getNoteFromMIDI(double midi) {
-		if (midi < 0)
+	public static Note getNoteFromMIDI(double midi)
+	{
+		if(midi < 0)
 			return null;
-		if (midi > MAX_MIDI)
+		if(midi > MAX_MIDI)
 			return null;
-		int midiInt = (int) Math.round(midi);
+		int midiInt = (int)Math.round(midi);
 		int octave = midiInt / 12;
 		String noteName = midiTranslationArray[midiInt % 12];
 		return new Note(noteName.charAt(0), octave, noteName.length() > 1);
 	}
 
-	private static String[] midiTranslationArray = { "C", "C#", "D", "D#", "E",
-			"F", "F#", "G", "G#", "A", "A#", "B" };
+	private static String[] midiTranslationArray = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 }

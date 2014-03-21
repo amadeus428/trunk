@@ -1,7 +1,9 @@
+
 package com.cs429.amadeus.fragments;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
 
 import org.puredata.android.io.AudioParameters;
 import org.puredata.android.service.PdService;
@@ -16,6 +18,7 @@ import com.cs429.amadeus.R.drawable;
 import com.cs429.amadeus.R.id;
 import com.cs429.amadeus.R.layout;
 import com.cs429.amadeus.R.raw;
+import com.cs429.amadeus.StaffLayout;
 import com.cs429.amadeus.StaffView;
 import com.cs429.amadeus.activities.MainActivity;
 import com.cs429.amadeus.helpers.NoteCalculator;
@@ -40,75 +43,84 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-public class PureDataDemoFragment extends Fragment {
-
-	StaffView staffView;
+public class PureDataDemoFragment extends Fragment
+{
+	private long lastNoteTime = 0;
+	private float noteCooldown = 1000;
+	private StaffLayout staffLayout;
 	private PdUiDispatcher dispatcher;
 	private PdService pdService = null;
-	private final ServiceConnection pdConnection = new ServiceConnection() {
+	
+	private final ServiceConnection pdConnection = new ServiceConnection()
+	{
 		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			pdService = ((PdService.PdBinder) service).getService();
-			try {
+		public void onServiceConnected(ComponentName name, IBinder service)
+		{
+			pdService = ((PdService.PdBinder)service).getService();
+			try
+			{
 				initPd();
 				loadPatch();
-			} catch (IOException e) {
+			}
+			catch (IOException e)
+			{
 				Log.e("TAG", e.toString());
 				getActivity().finish();
 			}
 		}
 
 		@Override
-		public void onServiceDisconnected(ComponentName name) {
+		public void onServiceDisconnected(ComponentName name)
+		{
 			// this method will never be called
 		}
 	};
 
-	public PureDataDemoFragment() {
+	public PureDataDemoFragment()
+	{
 		// Empty constructor required for fragment subclasses
 	}
 
-	public static PureDataDemoFragment newInstance() {
+	public static PureDataDemoFragment newInstance()
+	{
 		PureDataDemoFragment frag = new PureDataDemoFragment();
 
 		return frag;
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-
-		View rootView = inflater.inflate(R.layout.fragment_record, container,
-				false);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+		View rootView = inflater.inflate(R.layout.fragment_record, container, false);
 
 		return rootView;
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(Bundle savedInstanceState)
+	{
 		super.onActivityCreated(savedInstanceState);
 		getActivity().setTitle("Record");
 
 		// call functions to set up listeners/things in heres
 
-		FrameLayout frame = (FrameLayout) getActivity().findViewById(
-				R.id.demo_staffView);
-		staffView = new StaffView(getActivity());
-		frame.addView(staffView);
+		staffLayout = (StaffLayout)getActivity().findViewById(R.id.demo_staffLayout);
 
 		initSystemServices();
-		getActivity().bindService(new Intent(getActivity(), PdService.class),
-				pdConnection, getActivity().BIND_AUTO_CREATE);
+		getActivity().bindService(new Intent(getActivity(), PdService.class), pdConnection,
+				getActivity().BIND_AUTO_CREATE);
 
 	}
 
 	@Override
-	public void onDestroy() {
+	public void onDestroy()
+	{
 		super.onDestroy();
 		getActivity().unbindService(pdConnection);
 	}
 
-	private void initPd() throws IOException {
+	private void initPd() throws IOException
+	{
 		// Configure the audio glue
 		AudioParameters.init(getActivity());
 		int sampleRate = AudioParameters.suggestSampleRate();
@@ -118,47 +130,61 @@ public class PureDataDemoFragment extends Fragment {
 		// Create and install the dispatcher
 		dispatcher = new PdUiDispatcher();
 		PdBase.setReceiver(dispatcher);
-		dispatcher.addListener("pitch", new PdListener.Adapter() {
+		dispatcher.addListener("pitch", new PdListener.Adapter()
+		{
 			@Override
-			public void receiveFloat(String source, final float x) {
-				updateStaffView(x);
+			public void receiveFloat(String source, final float x)
+			{
+				long currTime = Calendar.getInstance().getTimeInMillis();
+				if(currTime - lastNoteTime > noteCooldown)
+				{
+					lastNoteTime = currTime;
+					updateStaffView(x);
+				}
 			}
 		});
 	}
 
-	private void updateStaffView(float x) {
-		Note note = NoteCalculator.getNoteFromMIDI((double) x);
-		staffView.makeDisplayNote(note);
+	private void updateStaffView(float x)
+	{
+		Note note = NoteCalculator.getNoteFromMIDI((double)x);
+		staffLayout.addNote(note);
+		Toast.makeText(getActivity(), note.toString(), Toast.LENGTH_SHORT).show();
 	}
 
-	private void startPDService() {
-		if (!pdService.isRunning()) {
-			Intent intent = new Intent(((MainActivity) getActivity()),
-					MainActivity.class);
-			pdService.startAudio(intent, R.drawable.icon, "Amadeus",
-					"Return to Amadeus");
+	private void startPDService()
+	{
+		if(!pdService.isRunning())
+		{
+			Intent intent = new Intent(((MainActivity)getActivity()), MainActivity.class);
+			pdService.startAudio(intent, R.drawable.icon, "Amadeus", "Return to Amadeus");
 		}
 	}
 
-	private void loadPatch() throws IOException {
+	private void loadPatch() throws IOException
+	{
 		File dir = getActivity().getFilesDir();
-		IoUtils.extractZipResource(getResources().openRawResource(R.raw.tuner),
-				dir, true);
+		IoUtils.extractZipResource(getResources().openRawResource(R.raw.tuner), dir, true);
 		File patchFile = new File(dir, "tuner.pd");
 		PdBase.openPatch(patchFile.getAbsolutePath());
 	}
 
-	private void initSystemServices() {
-		TelephonyManager telephonyManager = (TelephonyManager) getActivity()
-				.getSystemService(Context.TELEPHONY_SERVICE);
-		telephonyManager.listen(new PhoneStateListener() {
+	private void initSystemServices()
+	{
+		TelephonyManager telephonyManager = (TelephonyManager)getActivity().getSystemService(Context.TELEPHONY_SERVICE);
+		telephonyManager.listen(new PhoneStateListener()
+		{
 			@Override
-			public void onCallStateChanged(int state, String incomingNumber) {
-				if (pdService == null)
+			public void onCallStateChanged(int state, String incomingNumber)
+			{
+				if(pdService == null)
 					return;
-				if (state == TelephonyManager.CALL_STATE_IDLE) {
+				if(state == TelephonyManager.CALL_STATE_IDLE)
+				{
 					startPDService();
-				} else {
+				}
+				else
+				{
 					pdService.stopAudio();
 				}
 			}

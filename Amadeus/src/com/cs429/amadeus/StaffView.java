@@ -1,3 +1,4 @@
+
 package com.cs429.amadeus;
 
 import java.util.ArrayList;
@@ -14,7 +15,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-public class StaffView extends View implements OnTouchListener {
+public class StaffView extends View implements OnTouchListener
+{
 
 	private boolean isFingerDown;
 	private int touchX;
@@ -36,57 +38,66 @@ public class StaffView extends View implements OnTouchListener {
 
 	ArrayList<Note> notes = new ArrayList<Note>(10);
 
-	public StaffView(Context context) {
+	public StaffView(Context context)
+	{
 		super(context);
 		paint.setColor(Color.BLACK);
 		paint.setStrokeWidth(10);
 		updateMeasurements();
-		noteBitmap = BitmapFactory.decodeResource(getResources(),
-				R.drawable.quarter_note_down);
+		noteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.quarter_note_down);
 		this.setOnTouchListener(this);
 
 	}
 
-	public void displayNote(String noteString) {
+	public void displayNote(String noteString)
+	{
 
 	}
 
 	@Override
-	protected void onDraw(Canvas canvas) {
-		if (!isMeasured)
+	protected void onDraw(Canvas canvas)
+	{
+		if(!isMeasured)
 			updateMeasurements();
-		for (int i = 1; i <= 5; i++) {
+		for (int i = 1; i <= 5; i++)
+		{
 			canvas.drawLine(leftEdge, i * margin, width, i * margin, paint);
 		}
-		if (isFingerDown) {
+		if(isFingerDown)
+		{
 			canvas.drawCircle(touchX, touchY, margin / 2, paint);
 		}
-		for (int i = 0; i < notes.size(); i++) {
-			drawNote(notes.get(i), canvas, (int) (i * 2 * margin));
+		for (int i = 0; i < notes.size(); i++)
+		{
+			drawNote(notes.get(i), canvas, (int)(i * 2 * margin));
 		}
 
-		if (displayNote != null) {
-			drawNote(displayNote, canvas, (int) (notes.size() * 2 * margin));
+		if(displayNote != null)
+		{
+			drawNote(displayNote, canvas, (int)(notes.size() * 2 * margin));
 		}
 	}
 
 	/*
 	 * If a note was clicked, this returns the index that it
 	 */
-	public int getClickedNoteIndex(MotionEvent event) {
-		for (int i = 0; i < notes.size(); i++) {
-			if (!(margin / 2.0 + margin * 2 * i < event.getX() && event.getX() < margin
-					* 2 * i + 3 / 2.0 * margin)) {
+	public int getClickedNoteIndex(MotionEvent event)
+	{
+		for (int i = 0; i < notes.size(); i++)
+		{
+			if(!(margin / 2.0 + margin * 2 * i < event.getX() && event.getX() < margin * 2 * i + 3 / 2.0 * margin))
+			{
 				continue;
 			}
 
 			Note note = notes.get(i);
-			if (getNoteCoordinate(note) * margin / 2 + margin / 2.0 < event
-					.getY()
-					&& event.getY() < getNoteCoordinate(note) * margin / 2
-							+ margin * 3 / 2.0) {
+			if(getNoteCoordinate(note) * margin / 2 + margin / 2.0 < event.getY()
+					&& event.getY() < getNoteCoordinate(note) * margin / 2 + margin * 3 / 2.0)
+			{
 				return i;
-			} else {
+			}
+			else
+			{
 				break;
 			}
 		}
@@ -95,23 +106,23 @@ public class StaffView extends View implements OnTouchListener {
 
 	}
 
-	public void drawNote(Note note, Canvas canvas, int xCoord) {
+	public void drawNote(Note note, Canvas canvas, int xCoord)
+	{
 		// canvas.drawCircle(xCoord, getNoteCoordinate(note)*margin/2 +margin,
 		// margin/2, paint);
-		eRect.set(xCoord,
-				(int) ((getNoteCoordinate(note) - 3) * margin / 2 + margin),
-				xCoord + 200,
-				(int) ((getNoteCoordinate(note) - 3) * margin / 2 + 6 * margin));
+		eRect.set(xCoord, (int)((getNoteCoordinate(note) - 3) * margin / 2 + margin), xCoord + 200,
+				(int)((getNoteCoordinate(note) - 3) * margin / 2 + 6 * margin));
 		canvas.drawBitmap(noteBitmap, null, eRect, null);
 	}
 
 	boolean isMeasured = false;
 
-	private void updateMeasurements() {
-		eRect = new Rect(0, 0, 150, (int) (250));
+	private void updateMeasurements()
+	{
+		eRect = new Rect(0, 0, 150, (int)(250));
 
-		xpad = (float) (getPaddingLeft() + getPaddingRight());
-		ypad = (float) (getPaddingLeft() + getPaddingRight());
+		xpad = (float)(getPaddingLeft() + getPaddingRight());
+		ypad = (float)(getPaddingLeft() + getPaddingRight());
 		leftEdge = this.getLeft();
 		rightEdge = this.getRight();
 		bottomEdge = this.getBottom();
@@ -122,18 +133,25 @@ public class StaffView extends View implements OnTouchListener {
 	}
 
 	@Override
-	public boolean onTouch(View v, MotionEvent event) {
+	public boolean onTouch(View v, MotionEvent event)
+	{
 		getTouchInfo(event);
 		int ind;
 
-		if (touchType != MotionEvent.ACTION_UP) {
+		if(touchType != MotionEvent.ACTION_UP)
+		{
 			isFingerDown = true;
-		} else {
+		}
+		else
+		{
 			isFingerDown = false;
 
-			if ((ind = getClickedNoteIndex(event)) != -1) {
+			if((ind = getClickedNoteIndex(event)) != -1)
+			{
 				notes.remove(ind);
-			} else {
+			}
+			else
+			{
 
 				Note noteType = getNote();
 
@@ -145,20 +163,23 @@ public class StaffView extends View implements OnTouchListener {
 		return true;
 	}
 
-	private void getTouchInfo(MotionEvent event) {
-		touchX = (int) event.getX();
-		touchY = (int) event.getY();
+	private void getTouchInfo(MotionEvent event)
+	{
+		touchX = (int)event.getX();
+		touchY = (int)event.getY();
 		touchType = event.getAction();
 
 	}
 
-	private void insertNote(Note note) {
+	private void insertNote(Note note)
+	{
 		notes.add(note);
 	}
 
 	private Note displayNote;
 
-	public void makeDisplayNote(Note note) {
+	public void makeDisplayNote(Note note)
+	{
 		this.displayNote = note;
 		invalidate();
 	}
@@ -167,18 +188,18 @@ public class StaffView extends View implements OnTouchListener {
 	 * 
 	 * @return
 	 */
-	private int getStaffStepsFromTopLine() {
-		int topOfStaff = (int) margin;
+	private int getStaffStepsFromTopLine()
+	{
+		int topOfStaff = (int)margin;
 
-		int interval = (int) Math
-				.round((((double) (touchY - topOfStaff)) / (margin / 2.0)));
+		int interval = (int)Math.round((((double)(touchY - topOfStaff)) / (margin / 2.0)));
 		Log.i("APPDATA", "Interval: " + interval);
 
 		return interval;
 	}
 
-	private Note getNote() {
-
+	private Note getNote()
+	{
 		int steps = getStaffStepsFromTopLine();
 
 		char noteLetter = getNoteLetterFromInterval(steps);
@@ -190,31 +211,33 @@ public class StaffView extends View implements OnTouchListener {
 		return note;
 	}
 
-	private boolean getIsSharp(int interval) {
+	private boolean getIsSharp(int interval)
+	{
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	// TODO This method suggests that the A in FACE on Treble is A5
-	private int getOctave(int interval) {
-		if (interval > 5)
+	private int getOctave(int interval)
+	{
+		if(interval > 5)
 			return 4;
 		else
 			return 5;
 	}
 
-	private char getNoteLetterFromInterval(int interval) {
+	private char getNoteLetterFromInterval(int interval)
+	{
 		int numNoteNames = 7;
-		char letter = (char) ('A' + (('F' - 'A') - interval + numNoteNames)
-				% numNoteNames);
+		char letter = (char)('A' + (('F' - 'A') - interval + numNoteNames) % numNoteNames);
 		return letter;
 	}
 
 	// Assumes Treble
-	private int getNoteCoordinate(Note note) {
+	private int getNoteCoordinate(Note note)
+	{
 		int thisOctave = 5;
-		int staffStepsAboveA5 = note.note - 'A' + 7
-				* (note.octave - thisOctave);
+		int staffStepsAboveA5 = note.note - 'A' + 7 * (note.octave - thisOctave);
 		int staffSteps = 5 - staffStepsAboveA5;
 		Log.i("APPDATA", "Coord: " + staffSteps);
 		return staffSteps;
