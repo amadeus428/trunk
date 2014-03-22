@@ -4,16 +4,41 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal" >
+        
+        <ImageView 
+            android:id="@+id/fragment_home_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher" />
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AMADEUS" 
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/fragment_home_icon"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+        
+    </RelativeLayout>
+    
     <Button
         android:id="@+id/pd_demo_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="View Pure Data Demo" />
 
     <Button
         android:id="@+id/sheet_music_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"

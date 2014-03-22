@@ -37,7 +37,10 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	private LinkedList<Integer> spaceTops = new LinkedList<Integer>();
 	private HashMap<Character, Integer> noteToStepIndex = new HashMap<Character, Integer>();
 	private Paint paint = new Paint();
-	private Paint dragBitmapPaint = new Paint();
+	
+	private Bitmap dragBitmap;
+	private Rect dragBitmapTransformation;
+	private boolean isDragging = false;
 
 	public StaffLayout(Context context)
 	{
@@ -63,12 +66,12 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	private void init()
 	{
 		paint.setColor(Color.BLACK);
-		dragBitmapPaint.setAlpha(122);
 
 		setOnTouchListener(this);
 		setWillNotDraw(false);
 
 		quarterNoteDown = BitmapFactory.decodeResource(getResources(), R.drawable.quarter_note_down);
+		dragBitmap = quarterNoteDown;
 		
 		noteToStepIndex.put('D', 0);
 		noteToStepIndex.put('C', 1);
@@ -115,6 +118,11 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		{
 			canvas.drawLine(0, lineTop, getWidth(), lineTop, paint);
 		}
+		
+		if(isDragging)
+		{
+			//canvas.drawBitmap(dragBitmap, null, dragBitmapTransformation, null);
+		}
 
 		// Draw added note views.
 		super.onDraw(canvas);
@@ -126,12 +134,19 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		int action = event.getAction();
 		int x = (int)event.getX();
 		int y = (int)event.getY();
-
+		
 		if(action == MotionEvent.ACTION_UP)
 		{
+			isDragging = false;
 			// TODO: Which kind of note should be added?
 			// TODO: How do we know where to place it?
 			addNote(null, x, y);
+		}
+		else if(action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE)
+		{
+			isDragging = true;
+			dragBitmapTransformation = new Rect(x, y, x + noteWidth, y + noteHeight);
+			invalidate();
 		}
 
 		return true;
@@ -139,10 +154,9 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 
 	/**
 	 * Adds note at the closest snapped position to (x, y).
-	 * 
-	 * @param note
-	 * @param x
-	 * @param y
+	 * @param note - the note to add
+	 * @param x - the x coordinate in the layout
+	 * @param y - the y coordinate in the layout
 	 */
 	public void addNote(Note note, int x, int y)
 	{
@@ -171,8 +185,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	/*
 	 * Adds a note to the right of the rightmost previously added note. Used
 	 * ONLY for adding recorded notes.
-	 * 
-	 * @param note
+	 * @param note - the note to add
 	 */
 	public void addNote(Note note)
 	{
@@ -201,6 +214,15 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		int y = spaceHeight + lineHeight + amountDown;
 		
 		addNote(note, x, y + 50);
+	}
+	
+	/**
+	 * Saves the current sheet to an XML file with the given fileName.
+	 * @param fileName - the name of the file to save the sheet to (without the extension)
+	 */
+	public void saveSheet(String fileName)
+	{
+		// TODO: How do we want to implement this?
 	}
 
 	public int getLineHeight()

@@ -11,9 +11,6 @@ import android.widget.HorizontalScrollView;
 
 public class HorizontalTwoFingerScrollView extends HorizontalScrollView
 {
-	private boolean isScrolling = false;
-	private int startScrollX;
-
 	public HorizontalTwoFingerScrollView(Context context)
 	{
 		super(context);
@@ -29,34 +26,25 @@ public class HorizontalTwoFingerScrollView extends HorizontalScrollView
 		super(context, attrs, defStyle);
 	}
 
-	@Override
-	public boolean onTouchEvent(MotionEvent event)
-	{
-		int action = event.getAction();
-		int x = (int)event.getX();
-
-		if(action == MotionEvent.ACTION_UP)
-		{
-			isScrolling = false;
-		}
-		else if(event.getPointerCount() > 1)
-		{
-			if(action == MotionEvent.ACTION_MOVE)
-			{
-				if(isScrolling)
-				{
-					int dist = startScrollX - x;
-					scrollBy(dist, 0);
-					startScrollX = x;
-				}
-				else
-				{
-					isScrolling = true;
-					startScrollX = x;
-				}
-			}
-		}
-
-		return true;
-	}
+//	@Override
+//	public boolean onTouchEvent(MotionEvent event)
+//	{
+//		if(event.getPointerCount() > 1)
+//		{
+//			return super.onTouchEvent(event);
+//		}
+//		
+//		return true;
+//	}
+//	
+//	@Override
+//	public boolean onGenericMotionEvent(MotionEvent event)
+//	{
+//		if(event.getPointerCount() > 1)
+//		{
+//			return super.onGenericMotionEvent(event);
+//		}
+//		
+//		return true;
+//	}
 }
