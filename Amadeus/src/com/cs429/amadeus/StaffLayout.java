@@ -24,10 +24,21 @@ import android.widget.HorizontalScrollView;
 @SuppressWarnings("deprecation")
 public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 {
-	// Only need to decode this bitmap once.
+	public static final int WHOLE_NOTE = 0;
+	public static final int HALF_NOTE_DOWN = 1;
+	public static final int QUARTER_NOTE_DOWN = 2;
+	public static final int EIGHTH_NOTE_DOWN = 3;
+	public static final int SIXTEENTH_NOTE_DOWN = 4;
+	
 	// Should probably put decoded bitmap resources somewhere else...
+	public static Bitmap wholeNote;
+	public static Bitmap halfNoteDown;
 	public static Bitmap quarterNoteDown;
+	public static Bitmap eighthNoteDown;
+	public static Bitmap sixteenthNoteDown;
 
+	private Bitmap currNoteBitmap;
+	private int currNoteId = StaffLayout.QUARTER_NOTE_DOWN;
 	private int noteMarginRight;
 	private int noteWidth;
 	private int noteHeight;
@@ -37,10 +48,6 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	private LinkedList<Integer> spaceTops = new LinkedList<Integer>();
 	private HashMap<Character, Integer> noteToStepIndex = new HashMap<Character, Integer>();
 	private Paint paint = new Paint();
-	
-	private Bitmap dragBitmap;
-	private Rect dragBitmapTransformation;
-	private boolean isDragging = false;
 
 	public StaffLayout(Context context)
 	{
@@ -70,8 +77,12 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		setOnTouchListener(this);
 		setWillNotDraw(false);
 
+		wholeNote = BitmapFactory.decodeResource(getResources(), R.drawable.whole_note);
+		halfNoteDown = BitmapFactory.decodeResource(getResources(), R.drawable.half_note_down);
 		quarterNoteDown = BitmapFactory.decodeResource(getResources(), R.drawable.quarter_note_down);
-		dragBitmap = quarterNoteDown;
+		eighthNoteDown = BitmapFactory.decodeResource(getResources(), R.drawable.eighth_note_down);
+		sixteenthNoteDown = BitmapFactory.decodeResource(getResources(), R.drawable.sixteenth_note_down);
+		currNoteBitmap = quarterNoteDown; // default is quarter note
 		
 		noteToStepIndex.put('D', 0);
 		noteToStepIndex.put('C', 1);
@@ -94,9 +105,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 
 		lineHeight = (int)(getHeight() * .005f);
 		spaceHeight = (getHeight() - (lineHeight * 5)) / 6;
-		noteHeight = spaceHeight * 3;
-		noteWidth = noteHeight / 3;
-		noteMarginRight = noteWidth * 2;
+		noteMarginRight = calculateNoteMarginRight();
 
 		// Add the top values for all staff lines and spaces.
 		spaceTops.add(0);
@@ -118,11 +127,6 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		{
 			canvas.drawLine(0, lineTop, getWidth(), lineTop, paint);
 		}
-		
-		if(isDragging)
-		{
-			//canvas.drawBitmap(dragBitmap, null, dragBitmapTransformation, null);
-		}
 
 		// Draw added note views.
 		super.onDraw(canvas);
@@ -137,16 +141,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		
 		if(action == MotionEvent.ACTION_UP)
 		{
-			isDragging = false;
-			// TODO: Which kind of note should be added?
-			// TODO: How do we know where to place it?
 			addNote(null, x, y);
-		}
-		else if(action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE)
-		{
-			isDragging = true;
-			dragBitmapTransformation = new Rect(x, y, x + noteWidth, y + noteHeight);
-			invalidate();
 		}
 
 		return true;
@@ -160,6 +155,9 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	 */
 	public void addNote(Note note, int x, int y)
 	{
+		// Adjust the size of the note based on the current note bitmap.
+		adjustNoteSize();
+		
 		Vector2<Integer, Integer> snappedPosition = getSnappedNotePosition(x, y);
 		x = snappedPosition.x;
 		y = snappedPosition.y;
@@ -169,7 +167,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 			return;
 		}
 
-		NoteView noteView = new NoteView(getContext(), this, note);
+		NoteView noteView = new NoteView(getContext(), this, note, currNoteBitmap);
 		AbsoluteLayout.LayoutParams lp = new AbsoluteLayout.LayoutParams(noteWidth, noteHeight, x, y);
 		addView(noteView, lp);
 		invalidate();
@@ -209,7 +207,15 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		int amountDown = (numSpaces * spaceHeight) + (numSpaces * lineHeight);
 		if(numSteps % 2 == 0)
 		{
-			amountDown += noteHeight / 6;
+			if(currNoteId == StaffLayout.WHOLE_NOTE)
+			{
+				// Whole notes look different than the other notes so needs to be handled differently.
+				amountDown += (noteHeight / 2);
+			}
+			else
+			{
+				amountDown += noteHeight / 6;
+			}
 		}		
 		int y = spaceHeight + lineHeight + amountDown;
 		
@@ -223,6 +229,33 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	public void saveSheet(String fileName)
 	{
 		// TODO: How do we want to implement this?
+	}
+	
+	/**
+	 * Sets the current note type for future adds.
+	 * @param addNoteType - the type of note used for future adds (use StaffLayout constants)
+	 */
+	public void setCurrAddNoteType(int addNoteType)
+	{
+		currNoteId = addNoteType;
+		switch(addNoteType)
+		{
+			case WHOLE_NOTE:
+				currNoteBitmap = StaffLayout.wholeNote;
+				break;
+			case HALF_NOTE_DOWN:
+				currNoteBitmap = StaffLayout.halfNoteDown;
+				break;
+			case QUARTER_NOTE_DOWN:
+				currNoteBitmap = StaffLayout.quarterNoteDown;
+				break;
+			case EIGHTH_NOTE_DOWN:
+				currNoteBitmap = StaffLayout.eighthNoteDown;
+				break;
+			case SIXTEENTH_NOTE_DOWN:
+				currNoteBitmap = StaffLayout.sixteenthNoteDown;
+				break;
+		}
 	}
 
 	public int getLineHeight()
@@ -249,6 +282,35 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	{
 		return noteHeight;
 	}
+	
+	private void adjustNoteSize()
+	{
+		float bitmapWidth = currNoteBitmap.getWidth();
+		float bitmapHeight = currNoteBitmap.getHeight();
+		float whRatio = bitmapWidth / bitmapHeight;
+		
+		// Adjust the size of the notes to fit properly on the staff.
+		switch(currNoteId)
+		{
+			case WHOLE_NOTE:
+				noteHeight = spaceHeight;
+				break;
+			case HALF_NOTE_DOWN:
+				noteHeight = spaceHeight * 3;				
+				break;
+			case QUARTER_NOTE_DOWN:
+				noteHeight = spaceHeight * 3;
+				break;
+			case EIGHTH_NOTE_DOWN:
+				noteHeight = spaceHeight * 3;
+				break;
+			case SIXTEENTH_NOTE_DOWN:
+				noteHeight = spaceHeight * 3;
+				break;
+		}
+		
+		noteWidth = (int)(whRatio * noteHeight);
+	}
 
 	private Vector2<Integer, Integer> getSnappedNotePosition(int x, int y)
 	{
@@ -269,11 +331,33 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 			float correction = (spaceHeight * .15f);
 			if(y >= lineY - correction && y <= lineY + lineHeight + correction)
 			{
-				snappedY = lineY - (noteHeight / 6);
+				if(currNoteId == StaffLayout.WHOLE_NOTE)
+				{
+					// Whole notes look different than the other notes so needs to be handled differently.
+					snappedY = lineY - (noteHeight / 2);
+				}
+				else
+				{
+					snappedY = lineY - (noteHeight / 6);
+				}
 			}
 		}
 
 		return new Vector2<Integer, Integer>(snappedX, snappedY);
+	}
+	
+	private int calculateNoteMarginRight()
+	{
+		// The whole note has the widest bitmap.
+		// Thus, its width determines the note margin.
+		Bitmap wholeNoteBitmap = StaffLayout.wholeNote;
+		float width = wholeNoteBitmap.getWidth();
+		float height = wholeNoteBitmap.getHeight();
+		float whRatio = width / height;
+		
+		Log.e("schimpf", "" + ((int)(whRatio * spaceHeight)));
+		
+		return (int)(whRatio * spaceHeight);
 	}
 
 	private boolean noteExistsAt(int x, int y)

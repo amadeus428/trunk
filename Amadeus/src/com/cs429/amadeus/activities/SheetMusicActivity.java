@@ -2,12 +2,16 @@
 package com.cs429.amadeus.activities;
 
 import com.cs429.amadeus.R;
+import com.cs429.amadeus.StaffLayout;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
+import android.widget.Spinner;
 
 public class SheetMusicActivity extends Activity
 {
@@ -24,8 +28,41 @@ public class SheetMusicActivity extends Activity
 			@Override
 			public void onClick(View v)
 			{
-
+				
 			}			
+		});
+		
+		final StaffLayout staffLayout = (StaffLayout)findViewById(R.id.sheet_staff_layout);
+		Spinner noteTypeSpinner = (Spinner)findViewById(R.id.note_spinner);
+		noteTypeSpinner.setOnItemSelectedListener(new OnItemSelectedListener()
+		{
+			@Override
+			public void onItemSelected(AdapterView<?> adapter, View view, int pos, long id)
+			{
+				switch(pos)
+				{
+					case 0:
+						staffLayout.setCurrAddNoteType(StaffLayout.QUARTER_NOTE_DOWN);
+						break;
+					case 1:
+						staffLayout.setCurrAddNoteType(StaffLayout.WHOLE_NOTE);
+						break;
+					case 2:
+						staffLayout.setCurrAddNoteType(StaffLayout.HALF_NOTE_DOWN);
+						break;
+					case 3:
+						staffLayout.setCurrAddNoteType(StaffLayout.EIGHTH_NOTE_DOWN);
+						break;
+					case 4:
+						staffLayout.setCurrAddNoteType(StaffLayout.SIXTEENTH_NOTE_DOWN);
+						break;
+				}
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> adapter)
+			{
+			}		
 		});
 	}
 }

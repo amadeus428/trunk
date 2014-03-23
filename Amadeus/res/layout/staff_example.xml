@@ -29,6 +29,7 @@
         android:layout_height="match_parent" >
         
 	    <com.cs429.amadeus.StaffLayout
+	        android:id="@+id/sheet_staff_layout"
 	    	android:layout_width="wrap_content"
 	        android:layout_height="match_parent" />
 	    

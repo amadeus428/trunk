@@ -17,12 +17,12 @@ public class NoteView extends View
 	private Bitmap bitmap;
 	private Rect transformation;
 
-	public NoteView(Context context, StaffLayout parent, Note note)
+	public NoteView(Context context, StaffLayout parent, Note note, Bitmap bitmap)
 	{
 		super(context);
 
 		this.parent = parent;
-		bitmap = getBitmap(note);
+		this.bitmap = bitmap;
 
 		int width = parent.getNoteWidth();
 		int height = parent.getNoteHeight();
@@ -45,11 +45,5 @@ public class NoteView extends View
 	{
 		canvas.drawBitmap(bitmap, null, transformation, null);
 		super.onDraw(canvas);
-	}
-
-	private Bitmap getBitmap(Note note)
-	{
-		// TODO: This should depend on the note.
-		return StaffLayout.quarterNoteDown;
 	}
 }
