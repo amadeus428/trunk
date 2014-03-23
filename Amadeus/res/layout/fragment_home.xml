@@ -45,7 +45,7 @@
         android:layout_gravity="center"
         android:text="RECORD STUFF!"
         android:textAppearance="?android:attr/textAppearanceLarge" 
-        android:background="@drawable/button_background" />
+        android:background="@drawable/main_menu_button_background" />
 
     <Button
         android:id="@+id/sheet_music_button"
@@ -55,6 +55,6 @@
         android:layout_marginTop="10dp"
         android:text="MAKE SHEET MUSIC!"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:background="@drawable/button_background" />
+        android:background="@drawable/main_menu_button_background" />
 
 </LinearLayout>

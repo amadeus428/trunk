@@ -7,8 +7,8 @@
     
     <string-array name="navigation_drawer_items">
         <item>Home</item>
-        <item>Pure Data Demo</item>
-        <item>Create Sheet Music</item>
+        <item>RECORD MUSIC!</item>
+        <item>CREATE SHEET MUSIC!</item>
     </string-array>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>

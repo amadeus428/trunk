@@ -22,6 +22,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
@@ -31,8 +33,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -50,7 +54,7 @@ public class RecordingFragment extends Fragment
 	private long lastNoteTime = 0;
 	private int currNoteViewIndex = 0;
 	private LinkedList<NoteView> noteViews;
-	private Button playStopButton; // need to be able to change its text
+	private ImageButton playStopButton; // need to be able to change its text
 	private Spinner noteCooldownSpinner; // need to be able to get its selected value
 	private StaffLayout staffLayout;
 	private AlertDialog.Builder saveDialog; 
@@ -106,6 +110,9 @@ public class RecordingFragment extends Fragment
 
 		staffLayout = (StaffLayout)getActivity().findViewById(R.id.fragment_recording_staff_layout);
 		noteCooldownSpinner = (Spinner)getActivity().findViewById(R.id.fragment_recording_note_cooldown_spinner);
+		ArrayAdapter<CharSequence> noteCooldownSpinnerAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.add_cooldown_items, R.drawable.spinner_item);
+		noteCooldownSpinnerAdapter.setDropDownViewResource(R.drawable.spinner_item);
+		noteCooldownSpinner.setAdapter(noteCooldownSpinnerAdapter);
 		createButtonListeners();
 
 		initSystemServices();
@@ -138,22 +145,36 @@ public class RecordingFragment extends Fragment
 		{
 			@Override
 			public void onClick(View v)
-			{
-				String newText = isRecording ? "Start recording" : "Stop recording";
-				startStopButton.setText(newText);
-				
-				isRecording = !isRecording;
+			{	
+				if(!isPlaying)
+				{
+					String newText = isRecording ? "Record" : "Stop";
+					startStopButton.setText(newText);
+					
+					isRecording = !isRecording;
+				}
 			}			
 		});
 		
-		playStopButton = (Button)getActivity().findViewById(R.id.fragment_recording_play_stop_notes_button);
+		playStopButton = (ImageButton)getActivity().findViewById(R.id.fragment_recording_play_stop_notes_button);
 		playStopButton.setOnClickListener(new OnClickListener() 
 		{
 			@Override
 			public void onClick(View v)
 			{
-				String newText = isPlaying ? "Play notes" : "Stop playing";
-				playStopButton.setText(newText);
+				if(isRecording)
+				{
+					return;
+				}
+				
+				if(isPlaying)
+				{
+					playStopButton.setImageResource(R.drawable.play);
+				}
+				else
+				{
+					playStopButton.setImageResource(R.drawable.stop);
+				}
 				
 				isPlaying = !isPlaying;
 				if(isPlaying)
@@ -169,7 +190,10 @@ public class RecordingFragment extends Fragment
 			@Override
 			public void onClick(View v)
 			{
-				RecordingFragment.this.staffLayout.clearAllNoteViews();
+				if(!isPlaying && !isRecording)
+				{
+					RecordingFragment.this.staffLayout.clearAllNoteViews();
+				}
 			}			
 		});
 	}
@@ -177,6 +201,13 @@ public class RecordingFragment extends Fragment
 	private void playNotes()
 	{
 		noteViews = staffLayout.getAllNoteViews();		
+		if(noteViews.size() == 0)
+		{
+			playStopButton.setImageResource(R.drawable.play);
+			isPlaying = false;
+			return;
+		}
+		
 		int noteCooldown = Integer.parseInt(noteCooldownSpinner.getSelectedItem().toString());
 		
 		Timer timer = new Timer();
@@ -192,7 +223,7 @@ public class RecordingFragment extends Fragment
 						@Override
 						public void run()
 						{
-							playStopButton.setText("Play notes");
+							playStopButton.setImageResource(R.drawable.play);
 						}
 						
 					});

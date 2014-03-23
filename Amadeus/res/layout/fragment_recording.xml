@@ -4,46 +4,49 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" 
-        android:gravity="center">
+        android:orientation="horizontal" 
+        style="@android:style/ButtonBar" >
         
         <Button
             android:id="@+id/fragment_recording_save_recording_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Save sheet" />
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Save" />
         
         <Button
             android:id="@+id/fragment_recording_start_stop_recording_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/fragment_recording_save_recording_button"
-            android:text="Start recording" />  
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Record" />  
             
-       	<Button
+       	<ImageButton
        	    android:id="@+id/fragment_recording_play_stop_notes_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/fragment_recording_start_stop_recording_button"
-            android:text="Play notes" />  
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            android:src="@drawable/play" />  
             
     	<Button 
        	    android:id="@+id/fragment_recording_clear_notes_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/fragment_recording_play_stop_notes_button"
-            android:text="CLEAR" />  
+            android:layout_weight="1"
+            android:text="Clear" />  
             
        	<Spinner
             android:id="@+id/fragment_recording_note_cooldown_spinner"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/fragment_recording_clear_notes_button"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:entries="@array/add_cooldown_items" />
                  
-    </RelativeLayout>
+    </LinearLayout>
     
     <TextView
         android:id="@+id/fragment_recording_note_recorded_textview"

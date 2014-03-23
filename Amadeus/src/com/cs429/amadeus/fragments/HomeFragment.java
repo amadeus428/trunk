@@ -43,7 +43,6 @@ public class HomeFragment extends Fragment
 		getActivity().setTitle("Home");
 
 		final MainActivity parent = (MainActivity)getActivity();
-		// set button listeners for navigation
 		((Button)getActivity().findViewById(R.id.pd_demo_button)).setOnClickListener(new OnClickListener()
 		{
 			@Override
