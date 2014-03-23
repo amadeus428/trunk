@@ -1,5 +1,5 @@
 
-package com.cs429.amadeus;
+package com.cs429.amadeus.views;
 
 import android.content.Context;
 import android.util.AttributeSet;

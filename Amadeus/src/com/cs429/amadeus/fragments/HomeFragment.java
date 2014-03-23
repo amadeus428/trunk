@@ -14,7 +14,6 @@ import com.cs429.amadeus.activities.MainActivity;
 
 public class HomeFragment extends Fragment
 {
-
 	public HomeFragment()
 	{
 		// Empty constructor required for fragment subclasses
@@ -32,7 +31,6 @@ public class HomeFragment extends Fragment
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-
 		View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
 		return rootView;

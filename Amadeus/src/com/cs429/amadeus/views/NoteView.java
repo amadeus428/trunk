@@ -1,5 +1,7 @@
 
-package com.cs429.amadeus;
+package com.cs429.amadeus.views;
+
+import com.cs429.amadeus.Note;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -46,12 +48,12 @@ public class NoteView extends View
 		canvas.drawBitmap(bitmap, null, transformation, null);
 		super.onDraw(canvas);
 	}
-	
+
 	public Note getNote()
 	{
 		return note;
 	}
-	
+
 	private class DoubleTapListener extends GestureDetector.SimpleOnGestureListener 
 	{
         @Override

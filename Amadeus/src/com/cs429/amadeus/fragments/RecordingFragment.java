@@ -37,21 +37,23 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.cs429.amadeus.Note;
-import com.cs429.amadeus.NoteView;
 import com.cs429.amadeus.R;
-import com.cs429.amadeus.StaffLayout;
 import com.cs429.amadeus.activities.MainActivity;
 import com.cs429.amadeus.helpers.NoteCalculator;
+import com.cs429.amadeus.views.NoteView;
+import com.cs429.amadeus.views.StaffLayout;
 
-public class PureDataDemoFragment extends Fragment
+public class RecordingFragment extends Fragment
 {
 	private boolean isRecording = false;
 	private boolean isPlaying = false;
 	private long lastNoteTime = 0;
-	private Button playStopButton;
-	private Spinner noteCooldownSpinner;
-	private AlertDialog.Builder saveDialog;
+	private int currNoteViewIndex = 0;
+	private LinkedList<NoteView> noteViews;
+	private Button playStopButton; // need to be able to change its text
+	private Spinner noteCooldownSpinner; // need to be able to get its selected value
 	private StaffLayout staffLayout;
+	private AlertDialog.Builder saveDialog; 
 	private PdUiDispatcher dispatcher;
 	private PdService pdService = null;
 	
@@ -80,24 +82,20 @@ public class PureDataDemoFragment extends Fragment
 		}
 	};
 
-	public PureDataDemoFragment()
+	public RecordingFragment()
 	{
 		// Empty constructor required for fragment subclasses
 	}
 
-	public static PureDataDemoFragment newInstance()
+	public static RecordingFragment newInstance()
 	{
-		PureDataDemoFragment frag = new PureDataDemoFragment();
-
-		return frag;
+		return new RecordingFragment();
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-		View rootView = inflater.inflate(R.layout.fragment_record, container, false);
-
-		return rootView;
+		return inflater.inflate(R.layout.fragment_recording, container, false);
 	}
 
 	@Override
@@ -106,20 +104,25 @@ public class PureDataDemoFragment extends Fragment
 		super.onActivityCreated(savedInstanceState);
 		getActivity().setTitle("Record");
 
-		staffLayout = (StaffLayout)getActivity().findViewById(R.id.demo_staffLayout);
-		
+		staffLayout = (StaffLayout)getActivity().findViewById(R.id.fragment_recording_staff_layout);
+		noteCooldownSpinner = (Spinner)getActivity().findViewById(R.id.fragment_recording_note_cooldown_spinner);
 		createButtonListeners();
-		
-		noteCooldownSpinner = (Spinner)getActivity().findViewById(R.id.add_cooldown_spinner);
 
 		initSystemServices();
 		getActivity().bindService(new Intent(getActivity(), PdService.class), pdConnection,
-				getActivity().BIND_AUTO_CREATE);
+				Context.BIND_AUTO_CREATE);
+	}
+	
+	@Override
+	public void onStop()
+	{
+		super.onDestroy();
+		getActivity().unbindService(pdConnection);
 	}
 	
 	private void createButtonListeners()
 	{
-		final Button saveButton = (Button)getActivity().findViewById(R.id.save_recording);
+		final Button saveButton = (Button)getActivity().findViewById(R.id.fragment_recording_save_recording_button);
 		saveButton.setOnClickListener(new OnClickListener()
 		{		
 			@Override
@@ -130,7 +133,7 @@ public class PureDataDemoFragment extends Fragment
 			}		
 		});
 		
-		final Button startStopButton = (Button)getActivity().findViewById(R.id.start_stop_recording);
+		final Button startStopButton = (Button)getActivity().findViewById(R.id.fragment_recording_start_stop_recording_button);
 		startStopButton.setOnClickListener(new OnClickListener() 
 		{
 			@Override
@@ -143,7 +146,7 @@ public class PureDataDemoFragment extends Fragment
 			}			
 		});
 		
-		playStopButton = (Button)getActivity().findViewById(R.id.play_stop_notes);
+		playStopButton = (Button)getActivity().findViewById(R.id.fragment_recording_play_stop_notes_button);
 		playStopButton.setOnClickListener(new OnClickListener() 
 		{
 			@Override
@@ -160,33 +163,31 @@ public class PureDataDemoFragment extends Fragment
 			}			
 		});
 		
-		final Button clearNotesButton = (Button)getActivity().findViewById(R.id.clear_notes);
+		final Button clearNotesButton = (Button)getActivity().findViewById(R.id.fragment_recording_clear_notes_button);
 		clearNotesButton.setOnClickListener(new OnClickListener() 
 		{
 			@Override
 			public void onClick(View v)
 			{
-				PureDataDemoFragment.this.staffLayout.clearAllNoteViews();
+				RecordingFragment.this.staffLayout.clearAllNoteViews();
 			}			
 		});
 	}
 	
-	private static LinkedList<NoteView> noteViews;
-	private static int i = 0;
 	private void playNotes()
 	{
-		noteViews = staffLayout.getAllNoteViews();
-		
+		noteViews = staffLayout.getAllNoteViews();		
 		int noteCooldown = Integer.parseInt(noteCooldownSpinner.getSelectedItem().toString());
+		
 		Timer timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() 
 		{
 			@Override
 			public void run() 
 			{		  
-				if(i == noteViews.size() || !isPlaying)
+				if(currNoteViewIndex >= noteViews.size() || !isPlaying)
 				{
-					PureDataDemoFragment.this.getActivity().runOnUiThread(new Runnable()
+					RecordingFragment.this.getActivity().runOnUiThread(new Runnable()
 					{
 						@Override
 						public void run()
@@ -197,16 +198,16 @@ public class PureDataDemoFragment extends Fragment
 					});
 
 					isPlaying = false;
-					i = 0;
+					currNoteViewIndex = 0;
 					cancel();
 				}
 				
-				NoteView noteView = noteViews.get(i);
+				NoteView noteView = noteViews.get(currNoteViewIndex);
 				Note note = noteView.getNote();
 				float midiNote = (float)NoteCalculator.getMIDIFromNote(note);
 				PdBase.sendFloat("midinote", midiNote);
 				PdBase.sendBang("trigger");
-				i++;
+				currNoteViewIndex++;
 			  }
 		}, 0, noteCooldown);
 	}
@@ -223,7 +224,6 @@ public class PureDataDemoFragment extends Fragment
 			@Override
 			public void onClick(DialogInterface dialog, int whichButton) 
 			{
-				String value = input.getText().toString();
 			}
 		})
 		.setNegativeButton("Cancel", new DialogInterface.OnClickListener() 
@@ -234,13 +234,6 @@ public class PureDataDemoFragment extends Fragment
 				dialog.cancel();
 			}
 		});
-	}
-
-	@Override
-	public void onStop()
-	{
-		super.onDestroy();
-		getActivity().unbindService(pdConnection);
 	}
 
 	private void initPd() throws IOException
@@ -259,7 +252,7 @@ public class PureDataDemoFragment extends Fragment
 			@Override
 			public void receiveFloat(String source, final float x)
 			{
-				if(!isRecording)
+				if(!isRecording || isPlaying)
 				{
 					return;
 				}
@@ -276,10 +269,10 @@ public class PureDataDemoFragment extends Fragment
 	}
 
 	private void updateStaffView(float x)
-	{
+	{	
 		Note note = NoteCalculator.getNoteFromMIDI((double)x);
 		staffLayout.addNote(note);
-		TextView noteRecorded = (TextView)getActivity().findViewById(R.id.note_recorded);
+		TextView noteRecorded = (TextView)getActivity().findViewById(R.id.fragment_recording_note_recorded_textview);
 		noteRecorded.setText("Note recorded: " + note.toString());
 	}
 

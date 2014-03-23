@@ -1,8 +1,12 @@
-package com.cs429.amadeus;
+package com.cs429.amadeus.views;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
+
+import com.cs429.amadeus.Note;
+import com.cs429.amadeus.R;
+import com.cs429.amadeus.R.drawable;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -25,25 +29,25 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	public static final int QUARTER_NOTE_DOWN = 2;
 	public static final int EIGHTH_NOTE_DOWN = 3;
 	public static final int SIXTEENTH_NOTE_DOWN = 4;
+	public static Bitmap wholeNoteBitmap;
+	public static Bitmap halfNoteDownBitmap;
+	public static Bitmap quarterNoteDownBitmap;
+	public static Bitmap eighthNoteDownBitmap;
+	public static Bitmap sixteenthNoteDownBitmap;
 
-	// Should probably put decoded bitmap resources somewhere else...
-	public static Bitmap wholeNote;
-	public static Bitmap halfNoteDown;
-	public static Bitmap quarterNoteDown;
-	public static Bitmap eighthNoteDown;
-	public static Bitmap sixteenthNoteDown;
-
-	private Bitmap currNoteBitmap;
-	private int currNoteId = StaffLayout.QUARTER_NOTE_DOWN;
-	private int noteMarginRight;
+	private int noteMarginRight; // horizontal distance between notes
 	private int noteWidth;
 	private int noteHeight;
-	private int spaceHeight;
+	private int spaceHeight; // vertical distance between two staff lines
 	private int lineHeight;
-	private LinkedList<Integer> lineTops = new LinkedList<Integer>();
-	private LinkedList<Integer> spaceTops = new LinkedList<Integer>();
-	private HashMap<String, Integer> noteToYPos = new HashMap<String, Integer>();
+	private int currNoteId = StaffLayout.QUARTER_NOTE_DOWN; 
+	private Bitmap currNoteBitmap;
+	private LinkedList<Integer> lineTops = new LinkedList<Integer>(); // y positions of staff lines
+	private LinkedList<Integer> spaceTops = new LinkedList<Integer>(); // y positions of staff spaces
 	private Paint paint = new Paint();
+	
+	// maps notes to where they lay vertically on the staff
+	private HashMap<String, Integer> noteToYPos = new HashMap<String, Integer>(); 
 
 	public StaffLayout(Context context)
 	{
@@ -64,21 +68,6 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		super(context, attrs, defStyle);
 
 		init();
-	}
-
-	private void init()
-	{
-		paint.setColor(Color.BLACK);
-
-		setOnTouchListener(this);
-		setWillNotDraw(false);
-
-		wholeNote = BitmapFactory.decodeResource(getResources(), R.drawable.whole_note);
-		halfNoteDown = BitmapFactory.decodeResource(getResources(), R.drawable.half_note_down);
-		quarterNoteDown = BitmapFactory.decodeResource(getResources(), R.drawable.quarter_note_down);
-		eighthNoteDown = BitmapFactory.decodeResource(getResources(), R.drawable.eighth_note_down);
-		sixteenthNoteDown = BitmapFactory.decodeResource(getResources(), R.drawable.sixteenth_note_down);
-		currNoteBitmap = quarterNoteDown; // default is quarter note
 	}
 
 	@Override
@@ -190,19 +179,19 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		switch(addNoteType)
 		{
 			case WHOLE_NOTE:
-				currNoteBitmap = StaffLayout.wholeNote;
+				currNoteBitmap = StaffLayout.wholeNoteBitmap;
 				break;
 			case HALF_NOTE_DOWN:
-				currNoteBitmap = StaffLayout.halfNoteDown;
+				currNoteBitmap = StaffLayout.halfNoteDownBitmap;
 				break;
 			case QUARTER_NOTE_DOWN:
-				currNoteBitmap = StaffLayout.quarterNoteDown;
+				currNoteBitmap = StaffLayout.quarterNoteDownBitmap;
 				break;
 			case EIGHTH_NOTE_DOWN:
-				currNoteBitmap = StaffLayout.eighthNoteDown;
+				currNoteBitmap = StaffLayout.eighthNoteDownBitmap;
 				break;
 			case SIXTEENTH_NOTE_DOWN:
-				currNoteBitmap = StaffLayout.sixteenthNoteDown;
+				currNoteBitmap = StaffLayout.sixteenthNoteDownBitmap;
 				break;
 		}
 	}
@@ -256,12 +245,28 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	{
 		return noteHeight;
 	}
+	
+	private void init()
+	{
+		paint.setColor(Color.BLACK);
+
+		setOnTouchListener(this);
+		setWillNotDraw(false);
+
+		wholeNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.whole_note);
+		halfNoteDownBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.half_note_down);
+		quarterNoteDownBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.quarter_note_down);
+		eighthNoteDownBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.eighth_note_down);
+		sixteenthNoteDownBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sixteenth_note_down);
+		currNoteBitmap = quarterNoteDownBitmap; // default is quarter note
+	}
 
 	private void addNote(Note note, int x, int y, boolean addCorrection)
 	{
 		// Adjust the size of the note based on the current note bitmap.
 		adjustNoteSize();
 
+		// Need to add correction to account for human error when touching screen.
 		int correction = addCorrection ? -getHeight() / 12 : 0;
 		Vector2<Integer, Integer> snappedPosition = getSnappedNotePosition(x, y + correction);
 		x = snappedPosition.x;
@@ -282,6 +287,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		addView(noteView, lp);
 		invalidate();
 
+		// This assumes that the parent of this view is a HorizontalScrollView.
 		int screenWidth = getContext().getResources().getDisplayMetrics().widthPixels;
 		HorizontalScrollView parent = ((HorizontalScrollView)getParent());
 		if(x - parent.getScrollX() > screenWidth)
@@ -353,7 +359,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		return new Vector2<Integer, Integer>(snappedX, snappedY);
 	}
 
-	private Integer calculateYPos(Note note)
+	private int calculateYPos(Note note)
 	{
 		String noteOctave = note.note + "" + note.octave;
 		Integer y = noteToYPos.get(noteOctave);
@@ -369,7 +375,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	{
 		// The whole note has the widest bitmap.
 		// Thus, its width determines the note margin.
-		Bitmap wholeNoteBitmap = StaffLayout.wholeNote;
+		Bitmap wholeNoteBitmap = StaffLayout.wholeNoteBitmap;
 		float width = wholeNoteBitmap.getWidth();
 		float height = wholeNoteBitmap.getHeight();
 		float whRatio = width / height;

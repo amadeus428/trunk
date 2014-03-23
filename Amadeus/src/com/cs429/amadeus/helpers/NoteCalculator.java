@@ -8,13 +8,12 @@ import com.cs429.amadeus.Note;
 
 public class NoteCalculator
 {
-
 	private static final double MAX_MIDI = 128;
 	private HashMap<Double, String> frequencyToNoteMap;
 	private ArrayList<Double> noteFrequencies;
 
 	/**
-	 * Deprecated
+	 * @deprecated
 	 */
 	public NoteCalculator()
 	{
@@ -22,7 +21,7 @@ public class NoteCalculator
 	}
 
 	/**
-	 * Deprecated
+	 * @deprecated
 	 */
 	private void initializeFrequencyToNoteMap()
 	{
@@ -142,11 +141,10 @@ public class NoteCalculator
 		{
 			noteFrequencies.add(currFreq);
 		}
-
 	}
 
 	/**
-	 * Deprecated
+	 * @deprecated
 	 */
 	public String calculateNote(double frequency)
 	{
@@ -164,13 +162,16 @@ public class NoteCalculator
 
 		return frequencyToNoteMap.get(closestFreq);
 	}
+	
+	private static String[] midiTranslationArray = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 
 	public static Note getNoteFromMIDI(double midi)
 	{
-		if(midi < 0)
+		if(midi < 0 || midi > MAX_MIDI)
+		{
 			return null;
-		if(midi > MAX_MIDI)
-			return null;
+		}
+	
 		int midiInt = (int)Math.round(midi);
 		int octave = midiInt / 12;
 		String noteName = midiTranslationArray[midiInt % 12];
@@ -179,10 +180,12 @@ public class NoteCalculator
 	
 	public static double getMIDIFromNote(Note note)
 	{
+		String fullNote = note.note + (note.isSharp ? "#" : "");
+		
 		int n = 0;
 		for(int i = 0; i < midiTranslationArray.length; i++)
 		{
-			if(midiTranslationArray[i].equals(note.note + (note.isSharp ? "#" : "")))
+			if(midiTranslationArray[i].equals(fullNote))
 			{
 				n = i;
 				break;
@@ -191,6 +194,4 @@ public class NoteCalculator
 		
 		return (note.octave * 12) + n;
 	}
-
-	private static String[] midiTranslationArray = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 }

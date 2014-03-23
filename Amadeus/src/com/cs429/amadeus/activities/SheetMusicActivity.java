@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 
 import com.cs429.amadeus.R;
-import com.cs429.amadeus.StaffLayout;
+import com.cs429.amadeus.views.StaffLayout;
 
 public class SheetMusicActivity extends Activity
 {
@@ -20,11 +20,11 @@ public class SheetMusicActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.staff_example);
+		setContentView(R.layout.activity_sheet_music);
 		
-		final StaffLayout staffLayout = (StaffLayout)findViewById(R.id.sheet_staff_layout);
+		final StaffLayout staffLayout = (StaffLayout)findViewById(R.id.activity_sheet_music_staff_layout);
 		
-		Button openButton = (Button)findViewById(R.id.open_sheet_button); 
+		final Button openButton = (Button)findViewById(R.id.activity_sheet_music_open_sheet_button); 
 		openButton.setOnClickListener(new OnClickListener()
 		{
 			@Override
@@ -34,7 +34,7 @@ public class SheetMusicActivity extends Activity
 			}			
 		});
 		
-		Spinner noteTypeSpinner = (Spinner)findViewById(R.id.note_spinner);
+		final Spinner noteTypeSpinner = (Spinner)findViewById(R.id.activity_sheet_music_note_spinner);
 		noteTypeSpinner.setOnItemSelectedListener(new OnItemSelectedListener()
 		{
 			@Override

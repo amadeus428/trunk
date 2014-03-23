@@ -10,43 +10,43 @@
         android:gravity="center">
         
         <Button
-            android:id="@+id/save_recording"
+            android:id="@+id/fragment_recording_save_recording_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Save sheet" />
         
         <Button
-            android:id="@+id/start_stop_recording"
+            android:id="@+id/fragment_recording_start_stop_recording_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/save_recording"
+            android:layout_toRightOf="@id/fragment_recording_save_recording_button"
             android:text="Start recording" />  
             
        	<Button
-       	    android:id="@+id/play_stop_notes"
+       	    android:id="@+id/fragment_recording_play_stop_notes_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/start_stop_recording"
+            android:layout_toRightOf="@id/fragment_recording_start_stop_recording_button"
             android:text="Play notes" />  
             
     	<Button 
-       	    android:id="@+id/clear_notes"
+       	    android:id="@+id/fragment_recording_clear_notes_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/play_stop_notes"
-            android:text="Clear" />  
+            android:layout_toRightOf="@id/fragment_recording_play_stop_notes_button"
+            android:text="CLEAR" />  
             
        	<Spinner
-            android:id="@+id/add_cooldown_spinner"
+            android:id="@+id/fragment_recording_note_cooldown_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/clear_notes"
+            android:layout_toRightOf="@id/fragment_recording_clear_notes_button"
             android:entries="@array/add_cooldown_items" />
                  
     </RelativeLayout>
     
     <TextView
-        android:id="@+id/note_recorded"
+        android:id="@+id/fragment_recording_note_recorded_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -57,8 +57,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
         
-        	<com.cs429.amadeus.StaffLayout 
-        	    android:id="@+id/demo_staffLayout"
+        	<com.cs429.amadeus.views.StaffLayout 
+        	    android:id="@+id/fragment_recording_staff_layout"
         	    android:layout_width="wrap_content"
         	    android:layout_height="match_parent" />
         

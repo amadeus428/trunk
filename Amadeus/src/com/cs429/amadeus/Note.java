@@ -1,8 +1,4 @@
-
 package com.cs429.amadeus;
-
-import android.graphics.Canvas;
-import android.graphics.Rect;
 
 public class Note
 {
@@ -24,12 +20,18 @@ public class Note
 			this.octave = Integer.parseInt(note.substring(1));
 		}
 	}
+	
+	public Note(char noteLetter, int octave, boolean isSharp)
+	{
+		this.note = noteLetter;
+		this.octave = octave;
+		this.isSharp = isSharp;
+	}
 
 	@Override
 	public String toString()
 	{
 		return note + (isSharp ? "#" : "") + octave;
-
 	}
 
 	@Override
@@ -40,17 +42,4 @@ public class Note
 		else
 			return false;
 	}
-
-	public Note(char noteLetter, int octave, boolean isSharp)
-	{
-		this.note = noteLetter;
-		this.octave = octave;
-		this.isSharp = isSharp;
-	}
-
-	public void draw(Canvas canvas, Rect rect)
-	{
-
-	}
-
 }

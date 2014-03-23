@@ -21,7 +21,7 @@ import android.widget.ListView;
 
 import com.cs429.amadeus.R;
 import com.cs429.amadeus.fragments.HomeFragment;
-import com.cs429.amadeus.fragments.PureDataDemoFragment;
+import com.cs429.amadeus.fragments.RecordingFragment;
 
 public class MainActivity extends Activity
 {
@@ -149,7 +149,7 @@ public class MainActivity extends Activity
 		}
 		else if(position == 1)
 		{
-			fragment = PureDataDemoFragment.newInstance();
+			fragment = RecordingFragment.newInstance();
 		}
 		else if(position == 2)
 		{

@@ -1,7 +1,11 @@
 
-package com.cs429.amadeus;
+package com.cs429.amadeus.views;
 
 import java.util.ArrayList;
+
+import com.cs429.amadeus.Note;
+import com.cs429.amadeus.R;
+import com.cs429.amadeus.R.drawable;
 
 import android.content.Context;
 import android.graphics.Bitmap;
