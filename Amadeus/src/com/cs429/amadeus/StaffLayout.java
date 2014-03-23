@@ -10,16 +10,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.ViewGroup;
 import android.widget.AbsoluteLayout;
-import android.widget.GridLayout;
 import android.widget.HorizontalScrollView;
 
 @SuppressWarnings("deprecation")
@@ -30,7 +25,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	public static final int QUARTER_NOTE_DOWN = 2;
 	public static final int EIGHTH_NOTE_DOWN = 3;
 	public static final int SIXTEENTH_NOTE_DOWN = 4;
-	
+
 	// Should probably put decoded bitmap resources somewhere else...
 	public static Bitmap wholeNote;
 	public static Bitmap halfNoteDown;
@@ -99,7 +94,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		lineHeight = (int)(getHeight() * .005f);
 		spaceHeight = (getHeight() - (lineHeight * 5)) / 6;
 		noteMarginRight = calculateNoteMarginRight();
-		
+
 		initNoteToYPos();
 
 		// Add the top values for all staff lines and spaces.
@@ -133,7 +128,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		int action = event.getAction();
 		int x = (int)event.getX();
 		int y = (int)event.getY();
-		
+
 		if(action == MotionEvent.ACTION_UP)
 		{
 			addNote(x, y);
@@ -170,12 +165,12 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 				lastNoteRight = right;
 			}
 		}
-		
+
 		int x = lastNoteRight + noteMarginRight;	
 		int y = calculateYPos(note);		
 		addNote(note, x, y, false);
 	}
-	
+
 	/**
 	 * Saves the current sheet to an XML file with the given fileName.
 	 * @param fileName - the name of the file to save the sheet to (without the extension)
@@ -184,7 +179,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	{
 		// TODO: How do we want to implement this?
 	}
-	
+
 	/**
 	 * Sets the current note type for future adds.
 	 * @param addNoteType - the type of note used for future adds (use StaffLayout constants)
@@ -212,6 +207,31 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		}
 	}
 
+	/**
+	 * Get all note views.
+	 * @return - all note views
+	 */
+	public LinkedList<NoteView> getAllNoteViews()
+	{
+		LinkedList<NoteView> noteViews = new LinkedList<NoteView>();
+		for(int i = 0; i < getChildCount(); i++)
+		{
+			NoteView noteView = (NoteView)getChildAt(i);
+			noteViews.add(noteView);
+		}
+		
+		return noteViews;
+	}
+	
+	/**
+	 * Clears the staff of all note views.
+	 */
+	public void clearAllNoteViews()
+	{
+		removeAllViews();	
+		invalidate();
+	}
+
 	public int getLineHeight()
 	{
 		return lineHeight;
@@ -236,22 +256,22 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	{
 		return noteHeight;
 	}
-	
+
 	private void addNote(Note note, int x, int y, boolean addCorrection)
 	{
 		// Adjust the size of the note based on the current note bitmap.
 		adjustNoteSize();
-		
+
 		int correction = addCorrection ? -getHeight() / 12 : 0;
 		Vector2<Integer, Integer> snappedPosition = getSnappedNotePosition(x, y + correction);
 		x = snappedPosition.x;
 		y = snappedPosition.y;
-		
+
 		if(noteExistsAt(x, y))
 		{
 			return;
 		}
-		
+
 		if(note == null)
 		{
 			note = getNoteFromSnappedYPos(y);
@@ -261,7 +281,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		AbsoluteLayout.LayoutParams lp = new AbsoluteLayout.LayoutParams(noteWidth, noteHeight, x, y);
 		addView(noteView, lp);
 		invalidate();
-		
+
 		int screenWidth = getContext().getResources().getDisplayMetrics().widthPixels;
 		HorizontalScrollView parent = ((HorizontalScrollView)getParent());
 		if(x - parent.getScrollX() > screenWidth)
@@ -269,7 +289,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 			parent.scrollBy((screenWidth / 3) * 2, 0);
 		}
 	}
-	
+
 	private Note getNoteFromSnappedYPos(int y)
 	{
 		for(Entry<String, Integer> entry : noteToYPos.entrySet())
@@ -280,7 +300,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 				return new Note(entry.getKey());
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -289,7 +309,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		float bitmapWidth = currNoteBitmap.getWidth();
 		float bitmapHeight = currNoteBitmap.getHeight();
 		float whRatio = bitmapWidth / bitmapHeight;
-		
+
 		// Adjust the size of the notes to fit properly on the staff.
 		switch(currNoteId)
 		{
@@ -309,7 +329,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 				noteHeight = spaceHeight * 3;
 				break;
 		}
-		
+
 		noteWidth = (int)(whRatio * noteHeight);
 	}
 
@@ -332,7 +352,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 
 		return new Vector2<Integer, Integer>(snappedX, snappedY);
 	}
-	
+
 	private Integer calculateYPos(Note note)
 	{
 		String noteOctave = note.note + "" + note.octave;
@@ -341,10 +361,10 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		{
 			y = Integer.MAX_VALUE;
 		}
-		
+
 		return y;
 	}
-	
+
 	private int calculateNoteMarginRight()
 	{
 		// The whole note has the widest bitmap.
@@ -370,13 +390,13 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 
 		return false;
 	}
-	
+
 	private void initNoteToYPos()
 	{
 		noteToYPos.clear();
-		
+
 		int step = (int)(getHeight() / 6.0);
-		
+
 		float multiplier = -15.0f;
 		char currNote = 'A';
 		int currOctave = 8;
@@ -394,7 +414,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 			{
 				currOctave--;
 			}
-			
+
 			multiplier += 1.0f;
 		}
 	}

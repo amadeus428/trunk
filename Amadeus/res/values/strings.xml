@@ -21,5 +21,18 @@
 		<item>Eighth note</item>
 		<item>Sixteenth note</item>
 	</string-array>
+	
+    <string-array name="add_cooldown_items">
+		<item>100</item>
+		<item>200</item>
+		<item>300</item>
+		<item>400</item>
+		<item>500</item>
+		<item>600</item>
+		<item>700</item>
+		<item>800</item>
+		<item>900</item>
+		<item>1000</item>
+	</string-array>
 
 </resources>

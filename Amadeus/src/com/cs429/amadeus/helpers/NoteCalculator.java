@@ -176,6 +176,21 @@ public class NoteCalculator
 		String noteName = midiTranslationArray[midiInt % 12];
 		return new Note(noteName.charAt(0), octave, noteName.length() > 1);
 	}
+	
+	public static double getMIDIFromNote(Note note)
+	{
+		int n = 0;
+		for(int i = 0; i < midiTranslationArray.length; i++)
+		{
+			if(midiTranslationArray[i].equals(note.note + (note.isSharp ? "#" : "")))
+			{
+				n = i;
+				break;
+			}
+		}
+		
+		return (note.octave * 12) + n;
+	}
 
 	private static String[] midiTranslationArray = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 }

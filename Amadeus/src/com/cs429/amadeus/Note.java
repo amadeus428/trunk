@@ -6,9 +6,9 @@ import android.graphics.Rect;
 
 public class Note
 {
-	char note;
-	int octave;
-	boolean isSharp;
+	public char note;
+	public int octave;
+	public boolean isSharp;
 
 	public Note(String note)
 	{
@@ -52,4 +52,5 @@ public class Note
 	{
 
 	}
+
 }

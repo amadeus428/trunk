@@ -1,16 +1,6 @@
 
 package com.cs429.amadeus.activities;
 
-import com.cs429.amadeus.R;
-import com.cs429.amadeus.R.array;
-import com.cs429.amadeus.R.drawable;
-import com.cs429.amadeus.R.id;
-import com.cs429.amadeus.R.layout;
-import com.cs429.amadeus.R.menu;
-import com.cs429.amadeus.R.string;
-import com.cs429.amadeus.fragments.HomeFragment;
-import com.cs429.amadeus.fragments.PureDataDemoFragment;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
@@ -25,11 +15,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Button;
+
+import com.cs429.amadeus.R;
+import com.cs429.amadeus.fragments.HomeFragment;
+import com.cs429.amadeus.fragments.PureDataDemoFragment;
 
 public class MainActivity extends Activity
 {

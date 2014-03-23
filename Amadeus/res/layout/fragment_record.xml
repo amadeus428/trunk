@@ -20,7 +20,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/save_recording"
-            android:text="Stop recording" />  
+            android:text="Start recording" />  
+            
+       	<Button
+       	    android:id="@+id/play_stop_notes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/start_stop_recording"
+            android:text="Play notes" />  
+            
+    	<Button 
+       	    android:id="@+id/clear_notes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/play_stop_notes"
+            android:text="Clear" />  
+            
+       	<Spinner
+            android:id="@+id/add_cooldown_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/clear_notes"
+            android:entries="@array/add_cooldown_items" />
                  
     </RelativeLayout>
     

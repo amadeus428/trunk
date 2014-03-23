@@ -3,14 +3,11 @@ package com.cs429.amadeus;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 public class NoteView extends View
@@ -48,6 +45,11 @@ public class NoteView extends View
 	{
 		canvas.drawBitmap(bitmap, null, transformation, null);
 		super.onDraw(canvas);
+	}
+	
+	public Note getNote()
+	{
+		return note;
 	}
 	
 	private class DoubleTapListener extends GestureDetector.SimpleOnGestureListener 

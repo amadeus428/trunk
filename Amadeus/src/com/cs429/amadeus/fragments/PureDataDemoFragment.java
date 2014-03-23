@@ -4,6 +4,9 @@ package com.cs429.amadeus.fragments;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.puredata.android.io.AudioParameters;
 import org.puredata.android.service.PdService;
@@ -11,17 +14,6 @@ import org.puredata.android.utils.PdUiDispatcher;
 import org.puredata.core.PdBase;
 import org.puredata.core.PdListener;
 import org.puredata.core.utils.IoUtils;
-
-import com.cs429.amadeus.Note;
-import com.cs429.amadeus.R;
-import com.cs429.amadeus.R.drawable;
-import com.cs429.amadeus.R.id;
-import com.cs429.amadeus.R.layout;
-import com.cs429.amadeus.R.raw;
-import com.cs429.amadeus.StaffLayout;
-import com.cs429.amadeus.StaffView;
-import com.cs429.amadeus.activities.MainActivity;
-import com.cs429.amadeus.helpers.NoteCalculator;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -41,17 +33,23 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ToggleButton;
+
+import com.cs429.amadeus.Note;
+import com.cs429.amadeus.NoteView;
+import com.cs429.amadeus.R;
+import com.cs429.amadeus.StaffLayout;
+import com.cs429.amadeus.activities.MainActivity;
+import com.cs429.amadeus.helpers.NoteCalculator;
 
 public class PureDataDemoFragment extends Fragment
 {
-	private boolean isRecording = true;
+	private boolean isRecording = false;
+	private boolean isPlaying = false;
 	private long lastNoteTime = 0;
-	private float noteCooldown = 1000;
+	private Button playStopButton;
+	private Spinner noteCooldownSpinner;
 	private AlertDialog.Builder saveDialog;
 	private StaffLayout staffLayout;
 	private PdUiDispatcher dispatcher;
@@ -111,6 +109,8 @@ public class PureDataDemoFragment extends Fragment
 		staffLayout = (StaffLayout)getActivity().findViewById(R.id.demo_staffLayout);
 		
 		createButtonListeners();
+		
+		noteCooldownSpinner = (Spinner)getActivity().findViewById(R.id.add_cooldown_spinner);
 
 		initSystemServices();
 		getActivity().bindService(new Intent(getActivity(), PdService.class), pdConnection,
@@ -142,6 +142,73 @@ public class PureDataDemoFragment extends Fragment
 				isRecording = !isRecording;
 			}			
 		});
+		
+		playStopButton = (Button)getActivity().findViewById(R.id.play_stop_notes);
+		playStopButton.setOnClickListener(new OnClickListener() 
+		{
+			@Override
+			public void onClick(View v)
+			{
+				String newText = isPlaying ? "Play notes" : "Stop playing";
+				playStopButton.setText(newText);
+				
+				isPlaying = !isPlaying;
+				if(isPlaying)
+				{
+					playNotes();
+				}
+			}			
+		});
+		
+		final Button clearNotesButton = (Button)getActivity().findViewById(R.id.clear_notes);
+		clearNotesButton.setOnClickListener(new OnClickListener() 
+		{
+			@Override
+			public void onClick(View v)
+			{
+				PureDataDemoFragment.this.staffLayout.clearAllNoteViews();
+			}			
+		});
+	}
+	
+	private static LinkedList<NoteView> noteViews;
+	private static int i = 0;
+	private void playNotes()
+	{
+		noteViews = staffLayout.getAllNoteViews();
+		
+		int noteCooldown = Integer.parseInt(noteCooldownSpinner.getSelectedItem().toString());
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask() 
+		{
+			@Override
+			public void run() 
+			{		  
+				if(i == noteViews.size() || !isPlaying)
+				{
+					PureDataDemoFragment.this.getActivity().runOnUiThread(new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							playStopButton.setText("Play notes");
+						}
+						
+					});
+
+					isPlaying = false;
+					i = 0;
+					cancel();
+				}
+				
+				NoteView noteView = noteViews.get(i);
+				Note note = noteView.getNote();
+				float midiNote = (float)NoteCalculator.getMIDIFromNote(note);
+				PdBase.sendFloat("midinote", midiNote);
+				PdBase.sendBang("trigger");
+				i++;
+			  }
+		}, 0, noteCooldown);
 	}
 	
 	private void createSaveDialog()
@@ -177,7 +244,7 @@ public class PureDataDemoFragment extends Fragment
 	}
 
 	private void initPd() throws IOException
-	{
+	{	
 		// Configure the audio glue
 		AudioParameters.init(getActivity());
 		int sampleRate = AudioParameters.suggestSampleRate();
@@ -198,6 +265,7 @@ public class PureDataDemoFragment extends Fragment
 				}
 				
 				long currTime = Calendar.getInstance().getTimeInMillis();
+				int noteCooldown = Integer.parseInt(noteCooldownSpinner.getSelectedItem().toString());
 				if(currTime - lastNoteTime > noteCooldown)
 				{
 					lastNoteTime = currTime;

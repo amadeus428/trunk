@@ -3,10 +3,6 @@ package com.cs429.amadeus;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.GestureDetector.OnDoubleTapListener;
-import android.view.GestureDetector.OnGestureListener;
-import android.view.MotionEvent;
 import android.widget.HorizontalScrollView;
 
 public class HorizontalTwoFingerScrollView extends HorizontalScrollView

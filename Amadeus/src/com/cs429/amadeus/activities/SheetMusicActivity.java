@@ -1,9 +1,6 @@
 
 package com.cs429.amadeus.activities;
 
-import com.cs429.amadeus.R;
-import com.cs429.amadeus.StaffLayout;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +10,9 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import com.cs429.amadeus.R;
+import com.cs429.amadeus.StaffLayout;
+
 public class SheetMusicActivity extends Activity
 {
 	@Override
@@ -21,6 +21,8 @@ public class SheetMusicActivity extends Activity
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.staff_example);
+		
+		final StaffLayout staffLayout = (StaffLayout)findViewById(R.id.sheet_staff_layout);
 		
 		Button openButton = (Button)findViewById(R.id.open_sheet_button); 
 		openButton.setOnClickListener(new OnClickListener()
@@ -32,7 +34,6 @@ public class SheetMusicActivity extends Activity
 			}			
 		});
 		
-		final StaffLayout staffLayout = (StaffLayout)findViewById(R.id.sheet_staff_layout);
 		Spinner noteTypeSpinner = (Spinner)findViewById(R.id.note_spinner);
 		noteTypeSpinner.setOnItemSelectedListener(new OnItemSelectedListener()
 		{

@@ -1,17 +1,16 @@
 
 package com.cs429.amadeus.fragments;
 
-import com.cs429.amadeus.R;
-import com.cs429.amadeus.R.layout;
-import com.cs429.amadeus.activities.MainActivity;
-
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
+
+import com.cs429.amadeus.R;
+import com.cs429.amadeus.activities.MainActivity;
 
 public class HomeFragment extends Fragment
 {
