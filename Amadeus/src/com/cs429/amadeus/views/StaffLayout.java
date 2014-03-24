@@ -1,12 +1,9 @@
 package com.cs429.amadeus.views;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
-
-import com.cs429.amadeus.Note;
-import com.cs429.amadeus.R;
-import com.cs429.amadeus.R.drawable;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -21,6 +18,9 @@ import android.view.View.OnTouchListener;
 import android.widget.AbsoluteLayout;
 import android.widget.HorizontalScrollView;
 
+import com.cs429.amadeus.Note;
+import com.cs429.amadeus.R;
+
 @SuppressWarnings("deprecation")
 public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 {
@@ -34,6 +34,8 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	public static Bitmap quarterNoteDownBitmap;
 	public static Bitmap eighthNoteDownBitmap;
 	public static Bitmap sixteenthNoteDownBitmap;
+	
+	public final int NUM_STAFF_LINES = 41;
 
 	private int noteMarginRight; // horizontal distance between notes
 	private int noteWidth;
@@ -43,7 +45,6 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	private int currNoteId = StaffLayout.QUARTER_NOTE_DOWN; 
 	private Bitmap currNoteBitmap;
 	private LinkedList<Integer> lineTops = new LinkedList<Integer>(); // y positions of staff lines
-	private LinkedList<Integer> spaceTops = new LinkedList<Integer>(); // y positions of staff spaces
 	private Paint paint = new Paint();
 	
 	// maps notes to where they lay vertically on the staff
@@ -78,7 +79,6 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		setRight(Integer.MAX_VALUE);
 
 		lineTops.clear();
-		spaceTops.clear();
 
 		lineHeight = (int)(getHeight() * .005f);
 		spaceHeight = (getHeight() - (lineHeight * 5)) / 6;
@@ -88,11 +88,10 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 
 		// Add the top values for all staff lines and spaces.
 		int startY = (int)(-15.0 * (getHeight() / 6.0));
-		for (int i = 1; i <= 41; i++)
+		for (int i = 1; i <= NUM_STAFF_LINES; i++)
 		{
 			int lineTop = (int)(startY + (i * getHeight() / 6.0));
 			lineTops.add(lineTop);
-			spaceTops.add(lineTop + lineHeight);
 		}
 
 		paint.setStrokeWidth(lineHeight);
@@ -102,18 +101,34 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	public void onDraw(Canvas canvas)
 	{
 		// Draw staff lines behind note views.
-		for (float lineTop : lineTops)
-		{
-			canvas.drawLine(0, lineTop, getWidth(), lineTop, paint);
-		}
+		drawLines(canvas);
 
 		// Draw added note views.
 		super.onDraw(canvas);
 	}
+	
+	private void drawLines(Canvas canvas)
+	{
+		// Only draw E5, G5, B5, D6, F6.
+		int start = (int)(NUM_STAFF_LINES / 2.0) - 5;	
+		for (int i = 0; i < lineTops.size(); i++)
+		{
+			if(i >= start && i <= start + 4)
+			{
+				int y = lineTops.get(i);
+				canvas.drawLine(0, y, getWidth(), y, paint);
+			}
+		}
+	}
 
 	@Override
-	public boolean onTouch(View v, MotionEvent event)
+	public boolean onTouch(View view, MotionEvent event)
 	{
+		if(!isEnabled())
+		{
+			return true;
+		}
+		
 		int action = event.getAction();
 		int x = (int)event.getX();
 		int y = (int)event.getY();
@@ -136,7 +151,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		addNote(null, x, y, true);
 	}
 
-	/*
+	/**
 	 * Adds a note to the right of the rightmost previously added note. Used
 	 * ONLY for adding recorded notes.
 	 * @param note - the note to add
@@ -171,7 +186,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 
 	/**
 	 * Sets the current note type for future adds.
-	 * @param addNoteType - the type of note used for future adds (use StaffLayout constants)
+	 * @param addNoteType - the type of note used for future adds (use {@link StaffLayout} constants)
 	 */
 	public void setCurrAddNoteType(int addNoteType)
 	{
@@ -197,12 +212,12 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	}
 
 	/**
-	 * Get all note views.
+	 * Gets all {@link NoteView}s ordered from left to right on the staff.
 	 * @return - all note views
 	 */
-	public LinkedList<NoteView> getAllNoteViews()
+	public ArrayList<NoteView> getAllNoteViews()
 	{
-		LinkedList<NoteView> noteViews = new LinkedList<NoteView>();
+		ArrayList<NoteView> noteViews = new ArrayList<NoteView>();
 		for(int i = 0; i < getChildCount(); i++)
 		{
 			NoteView noteView = (NoteView)getChildAt(i);
@@ -213,12 +228,30 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	}
 	
 	/**
-	 * Clears the staff of all note views.
+	 * Clears the staff of all {@link NoteView}s.
 	 */
 	public void clearAllNoteViews()
 	{
 		removeAllViews();	
 		invalidate();
+	}
+	
+	/**
+	 * Scrolls to the right by the given amount.
+	 * This assumes the parent is {@link HorizontalScrollView}.
+	 * If amount is null, the default, 1.5 * screen width, will be used.
+	 * @param amount - x amount to scroll by 
+	 */
+	public void scrollRight(Integer amount)
+	{
+		if(amount == null)
+		{
+			int screenWidth = getContext().getResources().getDisplayMetrics().widthPixels;
+			amount = (screenWidth / 3) * 2;
+		}
+		
+		HorizontalScrollView parent = ((HorizontalScrollView)getParent());
+		parent.scrollBy(amount, 0);
 	}
 
 	public int getLineHeight()
@@ -277,14 +310,17 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 			return;
 		}
 
+		// May need to determine the note based on the y position.
 		if(note == null)
 		{
 			note = getNoteFromSnappedYPos(y);
 		}
-
+		
 		NoteView noteView = new NoteView(getContext(), this, note, currNoteBitmap);
 		AbsoluteLayout.LayoutParams lp = new AbsoluteLayout.LayoutParams(noteWidth, noteHeight, x, y);
-		addView(noteView, lp);
+		
+		// Need to add it at the correct position to keep views ordered by increasing x coord.
+		addView(noteView, getAddPos(x), lp); 
 		invalidate();
 
 		// This assumes that the parent of this view is a HorizontalScrollView.
@@ -292,8 +328,28 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		HorizontalScrollView parent = ((HorizontalScrollView)getParent());
 		if(x - parent.getScrollX() > screenWidth)
 		{
-			parent.scrollBy((screenWidth / 3) * 2, 0);
+			scrollRight(null);
 		}
+	}
+	
+	private int getAddPos(int x)
+	{
+		int childCount = getChildCount();
+		for(int i = 0; i < childCount; i++)
+		{
+			View child = getChildAt(i);
+			if(child.getX() > x)
+			{
+				return i;
+			}
+
+			if(i == childCount - 1)
+			{
+				return childCount;
+			}
+		}
+		
+		return 0;
 	}
 
 	private Note getNoteFromSnappedYPos(int y)
@@ -406,7 +462,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		float multiplier = -15.0f;
 		char currNote = 'A';
 		int currOctave = 8;
-		for(int i = 0; i < 41; i++)
+		for(int i = 0; i < NUM_STAFF_LINES; i++)
 		{
 			String noteOctave = currNote + "" + currOctave;
 			noteToYPos.put(noteOctave, (int)(step * (multiplier / 2.0)));

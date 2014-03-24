@@ -165,6 +165,11 @@ public class NoteCalculator
 	
 	private static String[] midiTranslationArray = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 
+	/**
+	 * Returns the staff note associated with the given midi note.
+	 * @param midi - midi note
+	 * @return - the staff note associated with the given midi note
+	 */
 	public static Note getNoteFromMIDI(double midi)
 	{
 		if(midi < 0 || midi > MAX_MIDI)
@@ -178,6 +183,11 @@ public class NoteCalculator
 		return new Note(noteName.charAt(0), octave, noteName.length() > 1);
 	}
 	
+	/**
+	 * Returns the midi note associated with the given staff note.
+	 * @param note - staff note
+	 * @return - the midi note associated with the given staff note
+	 */
 	public static double getMIDIFromNote(Note note)
 	{
 		String fullNote = note.note + (note.isSharp ? "#" : "");

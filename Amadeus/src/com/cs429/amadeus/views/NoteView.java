@@ -1,8 +1,6 @@
 
 package com.cs429.amadeus.views;
 
-import com.cs429.amadeus.Note;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -11,6 +9,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
+
+import com.cs429.amadeus.Note;
 
 public class NoteView extends View
 {
@@ -39,6 +39,11 @@ public class NoteView extends View
 	@Override
 	public boolean onTouchEvent(MotionEvent event)
 	{
+		if(!parent.isEnabled())
+		{
+			return true;
+		}
+		
 		return doubleTapListener.onTouchEvent(event);
 	}
 

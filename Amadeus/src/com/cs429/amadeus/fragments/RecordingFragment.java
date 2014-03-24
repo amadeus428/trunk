@@ -4,9 +4,6 @@ package com.cs429.amadeus.fragments;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.puredata.android.io.AudioParameters;
 import org.puredata.android.service.PdService;
@@ -22,8 +19,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
@@ -44,19 +39,18 @@ import com.cs429.amadeus.Note;
 import com.cs429.amadeus.R;
 import com.cs429.amadeus.activities.MainActivity;
 import com.cs429.amadeus.helpers.NoteCalculator;
-import com.cs429.amadeus.views.NoteView;
+import com.cs429.amadeus.helpers.StaffMIDIPlayer;
 import com.cs429.amadeus.views.StaffLayout;
 
 public class RecordingFragment extends Fragment
 {
-	private boolean isRecording = false;
-	private boolean isPlaying = false;
 	private long lastNoteTime = 0;
-	private int currNoteViewIndex = 0;
-	private LinkedList<NoteView> noteViews;
+	private boolean isRecording = false;
+	private boolean ignoreRecordingNoise = true;
 	private ImageButton playStopButton; // need to be able to change its text
 	private Spinner noteCooldownSpinner; // need to be able to get its selected value
 	private StaffLayout staffLayout;
+	private StaffMIDIPlayer midiPlayer;
 	private AlertDialog.Builder saveDialog; 
 	private PdUiDispatcher dispatcher;
 	private PdService pdService = null;
@@ -82,13 +76,13 @@ public class RecordingFragment extends Fragment
 		@Override
 		public void onServiceDisconnected(ComponentName name)
 		{
-			// this method will never be called
+			// This method will never be called.
 		}
 	};
 
 	public RecordingFragment()
 	{
-		// Empty constructor required for fragment subclasses
+		// Empty constructor required for fragment subclasses.
 	}
 
 	public static RecordingFragment newInstance()
@@ -118,6 +112,8 @@ public class RecordingFragment extends Fragment
 		initSystemServices();
 		getActivity().bindService(new Intent(getActivity(), PdService.class), pdConnection,
 				Context.BIND_AUTO_CREATE);
+		
+		Log.e("schimpf", "activity created");
 	}
 	
 	@Override
@@ -146,7 +142,7 @@ public class RecordingFragment extends Fragment
 			@Override
 			public void onClick(View v)
 			{	
-				if(!isPlaying)
+				if(!isPlaying())
 				{
 					String newText = isRecording ? "Record" : "Stop";
 					startStopButton.setText(newText);
@@ -167,18 +163,14 @@ public class RecordingFragment extends Fragment
 					return;
 				}
 				
-				if(isPlaying)
+				if(isPlaying())
 				{
 					playStopButton.setImageResource(R.drawable.play);
+					midiPlayer.stop();
 				}
 				else
 				{
 					playStopButton.setImageResource(R.drawable.stop);
-				}
-				
-				isPlaying = !isPlaying;
-				if(isPlaying)
-				{
 					playNotes();
 				}
 			}			
@@ -190,7 +182,7 @@ public class RecordingFragment extends Fragment
 			@Override
 			public void onClick(View v)
 			{
-				if(!isPlaying && !isRecording)
+				if(!isPlaying() && !isRecording)
 				{
 					RecordingFragment.this.staffLayout.clearAllNoteViews();
 				}
@@ -200,47 +192,27 @@ public class RecordingFragment extends Fragment
 	
 	private void playNotes()
 	{
-		noteViews = staffLayout.getAllNoteViews();		
-		if(noteViews.size() == 0)
-		{
-			playStopButton.setImageResource(R.drawable.play);
-			isPlaying = false;
-			return;
-		}
+		staffLayout.setEnabled(false);
 		
 		int noteCooldown = Integer.parseInt(noteCooldownSpinner.getSelectedItem().toString());
-		
-		Timer timer = new Timer();
-		timer.scheduleAtFixedRate(new TimerTask() 
+		midiPlayer = new StaffMIDIPlayer(getActivity(), staffLayout, noteCooldown)
 		{
 			@Override
-			public void run() 
-			{		  
-				if(currNoteViewIndex >= noteViews.size() || !isPlaying)
+			public void onFinished()
+			{
+				RecordingFragment.this.getActivity().runOnUiThread(new Runnable()
 				{
-					RecordingFragment.this.getActivity().runOnUiThread(new Runnable()
+					@Override
+					public void run()
 					{
-						@Override
-						public void run()
-						{
-							playStopButton.setImageResource(R.drawable.play);
-						}
-						
-					});
-
-					isPlaying = false;
-					currNoteViewIndex = 0;
-					cancel();
-				}
-				
-				NoteView noteView = noteViews.get(currNoteViewIndex);
-				Note note = noteView.getNote();
-				float midiNote = (float)NoteCalculator.getMIDIFromNote(note);
-				PdBase.sendFloat("midinote", midiNote);
-				PdBase.sendBang("trigger");
-				currNoteViewIndex++;
-			  }
-		}, 0, noteCooldown);
+						playStopButton.setImageResource(R.drawable.play);
+						staffLayout.setEnabled(true);
+					}
+					
+				});
+			}
+		};
+		midiPlayer.play();
 	}
 	
 	private void createSaveDialog()
@@ -269,13 +241,13 @@ public class RecordingFragment extends Fragment
 
 	private void initPd() throws IOException
 	{	
-		// Configure the audio glue
+		// Configure the audio glue.
 		AudioParameters.init(getActivity());
 		int sampleRate = AudioParameters.suggestSampleRate();
 		pdService.initAudio(sampleRate, 1, 2, 10.0f);
 		startPDService();
 
-		// Create and install the dispatcher
+		// Create and install the dispatcher.
 		dispatcher = new PdUiDispatcher();
 		PdBase.setReceiver(dispatcher);
 		dispatcher.addListener("pitch", new PdListener.Adapter()
@@ -283,7 +255,7 @@ public class RecordingFragment extends Fragment
 			@Override
 			public void receiveFloat(String source, final float x)
 			{
-				if(!isRecording || isPlaying)
+				if(!isRecording || isPlaying())
 				{
 					return;
 				}
@@ -302,6 +274,11 @@ public class RecordingFragment extends Fragment
 	private void updateStaffView(float x)
 	{	
 		Note note = NoteCalculator.getNoteFromMIDI((double)x);
+		if(ignoreRecordingNoise && (note.octave < 3 || note.octave > 7))
+		{
+			return;
+		}
+		
 		staffLayout.addNote(note);
 		TextView noteRecorded = (TextView)getActivity().findViewById(R.id.fragment_recording_note_recorded_textview);
 		noteRecorded.setText("Note recorded: " + note.toString());
@@ -344,5 +321,10 @@ public class RecordingFragment extends Fragment
 				}
 			}
 		}, PhoneStateListener.LISTEN_CALL_STATE);
+	}
+	
+	private boolean isPlaying()
+	{
+		return midiPlayer != null && midiPlayer.isPlaying();
 	}
 }

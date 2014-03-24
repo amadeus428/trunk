@@ -3,10 +3,6 @@ package com.cs429.amadeus.views;
 
 import java.util.ArrayList;
 
-import com.cs429.amadeus.Note;
-import com.cs429.amadeus.R;
-import com.cs429.amadeus.R.drawable;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,6 +14,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+
+import com.cs429.amadeus.Note;
+import com.cs429.amadeus.R;
 
 public class StaffView extends View implements OnTouchListener
 {
