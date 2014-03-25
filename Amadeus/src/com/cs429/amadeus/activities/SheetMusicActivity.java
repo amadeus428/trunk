@@ -44,19 +44,19 @@ public class SheetMusicActivity extends Activity
 				switch(pos)
 				{
 					case 0:
-						staffLayout.setAddNoteType(Note.QUARTER_NOTE_DOWN);
+						staffLayout.setAddNoteType(Note.QUARTER_NOTE);
 						break;
 					case 1:
 						staffLayout.setAddNoteType(Note.WHOLE_NOTE);
 						break;
 					case 2:
-						staffLayout.setAddNoteType(Note.HALF_NOTE_DOWN);
+						staffLayout.setAddNoteType(Note.HALF_NOTE);
 						break;
 					case 3:
-						staffLayout.setAddNoteType(Note.EIGHTH_NOTE_DOWN);
+						staffLayout.setAddNoteType(Note.EIGHTH_NOTE);
 						break;
 					case 4:
-						staffLayout.setAddNoteType(Note.SIXTEENTH_NOTE_DOWN);
+						staffLayout.setAddNoteType(Note.SIXTEENTH_NOTE);
 						break;
 				}
 			}

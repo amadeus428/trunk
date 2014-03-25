@@ -22,17 +22,20 @@
 		<item>Sixteenth note</item>
 	</string-array>
 	
-    <string-array name="add_cooldown_items">
+    <string-array name="bpm_items">
+		<item>80</item>
+		<item>90</item>
 		<item>100</item>
+		<item>110</item>
+		<item>120</item>
+		<item>130</item>
+		<item>140</item>
+		<item>150</item>
+		<item>160</item>
+		<item>170</item>
+		<item>180</item>
+		<item>190</item>
 		<item>200</item>
-		<item>300</item>
-		<item>400</item>
-		<item>500</item>
-		<item>600</item>
-		<item>700</item>
-		<item>800</item>
-		<item>900</item>
-		<item>1000</item>
 	</string-array>
 
 </resources>

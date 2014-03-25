@@ -4,7 +4,10 @@ package com.cs429.amadeus.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.HorizontalScrollView;
-
+/**
+ * This doesn't work correctly... yet.
+ * @deprecated
+ */
 public class HorizontalTwoFingerScrollView extends HorizontalScrollView
 {
 	public HorizontalTwoFingerScrollView(Context context)

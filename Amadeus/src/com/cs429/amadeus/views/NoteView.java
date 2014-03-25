@@ -12,6 +12,9 @@ import android.widget.Toast;
 
 import com.cs429.amadeus.Note;
 
+/**
+ * This class represents an interactive note used in combination with {@link StaffLayout}.
+ */
 public class NoteView extends View
 {
 	private StaffLayout parent;
@@ -21,13 +24,13 @@ public class NoteView extends View
 	private GestureDetector doubleTapListener;
 	private Toast toast;
 
-	public NoteView(Context context, StaffLayout parent, Note note, int noteType)
+	public NoteView(Context context, StaffLayout parent, Note note)
 	{
 		super(context);
 
 		this.parent = parent;
 		this.note = note;
-		this.bitmap = StaffLayout.getBitmap(noteType);
+		this.bitmap = StaffLayout.getBitmap(note.type);
 
 		int width = parent.getNoteWidth();
 		int height = parent.getNoteHeight();
@@ -39,6 +42,7 @@ public class NoteView extends View
 	@Override
 	public boolean onTouchEvent(MotionEvent event)
 	{
+		// If the parent is disabled, also disable touch events on this note.
 		if(!parent.isEnabled())
 		{
 			return true;

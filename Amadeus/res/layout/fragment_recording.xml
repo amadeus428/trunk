@@ -40,11 +40,11 @@
             android:text="Clear" />  
             
        	<Spinner
-            android:id="@+id/fragment_recording_note_cooldown_spinner"
+            android:id="@+id/fragment_recording_bpm_spinner"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:entries="@array/add_cooldown_items" />
+            android:entries="@array/bpm_items" />
                  
     </LinearLayout>
     
@@ -55,7 +55,7 @@
         android:layout_gravity="center"
         android:text="Note recorded: "
         android:textAppearance="?android:attr/textAppearanceMedium" />
-    
+
     <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent" >

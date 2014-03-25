@@ -44,11 +44,12 @@ import com.cs429.amadeus.views.StaffLayout;
 
 public class RecordingFragment extends Fragment
 {
-	private long lastRecordTime = 0;
+	private long lastRecordedNoteTime = 0;
 	private boolean isRecording = false;
 	private boolean ignoreRecordingNoise = true;
-	private ImageButton playStopButton; // need to be able to change its text
-	private Spinner noteCooldownSpinner; // need to be able to get its selected value
+	private Note lastNote;
+	private ImageButton playStopNotesButton; // need to be able to change its text
+	private Spinner bpmSpinner; // need to be able to get its selected value
 	private StaffLayout staffLayout;
 	private StaffMIDIPlayer midiPlayer;
 	private AlertDialog.Builder saveDialog; 
@@ -85,11 +86,6 @@ public class RecordingFragment extends Fragment
 		// Empty constructor required for fragment subclasses.
 	}
 
-	public static RecordingFragment newInstance()
-	{
-		return new RecordingFragment();
-	}
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
@@ -103,10 +99,10 @@ public class RecordingFragment extends Fragment
 		getActivity().setTitle("Record");
 
 		staffLayout = (StaffLayout)getActivity().findViewById(R.id.fragment_recording_staff_layout);
-		noteCooldownSpinner = (Spinner)getActivity().findViewById(R.id.fragment_recording_note_cooldown_spinner);
-		ArrayAdapter<CharSequence> noteCooldownSpinnerAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.add_cooldown_items, R.drawable.spinner_item);
-		noteCooldownSpinnerAdapter.setDropDownViewResource(R.drawable.spinner_item);
-		noteCooldownSpinner.setAdapter(noteCooldownSpinnerAdapter);
+		bpmSpinner = (Spinner)getActivity().findViewById(R.id.fragment_recording_bpm_spinner);
+		ArrayAdapter<CharSequence> bpmSpinnerAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.bpm_items, R.drawable.spinner_item);
+		bpmSpinnerAdapter.setDropDownViewResource(R.drawable.spinner_item);
+		bpmSpinner.setAdapter(bpmSpinnerAdapter);
 		createButtonListeners();
 
 		initSystemServices();
@@ -134,28 +130,30 @@ public class RecordingFragment extends Fragment
 			}		
 		});
 		
-		final Button startStopButton = (Button)getActivity().findViewById(R.id.fragment_recording_start_stop_recording_button);
-		startStopButton.setOnClickListener(new OnClickListener() 
+		final Button startStopRecordingButton = (Button)getActivity().findViewById(R.id.fragment_recording_start_stop_recording_button);
+		startStopRecordingButton.setOnClickListener(new OnClickListener() 
 		{
 			@Override
 			public void onClick(View v)
 			{	
+				// If currently playing notes, don't allow user to record.
 				if(!isPlaying())
 				{
 					String newText = isRecording ? "Record" : "Stop";
-					startStopButton.setText(newText);
+					startStopRecordingButton.setText(newText);
 					
 					isRecording = !isRecording;
 				}
 			}			
 		});
 		
-		playStopButton = (ImageButton)getActivity().findViewById(R.id.fragment_recording_play_stop_notes_button);
-		playStopButton.setOnClickListener(new OnClickListener() 
+		playStopNotesButton = (ImageButton)getActivity().findViewById(R.id.fragment_recording_play_stop_notes_button);
+		playStopNotesButton.setOnClickListener(new OnClickListener() 
 		{
 			@Override
 			public void onClick(View v)
 			{
+				// If currently recording, don't allow user to play notes.
 				if(isRecording)
 				{
 					return;
@@ -163,12 +161,12 @@ public class RecordingFragment extends Fragment
 				
 				if(isPlaying())
 				{
-					playStopButton.setImageResource(R.drawable.play);
+					playStopNotesButton.setImageResource(R.drawable.play);
 					midiPlayer.stop();
 				}
 				else
 				{
-					playStopButton.setImageResource(R.drawable.stop);
+					playStopNotesButton.setImageResource(R.drawable.stop);
 					playNotes();
 				}
 			}			
@@ -180,9 +178,12 @@ public class RecordingFragment extends Fragment
 			@Override
 			public void onClick(View v)
 			{
+				// If playing or recording notes, don't allow user to clear the notes.
 				if(!isPlaying() && !isRecording)
 				{
 					RecordingFragment.this.staffLayout.clearAllNoteViews();
+					TextView noteRecorded = (TextView)getActivity().findViewById(R.id.fragment_recording_note_recorded_textview);
+					noteRecorded.setText("Note recorded: ");
 				}
 			}			
 		});
@@ -190,10 +191,11 @@ public class RecordingFragment extends Fragment
 	
 	private void playNotes()
 	{
+		// While playing notes, disable touch events on the staff.
 		staffLayout.setEnabled(false);
 		
-		int noteCooldown = Integer.parseInt(noteCooldownSpinner.getSelectedItem().toString());
-		midiPlayer = new StaffMIDIPlayer(getActivity(), staffLayout, noteCooldown)
+		int bpm = getBPM();
+		midiPlayer = new StaffMIDIPlayer(getActivity(), staffLayout, bpm)
 		{
 			@Override
 			public void onFinished()
@@ -203,7 +205,9 @@ public class RecordingFragment extends Fragment
 					@Override
 					public void run()
 					{
-						playStopButton.setImageResource(R.drawable.play);
+						playStopNotesButton.setImageResource(R.drawable.play);
+						
+						// Re-enable touch events on the staff.
 						staffLayout.setEnabled(true);
 					}
 					
@@ -251,35 +255,55 @@ public class RecordingFragment extends Fragment
 		dispatcher.addListener("pitch", new PdListener.Adapter()
 		{
 			@Override
-			public void receiveFloat(String source, final float x)
+			public void receiveFloat(String source, final float midiNote)
 			{
 				if(!isRecording || isPlaying())
 				{
 					return;
 				}
 				
+				int bpm = getBPM();
+				float bps = bpm / 60.0f;
+	
+				// This gives us the amount of time after a 1/16 note.
+				// 1/16 notes are the quickest notes we allow for this applcation.
+				// Thus, we only need to record that often.
+				int ms = (int)((1.0 / bps) * 1000 / 4.0); 				
 				long currTime = Calendar.getInstance().getTimeInMillis();
-				int noteCooldown = Integer.parseInt(noteCooldownSpinner.getSelectedItem().toString());
-				if(currTime - lastRecordTime > noteCooldown)
+				if(currTime - lastRecordedNoteTime > ms)
 				{
-					lastRecordTime = currTime;
-					updateStaffView(x);
+					updateStaffView(midiNote);
+					lastRecordedNoteTime = currTime;
 				}
 			}
 		});
 	}
 
-	private void updateStaffView(float x)
-	{	
-		Note note = NoteCalculator.getNoteFromMIDI((double)x);
+	private void updateStaffView(float midiNote)
+	{		
+		Note note = NoteCalculator.getNoteFromMIDI((double)midiNote);
 		if(ignoreRecordingNoise && (note.octave < 3 || note.octave > 7))
 		{
 			return;
 		}
-		
-		staffLayout.addNote(note);
-		TextView noteRecorded = (TextView)getActivity().findViewById(R.id.fragment_recording_note_recorded_textview);
-		noteRecorded.setText("Note recorded: " + note.toString());
+
+		if(lastNote == null)
+		{
+			// We don't know the note's type yet until we know when the next note occurs.
+			lastNote = note;
+		}
+		else
+		{
+			// We can now determine what the last recorded note's type is.
+			// Thus, we can now display it.
+			int bpm = getBPM();
+			lastNote.type = getNoteType(bpm);	
+			staffLayout.addNote(lastNote);
+			lastNote = note;
+			
+			TextView noteRecorded = (TextView)getActivity().findViewById(R.id.fragment_recording_note_recorded_textview);
+			noteRecorded.setText("Note recorded: " + note.toString());
+		}
 	}
 
 	private void startPDService()
@@ -308,7 +332,10 @@ public class RecordingFragment extends Fragment
 			public void onCallStateChanged(int state, String incomingNumber)
 			{
 				if(pdService == null)
+				{
 					return;
+				}
+				
 				if(state == TelephonyManager.CALL_STATE_IDLE)
 				{
 					startPDService();
@@ -321,8 +348,62 @@ public class RecordingFragment extends Fragment
 		}, PhoneStateListener.LISTEN_CALL_STATE);
 	}
 	
+	private int getNoteType(float bpm)
+	{
+		float bps = bpm / 60.0f;
+		int ms = (int)((1.0f / bps) * 1000); 
+		long currTime = Calendar.getInstance().getTimeInMillis();
+		float timeSinceLastNote = currTime - lastRecordedNoteTime;
+		
+		// Go through each different note type's duration.
+		// Find the one that most closely matches timeSinceLastNote.
+		float best = Float.MAX_VALUE;
+		float besti = 0;
+		for(float i = 4.0f; i >= .025f; i /= 2.0f)
+		{
+			float val = ms * i;
+			float diff = Math.abs(val - timeSinceLastNote);
+			if(diff < best)
+			{
+				best = diff;
+				besti = i;
+			}
+		}
+		
+		if(besti == 4.0f)
+		{
+			return Note.WHOLE_NOTE;
+		}
+		else if(besti == 2.0f)
+		{
+			return Note.HALF_NOTE;
+		}
+		else if(besti == 1.0f)
+		{
+			return Note.QUARTER_NOTE;
+		}
+		else if(besti == 0.5f)
+		{
+			return Note.EIGHTH_NOTE;
+		}
+		else
+		{
+			return Note.SIXTEENTH_NOTE;
+		}
+	}
+	
 	private boolean isPlaying()
 	{
 		return midiPlayer != null && midiPlayer.isPlaying();
+	}
+	
+	private int getBPM()
+	{
+		return Integer.parseInt(bpmSpinner.getSelectedItem().toString());
+	}
+	
+	public static RecordingFragment newInstance()
+	{
+		return new RecordingFragment();
 	}
 }
