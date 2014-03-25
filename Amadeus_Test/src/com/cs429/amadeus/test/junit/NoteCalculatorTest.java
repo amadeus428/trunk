@@ -11,8 +11,8 @@ public class NoteCalculatorTest extends TestCase {
 
 	@Override
 	public void setUp() throws Exception {
-		testNoteA5 = new Note("A5");
-		testNoteMax = new Note("G10");
+		testNoteA5 = new Note("A5", 0);
+		testNoteMax = new Note("G10", 0);
 	}
 
 	public void testIntegerMidiValue() {
