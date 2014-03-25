@@ -142,6 +142,8 @@ public class RecordingFragment extends Fragment
 					String newText = isRecording ? "Record" : "Stop";
 					startStopRecordingButton.setText(newText);
 					
+					lastRecordedNoteTime = 0;
+					lastNote = null;
 					isRecording = !isRecording;
 				}
 			}			
@@ -272,8 +274,10 @@ public class RecordingFragment extends Fragment
 				long currTime = Calendar.getInstance().getTimeInMillis();
 				if(currTime - lastRecordedNoteTime > ms)
 				{
+					Log.e("schimpf", "start");
 					updateStaffView(midiNote);
 					lastRecordedNoteTime = currTime;
+					Log.e("schimpf", "end");
 				}
 			}
 		});
