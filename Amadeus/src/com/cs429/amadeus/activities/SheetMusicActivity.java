@@ -10,6 +10,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import com.cs429.amadeus.Note;
 import com.cs429.amadeus.R;
 import com.cs429.amadeus.views.StaffLayout;
 
@@ -43,19 +44,19 @@ public class SheetMusicActivity extends Activity
 				switch(pos)
 				{
 					case 0:
-						staffLayout.setCurrAddNoteType(StaffLayout.QUARTER_NOTE_DOWN);
+						staffLayout.setAddNoteType(Note.QUARTER_NOTE_DOWN);
 						break;
 					case 1:
-						staffLayout.setCurrAddNoteType(StaffLayout.WHOLE_NOTE);
+						staffLayout.setAddNoteType(Note.WHOLE_NOTE);
 						break;
 					case 2:
-						staffLayout.setCurrAddNoteType(StaffLayout.HALF_NOTE_DOWN);
+						staffLayout.setAddNoteType(Note.HALF_NOTE_DOWN);
 						break;
 					case 3:
-						staffLayout.setCurrAddNoteType(StaffLayout.EIGHTH_NOTE_DOWN);
+						staffLayout.setAddNoteType(Note.EIGHTH_NOTE_DOWN);
 						break;
 					case 4:
-						staffLayout.setCurrAddNoteType(StaffLayout.SIXTEENTH_NOTE_DOWN);
+						staffLayout.setAddNoteType(Note.SIXTEENTH_NOTE_DOWN);
 						break;
 				}
 			}

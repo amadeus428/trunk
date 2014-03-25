@@ -21,13 +21,13 @@ public class NoteView extends View
 	private GestureDetector doubleTapListener;
 	private Toast toast;
 
-	public NoteView(Context context, StaffLayout parent, Note note, Bitmap bitmap)
+	public NoteView(Context context, StaffLayout parent, Note note, int noteType)
 	{
 		super(context);
 
 		this.parent = parent;
 		this.note = note;
-		this.bitmap = bitmap;
+		this.bitmap = StaffLayout.getBitmap(noteType);
 
 		int width = parent.getNoteWidth();
 		int height = parent.getNoteHeight();

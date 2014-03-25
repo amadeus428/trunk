@@ -167,6 +167,7 @@ public class NoteCalculator
 
 	/**
 	 * Returns the staff note associated with the given midi note.
+	 * By default, the returned note's type is a quarter note.
 	 * @param midi - midi note
 	 * @return - the staff note associated with the given midi note
 	 */
@@ -180,7 +181,7 @@ public class NoteCalculator
 		int midiInt = (int)Math.round(midi);
 		int octave = midiInt / 12;
 		String noteName = midiTranslationArray[midiInt % 12];
-		return new Note(noteName.charAt(0), octave, noteName.length() > 1);
+		return new Note(noteName.charAt(0), octave, noteName.length() > 1, Note.QUARTER_NOTE_DOWN);
 	}
 	
 	/**

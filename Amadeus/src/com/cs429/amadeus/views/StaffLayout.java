@@ -24,11 +24,6 @@ import com.cs429.amadeus.R;
 @SuppressWarnings("deprecation")
 public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 {
-	public static final int WHOLE_NOTE = 0;
-	public static final int HALF_NOTE_DOWN = 1;
-	public static final int QUARTER_NOTE_DOWN = 2;
-	public static final int EIGHTH_NOTE_DOWN = 3;
-	public static final int SIXTEENTH_NOTE_DOWN = 4;
 	public static Bitmap wholeNoteBitmap;
 	public static Bitmap halfNoteDownBitmap;
 	public static Bitmap quarterNoteDownBitmap;
@@ -42,8 +37,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	private int noteHeight;
 	private int spaceHeight; // vertical distance between two staff lines
 	private int lineHeight;
-	private int currNoteId = StaffLayout.QUARTER_NOTE_DOWN; 
-	private Bitmap currNoteBitmap;
+	private int addNoteType = Note.QUARTER_NOTE_DOWN; 
 	private LinkedList<Integer> lineTops = new LinkedList<Integer>(); // y positions of staff lines
 	private Paint paint = new Paint();
 	
@@ -186,29 +180,11 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 
 	/**
 	 * Sets the current note type for future adds.
-	 * @param addNoteType - the type of note used for future adds (use {@link StaffLayout} constants)
+	 * @param addNoteType - the type of note used for future adds (use {@link Note} constants)
 	 */
-	public void setCurrAddNoteType(int addNoteType)
+	public void setAddNoteType(int addNoteType)
 	{
-		currNoteId = addNoteType;
-		switch(addNoteType)
-		{
-			case WHOLE_NOTE:
-				currNoteBitmap = StaffLayout.wholeNoteBitmap;
-				break;
-			case HALF_NOTE_DOWN:
-				currNoteBitmap = StaffLayout.halfNoteDownBitmap;
-				break;
-			case QUARTER_NOTE_DOWN:
-				currNoteBitmap = StaffLayout.quarterNoteDownBitmap;
-				break;
-			case EIGHTH_NOTE_DOWN:
-				currNoteBitmap = StaffLayout.eighthNoteDownBitmap;
-				break;
-			case SIXTEENTH_NOTE_DOWN:
-				currNoteBitmap = StaffLayout.sixteenthNoteDownBitmap;
-				break;
-		}
+		this.addNoteType = addNoteType;
 	}
 
 	/**
@@ -291,7 +267,6 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		quarterNoteDownBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.quarter_note_down);
 		eighthNoteDownBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.eighth_note_down);
 		sixteenthNoteDownBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sixteenth_note_down);
-		currNoteBitmap = quarterNoteDownBitmap; // default is quarter note
 	}
 
 	private void addNote(Note note, int x, int y, boolean addCorrection)
@@ -316,7 +291,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 			note = getNoteFromSnappedYPos(y);
 		}
 		
-		NoteView noteView = new NoteView(getContext(), this, note, currNoteBitmap);
+		NoteView noteView = new NoteView(getContext(), this, note, addNoteType);
 		AbsoluteLayout.LayoutParams lp = new AbsoluteLayout.LayoutParams(noteWidth, noteHeight, x, y);
 		
 		// Need to add it at the correct position to keep views ordered by increasing x coord.
@@ -359,7 +334,9 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 			int currY = entry.getValue();
 			if(currY == y)
 			{
-				return new Note(entry.getKey());
+				// This method is called when a note is manually being added.
+				// Thus, we can use the selected add note type as the added note's type.
+				return new Note(entry.getKey(), addNoteType);
 			}
 		}
 
@@ -368,26 +345,27 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 
 	private void adjustNoteSize()
 	{
-		float bitmapWidth = currNoteBitmap.getWidth();
-		float bitmapHeight = currNoteBitmap.getHeight();
+		Bitmap addNoteBitmap = StaffLayout.getBitmap(addNoteType);
+		float bitmapWidth = addNoteBitmap.getWidth();
+		float bitmapHeight = addNoteBitmap.getHeight();
 		float whRatio = bitmapWidth / bitmapHeight;
 
 		// Adjust the size of the notes to fit properly on the staff.
-		switch(currNoteId)
+		switch(addNoteType)
 		{
-			case WHOLE_NOTE:
+			case Note.WHOLE_NOTE:
 				noteHeight = spaceHeight;
 				break;
-			case HALF_NOTE_DOWN:
+			case Note.HALF_NOTE_DOWN:
 				noteHeight = spaceHeight * 3;				
 				break;
-			case QUARTER_NOTE_DOWN:
+			case Note.QUARTER_NOTE_DOWN:
 				noteHeight = spaceHeight * 3;
 				break;
-			case EIGHTH_NOTE_DOWN:
+			case Note.EIGHTH_NOTE_DOWN:
 				noteHeight = spaceHeight * 3;
 				break;
-			case SIXTEENTH_NOTE_DOWN:
+			case Note.SIXTEENTH_NOTE_DOWN:
 				noteHeight = spaceHeight * 3;
 				break;
 		}
@@ -479,6 +457,25 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 
 			multiplier += 1.0f;
 		}
+	}
+	
+	public static Bitmap getBitmap(int noteType)
+	{
+		switch(noteType)
+		{
+			case Note.WHOLE_NOTE:
+				return wholeNoteBitmap;
+			case Note.HALF_NOTE_DOWN:
+				return halfNoteDownBitmap;
+			case Note.QUARTER_NOTE_DOWN:
+				return quarterNoteDownBitmap;
+			case Note.EIGHTH_NOTE_DOWN:
+				return eighthNoteDownBitmap;
+			case Note.SIXTEENTH_NOTE_DOWN:
+				return sixteenthNoteDownBitmap;
+		}
+		
+		return null;
 	}
 
 	private class Vector2<X, Y>

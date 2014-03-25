@@ -209,7 +209,7 @@ public class StaffView extends View implements OnTouchListener
 		int octave = getOctave(steps);
 		boolean isSharp = getIsSharp(steps);
 
-		Note note = new Note(noteLetter, octave, isSharp);
+		Note note = new Note(noteLetter, octave, isSharp, Note.QUARTER_NOTE_DOWN);
 
 		return note;
 	}

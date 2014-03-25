@@ -44,7 +44,7 @@ import com.cs429.amadeus.views.StaffLayout;
 
 public class RecordingFragment extends Fragment
 {
-	private long lastNoteTime = 0;
+	private long lastRecordTime = 0;
 	private boolean isRecording = false;
 	private boolean ignoreRecordingNoise = true;
 	private ImageButton playStopButton; // need to be able to change its text
@@ -112,8 +112,6 @@ public class RecordingFragment extends Fragment
 		initSystemServices();
 		getActivity().bindService(new Intent(getActivity(), PdService.class), pdConnection,
 				Context.BIND_AUTO_CREATE);
-		
-		Log.e("schimpf", "activity created");
 	}
 	
 	@Override
@@ -262,9 +260,9 @@ public class RecordingFragment extends Fragment
 				
 				long currTime = Calendar.getInstance().getTimeInMillis();
 				int noteCooldown = Integer.parseInt(noteCooldownSpinner.getSelectedItem().toString());
-				if(currTime - lastNoteTime > noteCooldown)
+				if(currTime - lastRecordTime > noteCooldown)
 				{
-					lastNoteTime = currTime;
+					lastRecordTime = currTime;
 					updateStaffView(x);
 				}
 			}
