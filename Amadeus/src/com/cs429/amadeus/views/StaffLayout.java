@@ -22,6 +22,9 @@ import android.widget.HorizontalScrollView;
 import com.cs429.amadeus.Note;
 import com.cs429.amadeus.R;
 
+/**
+ * This class represents a layout, on which {@link NoteView}s can be added.
+ */
 @SuppressWarnings("deprecation")
 public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 {

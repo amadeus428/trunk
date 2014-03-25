@@ -50,7 +50,7 @@ public abstract class StaffMIDIPlayer
 		numBeatsPassed = 0;
 		currNoteIndex = 0;
 		
-		 // Adjust the durations by 1/4 so the timer fires on 1/16 beats.
+		 // Adjust the durations by 1/4 so the timer fires as quickly as 1/16 notes.
 		float bps = (bpm / 60.0f);
 		int ms = (int)((1.0f / bps) * 1000 / 4.0f); 
 
@@ -130,13 +130,13 @@ public abstract class StaffMIDIPlayer
 	
 	private void tryScrollRight(NoteView noteView)
 	{
+		// This assumes that the StaffLayout's parent is a HorizontalScrollView.
 		int screenWidth = parentActivity.getResources().getDisplayMetrics().widthPixels;
 		HorizontalScrollView parent = (HorizontalScrollView)staffLayout.getParent();
 		if(noteView.getX() - parent.getScrollX() > screenWidth)
 		{
 			staffLayout.scrollRight(null);
-		}
-		
+		}		
 	}
 	
 	private int getAdjustedNumBeats(Note note)
