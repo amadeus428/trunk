@@ -41,6 +41,7 @@ import android.widget.TextView;
 import com.cs429.amadeus.Note;
 import com.cs429.amadeus.R;
 import com.cs429.amadeus.activities.MainActivity;
+import com.cs429.amadeus.helpers.Metronome;
 import com.cs429.amadeus.helpers.NoteCalculator;
 import com.cs429.amadeus.helpers.StaffMIDIPlayer;
 import com.cs429.amadeus.views.StaffLayout;
@@ -53,8 +54,8 @@ public class RecordingFragment extends Fragment
 	private Note lastNote;
 	private ImageButton playStopNotesButton; // need to be able to change its text
 	private Spinner bpmSpinner; // need to be able to get its selected value
-	private Timer metronomeTimer = new Timer();
 	private StaffLayout staffLayout;
+	private Metronome metronome;
 	private StaffMIDIPlayer midiPlayer;
 	private AlertDialog.Builder saveDialog; 
 	private PdUiDispatcher dispatcher;
@@ -152,11 +153,12 @@ public class RecordingFragment extends Fragment
 					
 					if(isRecording)
 					{
-						startMetronome();
+						metronome = new Metronome(getActivity(), getBPM());
+						metronome.start();
 					}
 					else
 					{
-						stopMetronome();
+						metronome.stop();
 					}
 				}
 			}			
@@ -203,66 +205,7 @@ public class RecordingFragment extends Fragment
 			}			
 		});
 	}
-	
-	private void startMetronome()
-	{
-		// Flash once per beat.
-		int bpm = getBPM();
-		float bps = bpm / 60.0f;
-		final int ms = (int)((1.0 / bps) * 1000); 	
-		
-		metronomeTimer = new Timer();
-		metronomeTimer.scheduleAtFixedRate(new TimerTask()
-		{
-			@Override
-			public void run()
-			{
-				RecordingFragment.this.getActivity().runOnUiThread(new Runnable()
-				{
-					@Override
-					public void run()
-					{	
-						doMetronomeFlash(ms);
-					}
-				
-				});
-			}				
-		}, 0, ms);
-	}
-	
-	private void doMetronomeFlash(final int ms)
-	{
-		final TextView noteRecordedTextView = (TextView)getActivity().findViewById(R.id.fragment_recording_note_recorded_textview);
-		
-		final Timer flashTimer = new Timer();
-		final TimerTask flashTimerTask = new TimerTask()
-		{
-			@Override
-			public void run()
-			{
-				RecordingFragment.this.getActivity().runOnUiThread(new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						noteRecordedTextView.setBackgroundColor(Color.TRANSPARENT);
-					}
-				});
-			}			
-		};
-		
 
-		noteRecordedTextView.setBackgroundColor(Color.RED);
-		flashTimer.schedule(flashTimerTask, ms / 8);
-	}
-	
-	private void stopMetronome()
-	{
-		final TextView noteRecordedTextView = (TextView)getActivity().findViewById(R.id.fragment_recording_note_recorded_textview);
-		noteRecordedTextView.setBackgroundColor(Color.TRANSPARENT);
-		metronomeTimer.cancel();
-	}
-	
 	private void playNotes()
 	{
 		// While playing notes, disable touch events on the staff.
