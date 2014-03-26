@@ -4,6 +4,8 @@ package com.cs429.amadeus.fragments;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.puredata.android.io.AudioParameters;
 import org.puredata.android.service.PdService;
@@ -19,6 +21,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
@@ -50,6 +53,7 @@ public class RecordingFragment extends Fragment
 	private Note lastNote;
 	private ImageButton playStopNotesButton; // need to be able to change its text
 	private Spinner bpmSpinner; // need to be able to get its selected value
+	private Timer metronomeTimer = new Timer();
 	private StaffLayout staffLayout;
 	private StaffMIDIPlayer midiPlayer;
 	private AlertDialog.Builder saveDialog; 
@@ -145,6 +149,15 @@ public class RecordingFragment extends Fragment
 					lastRecordedNoteTime = 0;
 					lastNote = null;
 					isRecording = !isRecording;
+					
+					if(isRecording)
+					{
+						startMetronome();
+					}
+					else
+					{
+						stopMetronome();
+					}
 				}
 			}			
 		});
@@ -189,6 +202,65 @@ public class RecordingFragment extends Fragment
 				}
 			}			
 		});
+	}
+	
+	private void startMetronome()
+	{
+		// Flash once per beat.
+		int bpm = getBPM();
+		float bps = bpm / 60.0f;
+		final int ms = (int)((1.0 / bps) * 1000); 	
+		
+		metronomeTimer = new Timer();
+		metronomeTimer.scheduleAtFixedRate(new TimerTask()
+		{
+			@Override
+			public void run()
+			{
+				RecordingFragment.this.getActivity().runOnUiThread(new Runnable()
+				{
+					@Override
+					public void run()
+					{	
+						doMetronomeFlash(ms);
+					}
+				
+				});
+			}				
+		}, 0, ms);
+	}
+	
+	private void doMetronomeFlash(final int ms)
+	{
+		final TextView noteRecordedTextView = (TextView)getActivity().findViewById(R.id.fragment_recording_note_recorded_textview);
+		
+		final Timer flashTimer = new Timer();
+		final TimerTask flashTimerTask = new TimerTask()
+		{
+			@Override
+			public void run()
+			{
+				RecordingFragment.this.getActivity().runOnUiThread(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						noteRecordedTextView.setBackgroundColor(Color.TRANSPARENT);
+					}
+				});
+			}			
+		};
+		
+
+		noteRecordedTextView.setBackgroundColor(Color.RED);
+		flashTimer.schedule(flashTimerTask, ms / 8);
+	}
+	
+	private void stopMetronome()
+	{
+		final TextView noteRecordedTextView = (TextView)getActivity().findViewById(R.id.fragment_recording_note_recorded_textview);
+		noteRecordedTextView.setBackgroundColor(Color.TRANSPARENT);
+		metronomeTimer.cancel();
 	}
 	
 	private void playNotes()
@@ -274,10 +346,8 @@ public class RecordingFragment extends Fragment
 				long currTime = Calendar.getInstance().getTimeInMillis();
 				if(currTime - lastRecordedNoteTime > ms)
 				{
-					Log.e("schimpf", "start");
 					updateStaffView(midiNote);
 					lastRecordedNoteTime = currTime;
-					Log.e("schimpf", "end");
 				}
 			}
 		});
