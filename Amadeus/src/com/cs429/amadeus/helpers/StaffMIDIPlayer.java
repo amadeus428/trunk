@@ -43,7 +43,7 @@ public abstract class StaffMIDIPlayer
 	
 	/**
 	 * Plays every note on the staff from left to right.
-	 * Also changes the appearance of the current playing note's {@link @NoteView}.
+	 * Also changes the appearance of the current playing note's {@link NoteView}.
 	 */
 	public void play()
 	{

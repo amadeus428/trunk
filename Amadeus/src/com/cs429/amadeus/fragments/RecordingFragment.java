@@ -299,7 +299,7 @@ public class RecordingFragment extends Fragment
 	private void updateStaffView(float midiNote)
 	{		
 		Note note = NoteCalculator.getNoteFromMIDI((double)midiNote);
-		if(ignoreRecordingNoise && (note.octave < 3 || note.octave > 7))
+		if(ignoreRecordingNoise && (note.octave < 2 || note.octave > 8))
 		{
 			return;
 		}

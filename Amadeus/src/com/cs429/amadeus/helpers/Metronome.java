@@ -9,6 +9,10 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.widget.TextView;
 
+/**
+ * This class flashes the color of the "note recorded" text view in {@link RecordingFragment}, 
+ * once per beat, based on its given bpm.
+ */
 public class Metronome
 {
 	private int bpm;

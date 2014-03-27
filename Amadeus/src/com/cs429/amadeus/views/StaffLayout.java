@@ -1,3 +1,4 @@
+
 package com.cs429.amadeus.views;
 
 import java.util.ArrayList;
@@ -33,20 +34,19 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	public static Bitmap quarterNoteBitmap;
 	public static Bitmap eighthNoteBitmap;
 	public static Bitmap sixteenthNoteBitmap;
-	
-	public final int NUM_STAFF_LINES = 41;
 
-	private int noteMarginRight; // horizontal distance between notes
 	private int noteWidth;
 	private int noteHeight;
+	private int noteSpacing; // horizontal distance between notes
 	private int spaceHeight; // vertical distance between two staff lines
 	private int lineHeight;
-	private int addNoteType = Note.QUARTER_NOTE; 
-	private LinkedList<Integer> lineTops = new LinkedList<Integer>(); // y positions of staff lines
+	private int trebleClefStartY; // C4
+	private int bassClefStartY; // E2
+	private int addNoteType = Note.QUARTER_NOTE;
 	private Paint paint = new Paint();
-	
-	// maps notes to their y positions on the staff
-	private HashMap<String, Integer> noteToYPos = new HashMap<String, Integer>(); 
+
+	private final ArrayList<Integer> LINE_Y_POSITIONS = new ArrayList<Integer>();
+	private final HashMap<String, Integer> NOTE_OCTAVE_TO_Y_MAP = new HashMap<String, Integer>();
 
 	public StaffLayout(Context context)
 	{
@@ -76,21 +76,12 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 
 		setRight(Integer.MAX_VALUE);
 
-		lineTops.clear();
-
-		lineHeight = (int)(getHeight() * .005f);
-		spaceHeight = (getHeight() - (lineHeight * 5)) / 6;
-		noteMarginRight = calculateNoteMarginRight();
-
-		initNoteToYPosMap();
-
-		// Add the top values for all staff lines and spaces.
-		int startY = (int)(-15.0 * (getHeight() / 6.0));
-		for (int i = 1; i <= NUM_STAFF_LINES; i++)
-		{
-			int lineTop = (int)(startY + (i * getHeight() / 6.0));
-			lineTops.add(lineTop);
-		}
+		lineHeight = 2;
+		spaceHeight = getHeight() / 20;
+		noteSpacing = calculateNoteMarginRight();
+		trebleClefStartY = (spaceHeight * 9) - (spaceHeight / 2);
+		bassClefStartY = getBottom() - (spaceHeight * 3) - (spaceHeight / 2);
+		calculateNoteAndLinePositions();
 
 		paint.setStrokeWidth(lineHeight);
 	}
@@ -104,18 +95,13 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		// Draw added note views.
 		super.onDraw(canvas);
 	}
-	
+
 	private void drawLines(Canvas canvas)
 	{
-		// Only draw E5, G5, B5, D6, F6.
-		int start = (int)(NUM_STAFF_LINES / 2.0) - 5;	
-		for (int i = 0; i < lineTops.size(); i++)
+		for (int i = 0; i < LINE_Y_POSITIONS.size(); i++)
 		{
-			if(i >= start && i <= start + 4)
-			{
-				int y = lineTops.get(i);
-				canvas.drawLine(0, y, getWidth(), y, paint);
-			}
+			int y = LINE_Y_POSITIONS.get(i);
+			canvas.drawLine(0, y, getWidth(), y, paint);
 		}
 	}
 
@@ -126,7 +112,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		{
 			return true;
 		}
-		
+
 		int action = event.getAction();
 		int x = (int)event.getX();
 		int y = (int)event.getY();
@@ -141,37 +127,50 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 
 	/**
 	 * Adds note at the closest snapped position to (x, y).
-	 * @param x - the x coordinate in the layout
-	 * @param y - the y coordinate in the layout
+	 * 
+	 * @param x
+	 *            - the x coordinate in the layout
+	 * @param y
+	 *            - the y coordinate in the layout
 	 */
 	public void addNote(int x, int y)
 	{
 		adjustNoteSize(addNoteType);
-		
-		// Need to add correction to account for human error when touching screen.
-		int correction = -getHeight() / 12; 
+
+		// Need to add correction to account for human error when touching
+		// screen.
+		int correction = spaceHeight / 4;
 		Vector2<Integer, Integer> snappedPosition = getSnappedNotePos(x, y + correction);
 		x = snappedPosition.x;
 		y = snappedPosition.y;
-		
+
 		if(noteExistsAtSnappedPos(x, y))
 		{
 			return;
 		}
-		
-		Note note = getNoteFromSnappedYPos(y);
+
+		NoteView existing = getNoteViewAtSnappedX(x);
+		if(existing != null)
+		{
+			removeView(existing);
+			invalidate();
+		}
+
+		Note note = getNoteFromSnappedY(y);
 		addNote(note, x, y);
 	}
 
 	/**
 	 * Adds a note to the right of the rightmost previously added note. Used
 	 * ONLY for adding recorded notes.
-	 * @param note - the note to add
+	 * 
+	 * @param note
+	 *            - the note to add
 	 */
 	public void addNote(Note note)
 	{
 		adjustNoteSize(note.type);
-		
+
 		int lastNoteRight = 0;
 		for (int i = 0; i < getChildCount(); i++)
 		{
@@ -184,20 +183,23 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 			}
 		}
 
-		int x = lastNoteRight + noteMarginRight;	
-		int y = getSnappedYPosFromNote(note);	
-		
+		int x = lastNoteRight + noteSpacing;
+		int y = getSnappedYFromNote(note);
+
 		if(noteExistsAtSnappedPos(x, y))
 		{
 			return;
 		}
-		
+
 		addNote(note, x, y);
 	}
 
 	/**
 	 * Saves the current sheet to an XML file with the given fileName.
-	 * @param fileName - the name of the file to save the sheet to (without the extension)
+	 * 
+	 * @param fileName
+	 *            - the name of the file to save the sheet to (without the
+	 *            extension)
 	 */
 	public void saveSheet(String fileName)
 	{
@@ -206,7 +208,10 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 
 	/**
 	 * Sets the current note type for future adds.
-	 * @param addNoteType - the type of note used for future adds (use {@link Note} constants)
+	 * 
+	 * @param addNoteType
+	 *            - the type of note used for future adds (use {@link Note}
+	 *            constants)
 	 */
 	public void setAddNoteType(int addNoteType)
 	{
@@ -215,34 +220,37 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 
 	/**
 	 * Gets all {@link NoteView}s ordered from left to right on the staff.
+	 * 
 	 * @return - all note views
 	 */
 	public ArrayList<NoteView> getAllNoteViews()
 	{
 		ArrayList<NoteView> noteViews = new ArrayList<NoteView>();
-		for(int i = 0; i < getChildCount(); i++)
+		for (int i = 0; i < getChildCount(); i++)
 		{
 			NoteView noteView = (NoteView)getChildAt(i);
 			noteViews.add(noteView);
 		}
-		
+
 		return noteViews;
 	}
-	
+
 	/**
 	 * Clears the staff of all {@link NoteView}s.
 	 */
 	public void clearAllNoteViews()
 	{
-		removeAllViews();	
+		removeAllViews();
 		invalidate();
 	}
-	
+
 	/**
-	 * Scrolls to the right by the given amount.
-	 * This assumes the parent is {@link HorizontalScrollView}.
-	 * If amount is null, the default, 1.5 * screen width, will be used.
-	 * @param amount - x amount to scroll by 
+	 * Scrolls to the right by the given amount. This assumes the parent is
+	 * {@link HorizontalScrollView}. If amount is null, the default, 1.5 *
+	 * screen width, will be used.
+	 * 
+	 * @param amount
+	 *            - x amount to scroll by
 	 */
 	public void scrollRight(Integer amount)
 	{
@@ -251,7 +259,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 			int screenWidth = getContext().getResources().getDisplayMetrics().widthPixels;
 			amount = (screenWidth / 3) * 2;
 		}
-		
+
 		HorizontalScrollView parent = ((HorizontalScrollView)getParent());
 		parent.scrollBy(amount, 0);
 	}
@@ -266,9 +274,9 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		return spaceHeight;
 	}
 
-	public int getNoteMarginRight()
+	public int getNoteSpacing()
 	{
-		return noteMarginRight;
+		return noteSpacing;
 	}
 
 	public int getNoteWidth()
@@ -280,7 +288,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	{
 		return noteHeight;
 	}
-	
+
 	private void init()
 	{
 		paint.setColor(Color.BLACK);
@@ -296,11 +304,11 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 	}
 
 	private void addNote(Note note, int x, int y)
-	{	
+	{
 		NoteView noteView = new NoteView(getContext(), this, note);
 		AbsoluteLayout.LayoutParams lp = new AbsoluteLayout.LayoutParams(noteWidth, noteHeight, x, y);
-		
-		addView(noteView, getAddPos(x), lp); 
+
+		addView(noteView, getAddPos(x), lp);
 		invalidate();
 
 		// This assumes that the parent of this view is a HorizontalScrollView.
@@ -311,15 +319,16 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 			scrollRight(null);
 		}
 	}
-	
+
 	private Vector2<Integer, Integer> getSnappedNotePos(int x, int y)
 	{
-		int snappedX = (int)(x / noteMarginRight) * noteMarginRight;
+		int snappedX = (int)(x / noteSpacing) * noteSpacing;
 
-		// Find out which of the y positions in our map most closely matches the input y.
+		// Find out which of the y positions in our map most closely matches the
+		// input y.
 		int closestDiff = Integer.MAX_VALUE;
 		int snappedY = Integer.MAX_VALUE;
-		for(Entry<String, Integer> entry : noteToYPos.entrySet())
+		for (Entry<String, Integer> entry : NOTE_OCTAVE_TO_Y_MAP.entrySet())
 		{
 			int yPos = entry.getValue();
 			int diff = Math.abs(y - yPos);
@@ -332,17 +341,18 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 
 		return new Vector2<Integer, Integer>(snappedX, snappedY);
 	}
-	
-	private Note getNoteFromSnappedYPos(int y)
+
+	private Note getNoteFromSnappedY(int y)
 	{
 		// We need to find the note key based on the y value in our map.
-		for(Entry<String, Integer> entry : noteToYPos.entrySet())
+		for (Entry<String, Integer> entry : NOTE_OCTAVE_TO_Y_MAP.entrySet())
 		{
 			int currY = entry.getValue();
 			if(currY == y)
 			{
 				// This method is called when a note is manually being added.
-				// Thus, we can use the selected note type as the added note's type.
+				// Thus, we can use the selected note type as the added note's
+				// type.
 				return new Note(entry.getKey(), addNoteType);
 			}
 		}
@@ -350,18 +360,12 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		return null;
 	}
 
-	private int getSnappedYPosFromNote(Note note)
+	private int getSnappedYFromNote(Note note)
 	{
 		String noteOctave = note.note + "" + note.octave;
-		Integer y = noteToYPos.get(noteOctave);
-		if(y == null)
-		{
-			y = Integer.MAX_VALUE;
-		}
-
-		return y;
+		return NOTE_OCTAVE_TO_Y_MAP.get(noteOctave);
 	}
-	
+
 	private boolean noteExistsAtSnappedPos(int x, int y)
 	{
 		for (int i = 0; i < getChildCount(); i++)
@@ -375,13 +379,28 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 
 		return false;
 	}
-	
+
+	private NoteView getNoteViewAtSnappedX(int x)
+	{
+		for (int i = 0; i < getChildCount(); i++)
+		{
+			NoteView child = (NoteView)getChildAt(i);
+			if(child.getX() == x)
+			{
+				return child;
+			}
+		}
+
+		return null;
+	}
+
 	private int getAddPos(int x)
 	{
-		// Calculate where to place a view with this x coord in the children list 
+		// Calculate where to place a view with this x coord in the children
+		// list
 		// in order to keep the children list ordered by increasing x coord?
 		int childCount = getChildCount();
-		for(int i = 0; i < childCount; i++)
+		for (int i = 0; i < childCount; i++)
 		{
 			View child = getChildAt(i);
 			if(child.getX() > x)
@@ -394,10 +413,10 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 				return childCount;
 			}
 		}
-		
+
 		return 0;
 	}
-	
+
 	private void adjustNoteSize(int noteType)
 	{
 		Bitmap addNoteBitmap = StaffLayout.getBitmap(noteType);
@@ -406,13 +425,13 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		float whRatio = bitmapWidth / bitmapHeight;
 
 		// Adjust the size of the notes to fit properly on the staff.
-		switch(noteType)
+		switch (noteType)
 		{
 			case Note.WHOLE_NOTE:
 				noteHeight = spaceHeight;
 				break;
 			case Note.HALF_NOTE:
-				noteHeight = spaceHeight * 3;				
+				noteHeight = spaceHeight * 3;
 				break;
 			case Note.QUARTER_NOTE:
 				noteHeight = spaceHeight * 3;
@@ -437,41 +456,78 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		float height = wholeNoteBitmap.getHeight();
 		float whRatio = width / height;
 
-		return (int)(whRatio * spaceHeight);
+		return (int)(whRatio * spaceHeight * 2);
 	}
 
-	private void initNoteToYPosMap()
+	private void calculateNoteAndLinePositions()
 	{
-		noteToYPos.clear();
+		NOTE_OCTAVE_TO_Y_MAP.clear();
+		LINE_Y_POSITIONS.clear();
 
-		// Start at A8 and move down the staff.
-		
-		int step = (int)(getHeight() / 6.0);
-		float multiplier = -15.0f;
-		char currNote = 'A';
-		int currOctave = 8;
-		for(int i = 0; i < NUM_STAFF_LINES; i++)
+		int step = spaceHeight / 2;
+
+		// Map notes for bass clef (E2-B3).
+		mapNotes('E', 2, 'C', 4, bassClefStartY, step);
+
+		// Map notes for treble clef and above (C4-G8).
+		mapNotes('C', 4, 'C', 9, trebleClefStartY, step);
+
+		String[] lineNoteOctaves = new String[] { "F2", "A2", "C3", "E3", "G3", "D4", "F4", "A4", "C5", "E5" };
+		mapLines(lineNoteOctaves);
+	}
+
+	/**
+	 * 
+	 * @param startNote
+	 *            - note to start mapping from
+	 * @param startOctave
+	 *            - octave to start mapping from
+	 * @param endNote
+	 *            - one note after the note to stop mapping at
+	 * @param endOctave
+	 *            - the octave of the endNote
+	 * @param startY
+	 *            - the y coord to start mapping from
+	 * @param step
+	 *            - the y distance between each note position
+	 */
+	private void mapNotes(char startNote, int startOctave, char endNote, int endOctave, int startY, int step)
+	{
+		char currNote = startNote;
+		int currOctave = startOctave;
+		int currY = startY;
+		while (currNote != endNote || currOctave != endOctave)
 		{
 			String noteOctave = currNote + "" + currOctave;
-			noteToYPos.put(noteOctave, (int)(step * (multiplier / 2.0)));
+			NOTE_OCTAVE_TO_Y_MAP.put(noteOctave, currY);
 
-			currNote = (char)(currNote - 1);
-			if(currNote < 'A')
+			currNote = (char)(currNote + 1);
+			if(currNote > 'G')
 			{
-				currNote = 'G';
+				currNote = 'A';
 			}
-			if(currNote == 'B')
+			if(currNote == 'C')
 			{
-				currOctave--;
+				currOctave++;
 			}
 
-			multiplier += 1.0f;
+			currY -= step;
 		}
 	}
-	
+
+	private void mapLines(String[] noteOctaves)
+	{
+		for (int i = 0; i < noteOctaves.length; i++)
+		{
+			String noteOctave = noteOctaves[i];
+			int y = NOTE_OCTAVE_TO_Y_MAP.get(noteOctave);
+			LINE_Y_POSITIONS.add(y);
+		}
+	}
+
 	public static Bitmap getBitmap(int noteType)
 	{
-		switch(noteType)
+		switch (noteType)
 		{
 			case Note.WHOLE_NOTE:
 				return wholeNoteBitmap;
@@ -484,7 +540,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 			case Note.SIXTEENTH_NOTE:
 				return sixteenthNoteBitmap;
 		}
-		
+
 		return null;
 	}
 
