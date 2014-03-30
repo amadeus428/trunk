@@ -60,5 +60,14 @@ public class HomeFragment extends Fragment
 				parent.replaceContentViewOnItemSelected(2);
 			}
 		});
+		
+		((Button)getActivity().findViewById(R.id.guitar_chords_button)).setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View arg0)
+			{
+				parent.replaceContentViewOnItemSelected(3);
+			}
+		});
 	}
 }

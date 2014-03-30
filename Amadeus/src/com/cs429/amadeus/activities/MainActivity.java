@@ -1,6 +1,8 @@
 
 package com.cs429.amadeus.activities;
 
+import java.util.Arrays;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
@@ -20,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.cs429.amadeus.R;
+import com.cs429.amadeus.fragments.GuitarChordFragment;
 import com.cs429.amadeus.fragments.HomeFragment;
 import com.cs429.amadeus.fragments.RecordingFragment;
 
@@ -143,18 +146,23 @@ public class MainActivity extends Activity
 		// update the main content by replacing fragments
 		// determine which fragment to fill content view
 		// set arguments in bundle based on fragment
+		
 		if(position == 0)
 		{
 			fragment = HomeFragment.newInstance();
 		}
-		else if(position == 1)
+		else if(position == getIndexOfItemInDrawer(R.string.title_record_music))
 		{
 			fragment = RecordingFragment.newInstance();
 		}
-		else if(position == 2)
+		else if(position == getIndexOfItemInDrawer(R.string.title_create_sheet_music))
 		{
 			startSheetMusicActivity();
 			return;
+		}
+		else if (position == getIndexOfItemInDrawer(R.string.title_guitar_chords))
+		{
+			fragment = GuitarChordFragment.newInstance();
 		}
 		else
 		{
@@ -206,5 +214,10 @@ public class MainActivity extends Activity
 		super.onConfigurationChanged(newConfig);
 		// Pass any configuration change to the drawer toggle
 		mDrawerToggle.onConfigurationChanged(newConfig);
+	}
+	
+	private int getIndexOfItemInDrawer(int id) {
+		String[] navigationDrawerOptions = getResources().getStringArray(R.array.navigation_drawer_items);
+		return Arrays.asList(navigationDrawerOptions).indexOf(getString(id));
 	}
 }

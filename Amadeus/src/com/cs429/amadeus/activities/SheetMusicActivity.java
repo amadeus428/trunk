@@ -22,6 +22,7 @@ public class SheetMusicActivity extends Activity
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_sheet_music);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		final StaffLayout staffLayout = (StaffLayout)findViewById(R.id.activity_sheet_music_staff_layout);
 		
