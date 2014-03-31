@@ -2,21 +2,69 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:background="@android:color/background_dark">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal" >
+        
+        <ImageView 
+            android:id="@+id/fragment_home_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher" />
+        
+        <TextView
+            android:id="@+id/fragment_home_title_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AMADEUS" 
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/fragment_home_icon"
+            android:textSize="40sp" />
+        
+        <ImageView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_launcher" 
+            android:layout_toRightOf="@id/fragment_home_title_textview"/>
+        
+    </RelativeLayout>
+    
     <Button
         android:id="@+id/pd_demo_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="View Pure Data Demo" />
+        android:text="RECORD STUFF!"
+        android:textAppearance="?android:attr/textAppearanceLarge" 
+        android:background="@drawable/main_menu_button_background" />
 
     <Button
         android:id="@+id/sheet_music_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:text="View Sheet Music Demo" />
+        android:layout_marginTop="10dp"
+        android:text="MAKE SHEET MUSIC!"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:background="@drawable/main_menu_button_background" />
+    
+    <Button
+        android:id="@+id/guitar_chords_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:text="LEARN GUITAR CHORDS!"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:background="@drawable/main_menu_button_background" />
 
 </LinearLayout>
