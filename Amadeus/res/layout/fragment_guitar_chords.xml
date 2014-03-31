@@ -14,6 +14,7 @@
 <ImageView
     android:id="@+id/fragment_guitar_chords_chord_image"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"  />
+	android:layout_height="wrap_content"
+   />
 
 </LinearLayout>

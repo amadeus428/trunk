@@ -44,9 +44,7 @@ public class NoteView extends View
 		{
 			return true;
 		}
-		
-		Log.e("schimpf", "note touched: " + note.toString());
-		
+
 		if(event.getAction() == MotionEvent.ACTION_UP)
 		{
 			parent.removeView(NoteView.this);
