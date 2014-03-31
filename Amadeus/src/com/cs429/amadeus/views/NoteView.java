@@ -1,4 +1,3 @@
-
 package com.cs429.amadeus.views;
 
 import android.content.Context;
@@ -14,17 +13,16 @@ import android.widget.Toast;
 import com.cs429.amadeus.Note;
 
 /**
- * This class represents an interactive note used in combination with {@link StaffLayout}.
+ * This class represents an interactive note used in combination with
+ * {@link StaffLayout}.
  */
-public class NoteView extends View
-{
+public class NoteView extends View {
 	private StaffLayout parent;
 	private Note note;
 	private Bitmap bitmap;
 	private Rect transformation;
 
-	public NoteView(Context context, StaffLayout parent, Note note)
-	{
+	public NoteView(Context context, StaffLayout parent, Note note) {
 		super(context);
 
 		this.parent = parent;
@@ -37,31 +35,26 @@ public class NoteView extends View
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent event)
-	{
+	public boolean onTouchEvent(MotionEvent event) {
 		// If the parent is disabled, also disable touch events on this note.
-		if(!parent.isEnabled())
-		{
+		if (!parent.isEnabled()) {
 			return true;
 		}
 
-		if(event.getAction() == MotionEvent.ACTION_UP)
-		{
+		if (event.getAction() == MotionEvent.ACTION_UP) {
 			parent.removeView(NoteView.this);
 		}
-		
+
 		return true;
 	}
 
 	@Override
-	public void onDraw(Canvas canvas)
-	{
+	public void onDraw(Canvas canvas) {
 		canvas.drawBitmap(bitmap, null, transformation, null);
 		super.onDraw(canvas);
 	}
 
-	public Note getNote()
-	{
+	public Note getNote() {
 		return note;
 	}
 }
