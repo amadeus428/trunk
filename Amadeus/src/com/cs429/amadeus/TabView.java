@@ -10,10 +10,36 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.content.Context;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
-public class TabView {
+public class TabView extends View {
 	
+	Button search_btn;
+	EditText artistNameField;
+	EditText songNameField;
+	TextView tab;
+	
+	/**
+	 * Called when the view is constructed.  Use it to set up variables
+	 * @param context
+	 */
+	public TabView(Context context) {
+		super(context);
+		// TODO Auto-generated constructor stub
+		
+		search_btn = new Button(context);
+		artistNameField = new EditText(context);
+		songNameField = new EditText(context);
+		tab = new TextView(context);
+		
+		
+	}
+
 	/**
 	 * Given the artist and the song that the user wants to pull up the tab for
 	 * this method will build the url to query GuritarTabs.com 
