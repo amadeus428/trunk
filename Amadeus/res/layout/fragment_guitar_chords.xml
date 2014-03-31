@@ -5,46 +5,15 @@
     android:orientation="vertical" >
     
 <Spinner
-    android:id="@+id/spinner1"
+    android:id="@+id/fragment_guitar_chords_chord_spinner"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:drawable/btn_dropdown"
     android:spinnerMode="dropdown" />
 
 <ImageView
-    android:id="@+id/Achord"
+    android:id="@+id/fragment_guitar_chords_chord_image"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:src="@drawable/A" />
+    android:layout_height="wrap_content"  />
 
-<ImageView
-    android:id="@+id/Cchord"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:src="@drawable/C" />
-
-<ImageView 
-   android:id="@+id/Dchord"
-   android:src="@drawable/D"
-   android:layout_width="wrap_content"
-   android:layout_height="wrap_content"
-   />
-<ImageView 
-   android:id="@+id/Echord"
-   android:src="@drawable/E"
-   android:layout_width="wrap_content"
-   android:layout_height="wrap_content"
-   />
-<ImageView 
-   android:id="@+id/Fchord"
-   android:src="@drawable/F"
-   android:layout_width="wrap_content"
-   android:layout_height="wrap_content"
-   />
-<ImageView 
-   android:id="@+id/Gchord"
-   android:src="@drawable/G"
-   android:layout_width="wrap_content"
-   android:layout_height="wrap_content"
-   />
 </LinearLayout>
