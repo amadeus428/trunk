@@ -14,7 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-public class StaffView extends View implements OnTouchListener {
+public class StaffView extends ViewGroup implements OnTouchListener {
 
 	private boolean isFingerDown;
 	private int touchX;

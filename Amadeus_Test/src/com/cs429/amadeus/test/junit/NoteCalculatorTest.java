@@ -20,7 +20,7 @@ public class NoteCalculatorTest extends TestCase {
 	}
 	
 	public void testClosestNote() {
-		assertEquals(testNoteA5, NoteCalculator.getNoteFromMIDI(69.49));
+		assertEquals(testNoteA5, NoteCalculator.getNoteFromMIDI((float) 69.49));
 	}
 	
 	public void testCalculateNoteNegative() {
