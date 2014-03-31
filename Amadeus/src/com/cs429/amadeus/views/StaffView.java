@@ -1,4 +1,4 @@
-package com.cs429.amadeus;
+package com.cs429.amadeus.views;
 
 import java.util.ArrayList;
 
@@ -145,6 +145,10 @@ public class StaffView extends View implements OnTouchListener
 		return true;
 	}
 
+	/*
+	 * This method gets relevant data out of motion events received by StaffView through its OnClickListener interface.
+	 * This is then used for getNote() 
+	 */
 	private void getTouchInfo(MotionEvent event) {
 		touchX = (int) event.getX();
 		touchY = (int) event.getY();
@@ -152,10 +156,18 @@ public class StaffView extends View implements OnTouchListener
 
 	}
 
+	/*
+	 * Adds a note object to the end of the staff
+	 */
 	private void insertNote(Note note) {
 		notes.add(note);
 	}
 
+	/*
+	 * @DEPRECATED 
+	 * Used to temporarily display a note that is not a permanent part of the staff. 
+	 * Used for displaying possible positions of a note not yet added to the staff.
+	 */
 	private Note displayNote;
 	public void makeDisplayNote(Note note){
 		this.displayNote = note;
@@ -163,8 +175,9 @@ public class StaffView extends View implements OnTouchListener
 	}
 
 	/**
+	 * Gets the number of 'steps' from the top of the staff that the touch event is closest to
 	 * 
-	 * @return
+	 * @return the number of steps from top line on staff
 	 */
 	private int getStaffStepsFromTopLine() {
 		int topOfStaff = (int) margin;
@@ -175,6 +188,11 @@ public class StaffView extends View implements OnTouchListener
 		return interval;
 	}
 
+	/*
+	 * This method uses the variables that are set by touch events to create a note object 
+	 * 
+	 * @return the note generated from the most recent touch data
+	 */
 	private Note getNote() {
 
 		int steps = getStaffStepsFromTopLine();
@@ -188,26 +206,43 @@ public class StaffView extends View implements OnTouchListener
 		return note;
 	}
 
+	/*
+	 * Used to tell if a position is sharped or flatted by the key signature for the staff. 
+	 */
 	private boolean getIsSharp(int interval) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	// TODO This method suggests that the A in FACE on Treble is A5
-	private int getOctave(int interval) {
+	private int getOctave(Integer interval) {
 		if (interval > 5)
 			return 4;
 		else
 			return 5;
 	}
-
-	private char getNoteLetterFromInterval(int interval) {
+	/*
+	 * @Assumes Treble cleft
+	 * @param	interval 	An integer representing the number of 'steps' down the staff lines starting from the topmost line (F in treble)
+	 * 
+	 * @return	The letter representing the note [A-G]
+	 * 
+	 *  TODO No support for sharps/flats
+	 */
+	
+	private char getNoteLetterFromInterval(Integer interval) {
 		int numNoteNames = 7;
 		char letter = (char)('A' + (('F' - 'A') - interval + numNoteNames) % numNoteNames);
 		return letter;
 	}
 
-	// Assumes Treble
+	/*
+	 * @Assumes Treble cleft
+	 * 
+	 * @param note	a note object whose position on the staff you are interested in
+	 * 
+	 * @return 		The number of 'steps' down from the top of the staff this note should be written ( 0 for F, 1 for E, etc...)
+	 */
 	private int getNoteCoordinate(Note note) {
 		int thisOctave = 5;
 		int staffStepsAboveA5 = note.note - 'A' + 7 * (note.octave - thisOctave);
