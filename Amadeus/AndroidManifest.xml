@@ -18,7 +18,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.cs429.amadeus.activities.MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name" 
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,7 +29,8 @@
         <activity
             android:name="com.cs429.amadeus.activities.SheetMusicActivity"
             android:label="@string/app_name"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            android:parentActivityName="com.cs429.amadeus.activities.MainActivity">
         </activity>
         <service android:name="org.puredata.android.service.PdService" />
     </application>

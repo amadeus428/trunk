@@ -1,0 +1,41 @@
+[Test 1 - Making sheet music]
+Select note type from drop down.
+Add a note to the StaffLayout.
+Check to see if it has the selected note type.
+
+[Test 2 - Recording/Playing]
+Add note.
+Try to add a note at the same snapped x position.
+Check to see if removes the first note and adds the new one.
+
+[Test 3 - Recording/Playing]
+Add a note.
+Touch it again.
+Check to see if it gets removed.
+
+[Test 4 - Recording/Playing]
+Add notes as close together (horizontally) as possible.
+Make sure there is uniform spacing in between all of them.
+
+[Test 5 - Recording/Playing]
+Record some notes.
+Click the 'Clear' button.
+Make sure all notes are removed.
+Try to play and make sure nothing is played.
+
+[Test 6 - Recording/Playing]
+Record some notes (and make sure some are within the 5-7 octave range).
+Click the 'Play' button.
+Make sure what is played corresponds to the notes and note types.
+The higher on the staff the notes are, the higher pitch they are.
+Make sure 16th notes are played faster than 8th, quarter, half, and whole notes (in that order).
+
+[Test 7 - Recording/Playing]
+Start recording.
+Try clicking the 'Play' and 'Clear' buttons.
+Make sure it doesn't allow you.
+
+[Test 8 - Recording/Playing]
+Start playing some recorded notes.
+Try clicking the 'Record' and 'Clear' buttons.
+Make sure it doesn't allow you.

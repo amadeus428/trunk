@@ -1,14 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="match_parent" 
     android:orientation="vertical" >
+    
+    <LinearLayout 
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content" 
+    	android:orientation="horizontal" >
+    	
+        <Button
+            android:id="@+id/activity_sheet_music_open_sheet_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" 
+            android:text="Open sheet" />
+        
+        <Spinner
+            android:id="@+id/activity_sheet_music_note_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/note_spinner_items" />
+        
+    </LinearLayout>
+    
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+        
+	    <com.cs429.amadeus.views.StaffLayout
+	        android:id="@+id/activity_sheet_music_staff_layout"
+	    	android:layout_width="wrap_content"
+	        android:layout_height="match_parent" />
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sheet Music"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
+   	</HorizontalScrollView>
+    
 </LinearLayout>
