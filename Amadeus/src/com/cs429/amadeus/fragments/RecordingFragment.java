@@ -34,6 +34,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -184,6 +185,7 @@ public class RecordingFragment extends Fragment
 				else
 				{
 					playStopNotesButton.setImageResource(R.drawable.stop);
+					((HorizontalScrollView)staffLayout.getParent()).scrollTo(0, 0);
 					playNotes();
 				}
 			}			

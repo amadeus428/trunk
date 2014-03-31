@@ -34,11 +34,16 @@ public class NoteCalculator
 	 * @param note - staff note
 	 * @return - the midi note associated with the given staff note
 	 */
-	public static double getMIDIFromNote(Note note)
+	public static Float getMIDIFromNote(Note note)
 	{
+		if(note == null || note.octave < 0)
+		{
+			return null;
+		}
+		
 		String fullNote = note.note + (note.isSharp ? "#" : "");
 		
-		int n = 0;
+		int n = -1;
 		for(int i = 0; i < midiTranslationArray.length; i++)
 		{
 			if(midiTranslationArray[i].equals(fullNote))
@@ -48,6 +53,11 @@ public class NoteCalculator
 			}
 		}
 		
-		return (note.octave * 12) + n;
+		if(n < 0)
+		{
+			return null;
+		}
+		
+		return (note.octave * 12.0f) + n;
 	}
 }

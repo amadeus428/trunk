@@ -15,35 +15,35 @@
     android:id="@+id/Achord"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:src="@drawable/A" />
+    android:src="@drawable/a" />
 
 <ImageView
     android:id="@+id/Cchord"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:src="@drawable/C" />
+    android:src="@drawable/c" />
 
 <ImageView 
    android:id="@+id/Dchord"
-   android:src="@drawable/D"
+   android:src="@drawable/d"
    android:layout_width="wrap_content"
    android:layout_height="wrap_content"
    />
 <ImageView 
    android:id="@+id/Echord"
-   android:src="@drawable/E"
+   android:src="@drawable/e"
    android:layout_width="wrap_content"
    android:layout_height="wrap_content"
    />
 <ImageView 
    android:id="@+id/Fchord"
-   android:src="@drawable/F"
+   android:src="@drawable/f"
    android:layout_width="wrap_content"
    android:layout_height="wrap_content"
    />
 <ImageView 
    android:id="@+id/Gchord"
-   android:src="@drawable/G"
+   android:src="@drawable/g"
    android:layout_width="wrap_content"
    android:layout_height="wrap_content"
    />

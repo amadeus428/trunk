@@ -78,7 +78,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 
 		lineHeight = 2;
 		spaceHeight = getHeight() / 20;
-		noteSpacing = calculateNoteMarginRight();
+		noteSpacing = calculateNoteSpacing();
 		trebleClefStartY = (spaceHeight * 9) - (spaceHeight / 2);
 		bassClefStartY = getBottom() - (spaceHeight * 3) - (spaceHeight / 2);
 		calculateNoteAndLinePositions();
@@ -447,7 +447,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener
 		noteWidth = (int)(whRatio * noteHeight);
 	}
 
-	private int calculateNoteMarginRight()
+	private int calculateNoteSpacing()
 	{
 		// The whole note has the widest bitmap.
 		// Thus, its width determines the note margin.
