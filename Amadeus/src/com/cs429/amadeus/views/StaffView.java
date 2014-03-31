@@ -1,3 +1,4 @@
+
 package com.cs429.amadeus.views;
 
 import java.util.ArrayList;
@@ -17,8 +18,7 @@ import android.view.View.OnTouchListener;
 import com.cs429.amadeus.Note;
 import com.cs429.amadeus.R;
 
-public class StaffView extends View implements OnTouchListener
-{
+public class StaffView extends View implements OnTouchListener {
 
 	private boolean isFingerDown;
 	private int touchX;
@@ -45,7 +45,8 @@ public class StaffView extends View implements OnTouchListener
 		paint.setColor(Color.BLACK);
 		paint.setStrokeWidth(10);
 		updateMeasurements();
-		noteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.quarter_note_down);
+		noteBitmap = BitmapFactory.decodeResource(getResources(),
+				R.drawable.quarter_note_down);
 		this.setOnTouchListener(this);
 
 	}
@@ -68,8 +69,8 @@ public class StaffView extends View implements OnTouchListener
 			drawNote(notes.get(i), canvas, (int) (i * 2 * margin));
 		}
 
-		if(displayNote!=null){
-			drawNote(displayNote, canvas, (int) (notes.size()*2*margin));
+		if (displayNote != null) {
+			drawNote(displayNote, canvas, (int) (notes.size() * 2 * margin));
 		}
 	}
 
@@ -84,9 +85,10 @@ public class StaffView extends View implements OnTouchListener
 			}
 
 			Note note = notes.get(i);
-			if(getNoteCoordinate(note) * margin / 2 + margin / 2.0 < event.getY()
-					&& event.getY() < getNoteCoordinate(note) * margin / 2 + margin * 3 / 2.0)
-			{
+			if (getNoteCoordinate(note) * margin / 2 + margin / 2.0 < event
+					.getY()
+					&& event.getY() < getNoteCoordinate(note) * margin / 2
+							+ margin * 3 / 2.0) {
 				return i;
 			} else {
 				break;
@@ -169,7 +171,8 @@ public class StaffView extends View implements OnTouchListener
 	 * Used for displaying possible positions of a note not yet added to the staff.
 	 */
 	private Note displayNote;
-	public void makeDisplayNote(Note note){
+
+	public void makeDisplayNote(Note note) {
 		this.displayNote = note;
 		invalidate();
 	}

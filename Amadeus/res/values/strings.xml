@@ -9,12 +9,14 @@
     <string name="title_record_music">RECORD MUSIC!</string>
     <string name="title_create_sheet_music">CREATE SHEET MUSIC!</string>
     <string name="title_guitar_chords">LEARN GUITAR CHORDS!</string>
+    <string name="title_guitar_tabs">GET TABS!!</string>
     
     <string-array name="navigation_drawer_items">
         <item>@string/title_home</item>
         <item>@string/title_record_music</item>
         <item>@string/title_create_sheet_music</item>
         <item>@string/title_guitar_chords</item>
+        <item>@string/title_guitar_tabs</item>
     </string-array>
     
     <string name="drawer_open">Open navigation drawer</string>

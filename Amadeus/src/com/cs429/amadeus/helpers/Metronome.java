@@ -10,72 +10,61 @@ import android.graphics.Color;
 import android.widget.TextView;
 
 /**
- * This class flashes the color of the "note recorded" text view in {@link RecordingFragment}, 
- * once per beat, based on its given bpm.
+ * This class flashes the color of the "note recorded" text view in
+ * {@link RecordingFragment}, once per beat, based on its given bpm.
  */
-public class Metronome
-{
+public class Metronome {
 	private int bpm;
 	private Activity parentActivity;
 	private Timer tickTimer;
-	
-	public Metronome(Activity parentActivity, int bpm)
-	{
+
+	public Metronome(Activity parentActivity, int bpm) {
 		this.parentActivity = parentActivity;
 		this.bpm = bpm;
 	}
 
-	public void start()
-	{
+	public void start() {
 		float bps = bpm / 60.0f;
-		final int ms = (int)((1.0 / bps) * 1000); 
-		
+		final int ms = (int) ((1.0 / bps) * 1000);
+
 		tickTimer = new Timer();
-		tickTimer.scheduleAtFixedRate(new TimerTask()
-		{
+		tickTimer.scheduleAtFixedRate(new TimerTask() {
 			@Override
-			public void run()
-			{
-				parentActivity.runOnUiThread(new Runnable()
-				{
+			public void run() {
+				parentActivity.runOnUiThread(new Runnable() {
 					@Override
-					public void run()
-					{	
+					public void run() {
 						doMetronomeFlash(ms);
-					}			
+					}
 				});
-			}				
+			}
 		}, 0, ms);
 	}
-	
-	public void stop()
-	{
-		final TextView noteRecordedTextView = (TextView)parentActivity.findViewById(R.id.fragment_recording_note_recorded_textview);
+
+	public void stop() {
+		final TextView noteRecordedTextView = (TextView) parentActivity
+				.findViewById(R.id.fragment_recording_note_recorded_textview);
 		noteRecordedTextView.setBackgroundColor(Color.TRANSPARENT);
 		tickTimer.cancel();
 	}
-	
-	private void doMetronomeFlash(final int ms)
-	{
-		final TextView noteRecordedTextView = (TextView)parentActivity.findViewById(R.id.fragment_recording_note_recorded_textview);
-		
+
+	private void doMetronomeFlash(final int ms) {
+		final TextView noteRecordedTextView = (TextView) parentActivity
+				.findViewById(R.id.fragment_recording_note_recorded_textview);
+
 		final Timer flashTimer = new Timer();
-		final TimerTask flashTimerTask = new TimerTask()
-		{
+		final TimerTask flashTimerTask = new TimerTask() {
 			@Override
-			public void run()
-			{
-				parentActivity.runOnUiThread(new Runnable()
-				{
+			public void run() {
+				parentActivity.runOnUiThread(new Runnable() {
 					@Override
-					public void run()
-					{
-						noteRecordedTextView.setBackgroundColor(Color.TRANSPARENT);
+					public void run() {
+						noteRecordedTextView
+								.setBackgroundColor(Color.TRANSPARENT);
 					}
 				});
-			}			
+			}
 		};
-		
 
 		noteRecordedTextView.setBackgroundColor(Color.RED);
 		flashTimer.schedule(flashTimerTask, ms / 8);
