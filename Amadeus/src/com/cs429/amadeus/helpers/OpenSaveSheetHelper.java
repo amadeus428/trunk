@@ -24,7 +24,8 @@ import com.cs429.amadeus.views.NoteView;
 import com.cs429.amadeus.views.StaffLayout;
 
 /**
- * This class contains static methods that take care of the opening/saving sheets work.
+ * This class contains static methods that take care of the opening/saving
+ * sheets work.
  */
 public class OpenSaveSheetHelper {
     private static final String DIR = "recordings";
@@ -34,6 +35,7 @@ public class OpenSaveSheetHelper {
 
     /**
      * Saves the given staff to a file with the given filename.
+     * 
      * @param context
      * @param filename
      * @param staffLayout
@@ -52,43 +54,40 @@ public class OpenSaveSheetHelper {
     }
 
     /**
-     * First, clears the staff.
-     * Then, opens the sheet music file with the given filename and updates the staff.
+     * First, clears the staff. Then, opens the sheet music file with the given
+     * filename and updates the staff.
+     * 
      * @param context
      * @param filename
      * @param staffLayout
      */
     public static void openSheet(Context context, String filename, StaffLayout staffLayout) {
-	try
-	{
+	try {
 	    staffLayout.clearAllNoteViews();
-	    
+
 	    File rootDir = context.getDir(DIR, Context.MODE_PRIVATE);
 	    File file = new File(rootDir, filename);
-	    
+
 	    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	    DocumentBuilder builder = factory.newDocumentBuilder();
 	    Document document = builder.parse(file);
 	    document.getDocumentElement().normalize();
-	    
-	    Element root = (Element)document.getElementsByTagName("sheet").item(0);
+
+	    Element root = (Element) document.getElementsByTagName("sheet").item(0);
 	    NodeList noteList = root.getElementsByTagName("note");
-	    for (int i = 0; i < noteList.getLength(); i++)
-	    {
-		Element noteElem = (Element)noteList.item(i);
+	    for (int i = 0; i < noteList.getLength(); i++) {
+		Element noteElem = (Element) noteList.item(i);
 		char noteLetter = noteElem.getAttribute("noteLetter").charAt(0);
 		int octave = Integer.valueOf(noteElem.getAttribute("octave"));
 		boolean isSharp = Boolean.valueOf(noteElem.getAttribute("isSharp"));
 		int type = Integer.valueOf(noteElem.getAttribute("type"));
-		Note note = new Note(noteLetter, octave, isSharp, type);			
+		Note note = new Note(noteLetter, octave, isSharp, type);
 		staffLayout.addNote(note);
 	    }
-	    
-	    ((HorizontalScrollView)staffLayout.getParent()).scrollTo(0, 0);
-	}
-	catch(Exception e)
-	{
-	    Log.e("TEST", "exception", e); 
+
+	    ((HorizontalScrollView) staffLayout.getParent()).scrollTo(0, 0);
+	} catch (Exception e) {
+	    Log.e("TEST", "exception", e);
 	}
     }
 
