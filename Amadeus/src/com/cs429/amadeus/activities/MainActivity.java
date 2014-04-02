@@ -148,11 +148,8 @@ public class MainActivity extends Activity {
 
 	if (position == 0) {
 	    fragment = HomeFragment.newInstance();
-	} else if (position == getIndexOfItemInDrawer(R.string.title_record_music)) {
+	} else if (position == getIndexOfItemInDrawer(R.string.title_create_music)) {
 	    fragment = RecordingFragment.newInstance();
-	} else if (position == getIndexOfItemInDrawer(R.string.title_create_sheet_music)) {
-	    startSheetMusicActivity();
-	    return;
 	} else if (position == getIndexOfItemInDrawer(R.string.title_guitar_tabs)) {
 	    fragment = TabSearchFragment.newInstance();
 	}

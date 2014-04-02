@@ -30,6 +30,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,6 +38,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.cs429.amadeus.Note;
 import com.cs429.amadeus.R;
@@ -94,15 +96,9 @@ public class RecordingFragment extends Fragment {
 	super.onActivityCreated(savedInstanceState);
 	getActivity().setTitle("Record");
 
-	staffLayout = (StaffLayout) getActivity().findViewById(
-		R.id.fragment_recording_staff_layout);
-	bpmSpinner = (Spinner) getActivity().findViewById(
-		R.id.fragment_recording_bpm_spinner);
-	ArrayAdapter<CharSequence> bpmSpinnerAdapter = ArrayAdapter
-		.createFromResource(getActivity(), R.array.bpm_items,
-			R.drawable.spinner_item);
-	bpmSpinnerAdapter.setDropDownViewResource(R.drawable.spinner_item);
-	bpmSpinner.setAdapter(bpmSpinnerAdapter);
+	staffLayout = (StaffLayout) getActivity().findViewById(R.id.fragment_recording_staff_layout);
+	
+	initSpinners();
 	createButtonListeners();
 
 	initSystemServices();
@@ -115,8 +111,49 @@ public class RecordingFragment extends Fragment {
 	super.onDestroy();
 	getActivity().unbindService(pdConnection);
     }
+    
+    private void initSpinners()
+    {
+	bpmSpinner = (Spinner) getActivity().findViewById(R.id.fragment_recording_bpm_spinner);
+	
+	final Spinner noteTypeSpinner = (Spinner) getActivity().findViewById(R.id.fragment_recording_note_spinner);
+	noteTypeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+	    @Override
+	    public void onItemSelected(AdapterView<?> adapter, View view, int pos, long id) {
+		switch (pos) {
+		case 0:
+		    staffLayout.setAddNoteType(Note.WHOLE_NOTE);	    
+		    break;
+		case 1:
+		    staffLayout.setAddNoteType(Note.HALF_NOTE);
+		    break;
+		case 2:
+		    staffLayout.setAddNoteType(Note.QUARTER_NOTE);
+		    break;
+		case 3:
+		    staffLayout.setAddNoteType(Note.EIGHTH_NOTE);
+		    break;
+		case 4:
+		    staffLayout.setAddNoteType(Note.SIXTEENTH_NOTE);
+		    break;
+		}
+	    }
+
+	    @Override
+	    public void onNothingSelected(AdapterView<?> adapter) {
+	    }
+	});
+    }
 
     private void createButtonListeners() {
+	final Button openButton = (Button) getActivity().findViewById(R.id.fragment_recording_open_recording_button);
+	openButton.setOnClickListener(new OnClickListener() {
+	    @Override
+	    public void onClick(View v) {
+
+	    }
+	});
+	
 	final Button saveButton = (Button) getActivity().findViewById(
 		R.id.fragment_recording_save_recording_button);
 	saveButton.setOnClickListener(new OnClickListener() {
@@ -177,7 +214,7 @@ public class RecordingFragment extends Fragment {
 	playStopNotesButton.setOnClickListener(new OnClickListener() {
 	    @Override
 	    public void onClick(View v) {
-		if (recorder.isRecording()) {
+		if (recorder != null && recorder.isRecording()) {
 		    return;
 		}
 
@@ -200,7 +237,7 @@ public class RecordingFragment extends Fragment {
 	    public void onClick(View v) {
 		// If playing or recording notes, don't allow user to clear the
 		// notes.
-		if (!isPlaying() && !recorder.isRecording()) {
+		if (!isPlaying() && (recorder == null || !recorder.isRecording())) {
 		    RecordingFragment.this.staffLayout.clearAllNoteViews();
 		    TextView noteRecorded = (TextView) getActivity()
 			    .findViewById(

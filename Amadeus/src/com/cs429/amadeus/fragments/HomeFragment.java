@@ -47,14 +47,6 @@ public class HomeFragment extends Fragment {
 		    }
 		});
 
-	((Button) getActivity().findViewById(R.id.sheet_music_button))
-		.setOnClickListener(new OnClickListener() {
-		    @Override
-		    public void onClick(View arg0) {
-			parent.replaceContentViewOnItemSelected(2);
-		    }
-		});
-
 	((Button) getActivity().findViewById(R.id.guitar_chords_button))
 		.setOnClickListener(new OnClickListener() {
 		    @Override

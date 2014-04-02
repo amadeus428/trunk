@@ -43,18 +43,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="RECORD STUFF!"
+        android:text="CREATE SHEET MUSIC!"
         android:textAppearance="?android:attr/textAppearanceLarge" 
-        android:background="@drawable/main_menu_button_background" />
-
-    <Button
-        android:id="@+id/sheet_music_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:text="MAKE SHEET MUSIC!"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:background="@drawable/main_menu_button_background" />
     
     <Button
