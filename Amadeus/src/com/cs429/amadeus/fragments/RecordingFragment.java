@@ -39,6 +39,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -90,8 +91,7 @@ public class RecordingFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	    Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	return inflater.inflate(R.layout.fragment_recording, container, false);
     }
 
@@ -100,15 +100,13 @@ public class RecordingFragment extends Fragment {
 	super.onActivityCreated(savedInstanceState);
 	getActivity().setTitle("Record");
 
-	staffLayout = (StaffLayout) getActivity().findViewById(
-		R.id.fragment_recording_staff_layout);
+	staffLayout = (StaffLayout) getActivity().findViewById(R.id.fragment_recording_staff_layout);
 
 	initSpinners();
 	createButtonListeners();
 
 	initSystemServices();
-	getActivity().bindService(new Intent(getActivity(), PdService.class),
-		pdConnection, Context.BIND_AUTO_CREATE);
+	getActivity().bindService(new Intent(getActivity(), PdService.class), pdConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -118,15 +116,12 @@ public class RecordingFragment extends Fragment {
     }
 
     private void initSpinners() {
-	bpmSpinner = (Spinner) getActivity().findViewById(
-		R.id.fragment_recording_bpm_spinner);
+	bpmSpinner = (Spinner) getActivity().findViewById(R.id.fragment_recording_bpm_spinner);
 
-	final Spinner noteTypeSpinner = (Spinner) getActivity().findViewById(
-		R.id.fragment_recording_note_spinner);
+	final Spinner noteTypeSpinner = (Spinner) getActivity().findViewById(R.id.fragment_recording_note_spinner);
 	noteTypeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 	    @Override
-	    public void onItemSelected(AdapterView<?> adapter, View view,
-		    int pos, long id) {
+	    public void onItemSelected(AdapterView<?> adapter, View view, int pos, long id) {
 		switch (pos) {
 		case 0:
 		    staffLayout.setAddNoteType(Note.WHOLE_NOTE);
@@ -153,8 +148,7 @@ public class RecordingFragment extends Fragment {
     }
 
     private void createButtonListeners() {
-	final Button openButton = (Button) getActivity().findViewById(
-		R.id.fragment_recording_open_recording_button);
+	final Button openButton = (Button) getActivity().findViewById(R.id.fragment_recording_open_recording_button);
 	openButton.setOnClickListener(new OnClickListener() {
 	    @Override
 	    public void onClick(View v) {
@@ -163,8 +157,7 @@ public class RecordingFragment extends Fragment {
 	    }
 	});
 
-	final Button saveButton = (Button) getActivity().findViewById(
-		R.id.fragment_recording_save_recording_button);
+	final Button saveButton = (Button) getActivity().findViewById(R.id.fragment_recording_save_recording_button);
 	saveButton.setOnClickListener(new OnClickListener() {
 	    @Override
 	    public void onClick(View view) {
@@ -173,9 +166,8 @@ public class RecordingFragment extends Fragment {
 	    }
 	});
 
-	final Button startStopRecordingButton = (Button) getActivity()
-		.findViewById(
-			R.id.fragment_recording_start_stop_recording_button);
+	final Button startStopRecordingButton = (Button) getActivity().findViewById(
+		R.id.fragment_recording_start_stop_recording_button);
 	startStopRecordingButton.setOnClickListener(new OnClickListener() {
 	    @Override
 	    public void onClick(View v) {
@@ -188,24 +180,19 @@ public class RecordingFragment extends Fragment {
 		    metronome.stop();
 		    recorder.stop();
 		} else {
-		    ((HorizontalScrollView) staffLayout.getParent()).scrollTo(
-			    0, 0);
+		    ((HorizontalScrollView) staffLayout.getParent()).scrollTo(0, 0);
 
 		    recorder = new Recorder(staffLayout, getBPM()) {
 			@Override
 			public void onNote(final Note note) {
-			    RecordingFragment.this.getActivity().runOnUiThread(
-				    new Runnable() {
-					@Override
-					public void run() {
-					    TextView noteRecorded = (TextView) getActivity()
-						    .findViewById(
-							    R.id.fragment_recording_note_recorded_textview);
-					    noteRecorded
-						    .setText("Note recorded: "
-							    + note.toString());
-					}
-				    });
+			    RecordingFragment.this.getActivity().runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+				    TextView noteRecorded = (TextView) getActivity().findViewById(
+					    R.id.fragment_recording_note_recorded_textview);
+				    noteRecorded.setText("Note recorded: " + note.toString());
+				}
+			    });
 			}
 		    };
 		    recorder.start();
@@ -218,8 +205,7 @@ public class RecordingFragment extends Fragment {
 	    }
 	});
 
-	playStopNotesButton = (ImageButton) getActivity().findViewById(
-		R.id.fragment_recording_play_stop_notes_button);
+	playStopNotesButton = (ImageButton) getActivity().findViewById(R.id.fragment_recording_play_stop_notes_button);
 	playStopNotesButton.setOnClickListener(new OnClickListener() {
 	    @Override
 	    public void onClick(View v) {
@@ -232,26 +218,22 @@ public class RecordingFragment extends Fragment {
 		    midiPlayer.stop();
 		} else {
 		    playStopNotesButton.setImageResource(R.drawable.stop);
-		    ((HorizontalScrollView) staffLayout.getParent()).scrollTo(
-			    0, 0);
+		    ((HorizontalScrollView) staffLayout.getParent()).scrollTo(0, 0);
 		    playNotes();
 		}
 	    }
 	});
 
-	final Button clearNotesButton = (Button) getActivity().findViewById(
-		R.id.fragment_recording_clear_notes_button);
+	final Button clearNotesButton = (Button) getActivity().findViewById(R.id.fragment_recording_clear_notes_button);
 	clearNotesButton.setOnClickListener(new OnClickListener() {
 	    @Override
 	    public void onClick(View v) {
 		// If playing or recording notes, don't allow user to clear the
 		// notes.
-		if (!isPlaying()
-			&& (recorder == null || !recorder.isRecording())) {
+		if (!isPlaying() && (recorder == null || !recorder.isRecording())) {
 		    RecordingFragment.this.staffLayout.clearAllNoteViews();
-		    TextView noteRecorded = (TextView) getActivity()
-			    .findViewById(
-				    R.id.fragment_recording_note_recorded_textview);
+		    TextView noteRecorded = (TextView) getActivity().findViewById(
+			    R.id.fragment_recording_note_recorded_textview);
 		    noteRecorded.setText("Note recorded: ");
 		}
 	    }
@@ -265,18 +247,16 @@ public class RecordingFragment extends Fragment {
 	midiPlayer = new StaffMIDIPlayer(getActivity(), staffLayout, getBPM()) {
 	    @Override
 	    public void onFinished() {
-		RecordingFragment.this.getActivity().runOnUiThread(
-			new Runnable() {
-			    @Override
-			    public void run() {
-				playStopNotesButton
-					.setImageResource(R.drawable.play);
+		RecordingFragment.this.getActivity().runOnUiThread(new Runnable() {
+		    @Override
+		    public void run() {
+			playStopNotesButton.setImageResource(R.drawable.play);
 
-				// Re-enable touch events on the staff.
-				staffLayout.setEnabled(true);
-			    }
+			// Re-enable touch events on the staff.
+			staffLayout.setEnabled(true);
+		    }
 
-			});
+		});
 	    }
 	};
 	midiPlayer.play();
@@ -285,76 +265,41 @@ public class RecordingFragment extends Fragment {
     private void createSaveDialog() {
 	final EditText input = new EditText(getActivity());
 	saveDialog = new AlertDialog.Builder(getActivity());
-	saveDialog
-		.setTitle("Save recording")
-		.setMessage("Choose save filename")
-		.setView(input)
+	saveDialog.setTitle("Save recording").setMessage("Choose save filename").setView(input)
 		.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 		    @Override
 		    public void onClick(DialogInterface dialog, int whichButton) {
-			String filename = ((EditText) input).getText()
-				.toString();
+			String filename = ((EditText) input).getText().toString();
 			if (filename != null && filename.length() > 0) {
-			    OpenSaveSheetHelper
-				    .saveSheet(filename, staffLayout);
+			    OpenSaveSheetHelper.saveSheet(getActivity(), filename, staffLayout);
 			}
 		    }
-		})
-		.setNegativeButton("Cancel",
-			new DialogInterface.OnClickListener() {
-			    @Override
-			    public void onClick(DialogInterface dialog,
-				    int whichButton) {
-				dialog.cancel();
-			    }
-			});
+		}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		    @Override
+		    public void onClick(DialogInterface dialog, int whichButton) {
+			dialog.cancel();
+		    }
+		});
     }
 
     private void createOpenDialog() {
-	final ListView filenameListView = getFilenameListView();
+	File recordingsRoot = getActivity().getDir("recordings", Context.MODE_PRIVATE);
+	final String[] filenames = recordingsRoot.list();
+
 	openDialog = new AlertDialog.Builder(getActivity());
-	openDialog
-		.setTitle("Open recording")
-		.setMessage("Choose filename")
-		.setView(filenameListView)
-		.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-		    @Override
-		    public void onClick(DialogInterface dialog, int whichButton) {
-			TextView selected = (TextView) filenameListView
-				.getSelectedView();
-			if (selected != null) {
-			    String filename = selected.getText().toString();
-			    OpenSaveSheetHelper
-				    .openSheet(filename, staffLayout);
-			}
-		    }
-		})
-		.setNegativeButton("Cancel",
-			new DialogInterface.OnClickListener() {
-			    @Override
-			    public void onClick(DialogInterface dialog,
-				    int whichButton) {
-				dialog.cancel();
-			    }
-			});
-    }
-
-    private ListView getFilenameListView() {
-	try {
-	    ListView filenameListView = new ListView(getActivity());
-	    String[] filenames = getActivity().getAssets().list("recordings");
-	    if (filenames != null) {
-		filenameListView.setAdapter(new ArrayAdapter<String>(
-			getActivity(),
-			R.layout.recording_fragment_open_dialog_list_item,
-			filenames));
+	openDialog.setTitle("Open recording").setItems(filenames, new DialogInterface.OnClickListener() {
+	    @Override
+	    public void onClick(DialogInterface dialog, int which) {
+		String filename = filenames[which];
+		OpenSaveSheetHelper.openSheet(getActivity(), filename, staffLayout);
+		dialog.dismiss();
 	    }
-
-	    return filenameListView;
-	} catch (IOException e) {
-	    e.printStackTrace();
-	    return null;
-	}
+	}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+	    @Override
+	    public void onClick(DialogInterface dialog, int whichButton) {
+		dialog.cancel();
+	    }
+	});
     }
 
     private void initPd() throws IOException {
@@ -379,17 +324,14 @@ public class RecordingFragment extends Fragment {
 
     private void startPDService() {
 	if (!pdService.isRunning()) {
-	    Intent intent = new Intent(((MainActivity) getActivity()),
-		    MainActivity.class);
-	    pdService.startAudio(intent, R.drawable.icon, "Amadeus",
-		    "Return to Amadeus");
+	    Intent intent = new Intent(((MainActivity) getActivity()), MainActivity.class);
+	    pdService.startAudio(intent, R.drawable.icon, "Amadeus", "Return to Amadeus");
 	}
     }
 
     private void loadPatch() throws IOException {
 	File dir = getActivity().getFilesDir();
-	IoUtils.extractZipResource(getResources().openRawResource(R.raw.tuner),
-		dir, true);
+	IoUtils.extractZipResource(getResources().openRawResource(R.raw.tuner), dir, true);
 	File patchFile = new File(dir, "tuner.pd");
 	PdBase.openPatch(patchFile.getAbsolutePath());
     }

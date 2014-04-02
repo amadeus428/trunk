@@ -16,8 +16,7 @@ import android.widget.Spinner;
 import com.cs429.amadeus.R;
 import com.cs429.amadeus.activities.MainActivity;
 
-public class GuitarChordFragment extends Fragment implements
-	OnItemSelectedListener {
+public class GuitarChordFragment extends Fragment implements OnItemSelectedListener {
 
     public GuitarChordFragment() {
 	// Empty constructor required for fragment subclasses
@@ -32,11 +31,9 @@ public class GuitarChordFragment extends Fragment implements
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	    Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	// TODO: Replace the R.layout.fragment_home with your layout
-	View rootView = inflater.inflate(R.layout.fragment_guitar_chords,
-		container, false);
+	View rootView = inflater.inflate(R.layout.fragment_guitar_chords, container, false);
 
 	return rootView;
     }
@@ -47,21 +44,18 @@ public class GuitarChordFragment extends Fragment implements
 	getActivity().setTitle("Chords");
 
 	// Do other set up things here, like set up listeners
-	Spinner dropdown = (Spinner) getActivity().findViewById(
-		R.id.fragment_guitar_chords_chord_spinner);
-	String[] items = new String[] { "A", "A2", "A4", "Am", "C", "D", "D2",
-		"D4", "Dm", "D/F#", "E", "E4", "F", "G", "G/B" };
-	ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-		this.getActivity(), android.R.layout.simple_spinner_item, items);
+	Spinner dropdown = (Spinner) getActivity().findViewById(R.id.fragment_guitar_chords_chord_spinner);
+	String[] items = new String[] { "A", "A2", "A4", "Am", "C", "D", "D2", "D4", "Dm", "D/F#", "E", "E4", "F", "G",
+		"G/B" };
+	ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity(),
+		android.R.layout.simple_spinner_item, items);
 	dropdown.setAdapter(adapter);
 	dropdown.setOnItemSelectedListener(this);
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View v, int position,
-	    long id) {
-	ImageView image = (ImageView) getActivity().findViewById(
-		R.id.fragment_guitar_chords_chord_image);
+    public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+	ImageView image = (ImageView) getActivity().findViewById(R.id.fragment_guitar_chords_chord_image);
 	switch (position) {
 	case 0:
 	    image.setImageResource(R.drawable.a);

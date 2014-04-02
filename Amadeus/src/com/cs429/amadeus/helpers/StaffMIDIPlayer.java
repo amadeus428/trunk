@@ -27,8 +27,7 @@ public abstract class StaffMIDIPlayer {
     private ArrayList<NoteView> noteViews;
     private Timer timer = new Timer();
 
-    public StaffMIDIPlayer(Activity parentActivity, StaffLayout staffLayout,
-	    int bpm) {
+    public StaffMIDIPlayer(Activity parentActivity, StaffLayout staffLayout, int bpm) {
 	this.parentActivity = parentActivity;
 	this.staffLayout = staffLayout;
 	this.noteViews = staffLayout.getAllNoteViews();
@@ -72,8 +71,7 @@ public abstract class StaffMIDIPlayer {
 
 		numBeatsPassed++;
 		NoteView currNoteView = noteViews.get(currNoteIndex);
-		Note lastNote = lastNoteView == null ? null : lastNoteView
-			.getNote();
+		Note lastNote = lastNoteView == null ? null : lastNoteView.getNote();
 		if (numBeatsPassed < getAdjustedNumBeats(lastNote)) {
 		    return;
 		}
@@ -83,8 +81,7 @@ public abstract class StaffMIDIPlayer {
 		setNoteViewAlpha(currNoteView, .5f);
 
 		Note currNote = currNoteView.getNote();
-		float midiNote = (float) NoteCalculator
-			.getMIDIFromNote(currNote);
+		float midiNote = (float) NoteCalculator.getMIDIFromNote(currNote);
 
 		PdBase.sendFloat("midinote", midiNote);
 		PdBase.sendBang("trigger");
@@ -123,8 +120,7 @@ public abstract class StaffMIDIPlayer {
     private void tryScrollRight(NoteView noteView) {
 	// This assumes that the StaffLayout's parent is a HorizontalScrollView.
 	int screenWidth = parentActivity.getResources().getDisplayMetrics().widthPixels;
-	HorizontalScrollView parent = (HorizontalScrollView) staffLayout
-		.getParent();
+	HorizontalScrollView parent = (HorizontalScrollView) staffLayout.getParent();
 	if (noteView.getX() - parent.getScrollX() > screenWidth) {
 	    staffLayout.scrollRight(null);
 	}

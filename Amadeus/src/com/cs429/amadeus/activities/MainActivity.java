@@ -51,19 +51,16 @@ public class MainActivity extends Activity {
 
 	mTitle = mDrawerTitle = getTitle();
 
-	mNavigationDrawerItems = getResources().getStringArray(
-		R.array.navigation_drawer_items);
+	mNavigationDrawerItems = getResources().getStringArray(R.array.navigation_drawer_items);
 
 	mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 	mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
 	// set a custom shadow that overlays the main content when the drawer
 	// opens
-	mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
-		GravityCompat.START);
+	mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
 	// set up the drawer's list view with items and click listener
-	mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-		R.layout.drawer_list_item, mNavigationDrawerItems));
+	mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, mNavigationDrawerItems));
 	mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
 	// enable ActionBar app icon to behave as action to toggle nav drawer
@@ -129,11 +126,9 @@ public class MainActivity extends Activity {
     }
 
     /* The click listener for ListView in the navigation drawer */
-    private class DrawerItemClickListener implements
-	    ListView.OnItemClickListener {
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position,
-		long id) {
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 	    replaceContentViewOnItemSelected(position);
 	}
     }
@@ -165,8 +160,7 @@ public class MainActivity extends Activity {
 
 	// replace the content view
 	FragmentManager fragmentManager = getFragmentManager();
-	fragmentManager.beginTransaction()
-		.replace(R.id.content_frame, fragment).commit();
+	fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 
 	// update selected item and title, then close the drawer
 	mDrawerList.setItemChecked(position, true);
@@ -205,8 +199,7 @@ public class MainActivity extends Activity {
     }
 
     private int getIndexOfItemInDrawer(int id) {
-	String[] navigationDrawerOptions = getResources().getStringArray(
-		R.array.navigation_drawer_items);
+	String[] navigationDrawerOptions = getResources().getStringArray(R.array.navigation_drawer_items);
 	return Arrays.asList(navigationDrawerOptions).indexOf(getString(id));
     }
 }

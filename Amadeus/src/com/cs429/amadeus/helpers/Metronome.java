@@ -59,8 +59,7 @@ public class Metronome {
 		parentActivity.runOnUiThread(new Runnable() {
 		    @Override
 		    public void run() {
-			noteRecordedTextView
-				.setBackgroundColor(Color.TRANSPARENT);
+			noteRecordedTextView.setBackgroundColor(Color.TRANSPARENT);
 		    }
 		});
 	    }

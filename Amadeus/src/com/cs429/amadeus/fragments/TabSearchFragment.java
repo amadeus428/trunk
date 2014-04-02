@@ -49,11 +49,9 @@ public class TabSearchFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	    Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-	View rootView = inflater.inflate(R.layout.fragment_tab, container,
-		false);
+	View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
 
 	return rootView;
     }
@@ -63,25 +61,21 @@ public class TabSearchFragment extends Fragment {
 	super.onActivityCreated(savedInstanceState);
 	getActivity().setTitle("TabSearch");
 
-	((Button) getActivity().findViewById(R.id.tab_button))
-		.setOnClickListener(new OnClickListener() {
-		    public void onClick(View arg) {
-			onButtonClick();
-		    }
-		});
+	((Button) getActivity().findViewById(R.id.tab_button)).setOnClickListener(new OnClickListener() {
+	    public void onClick(View arg) {
+		onButtonClick();
+	    }
+	});
     }
 
     /**
      * Function called by the listener attached to the button
      */
     private void onButtonClick() {
-	String artist = ((EditText) getActivity().findViewById(
-		R.id.tab_artist_box)).getText().toString();
-	String song = ((EditText) getActivity().findViewById(R.id.tab_song_box))
-		.getText().toString();
+	String artist = ((EditText) getActivity().findViewById(R.id.tab_artist_box)).getText().toString();
+	String song = ((EditText) getActivity().findViewById(R.id.tab_song_box)).getText().toString();
 	// make sure the user has entered information into the boxes
-	if (song == null || artist == null || song.length() < 1
-		|| artist.length() < 1) {
+	if (song == null || artist == null || song.length() < 1 || artist.length() < 1) {
 	    return;
 	}
 	String url = buildUrl(artist, song);
@@ -109,8 +103,7 @@ public class TabSearchFragment extends Fragment {
 	artist = artist.replace(" ", "_");
 	song = song.replace(" ", "_");
 
-	return "http://tabs.ultimate-guitar.com/" + firstLetterArtist + "/"
-		+ artist + "/" + song + "_tab.htm";
+	return "http://tabs.ultimate-guitar.com/" + firstLetterArtist + "/" + artist + "/" + song + "_tab.htm";
     }
 
     /**
@@ -141,8 +134,7 @@ public class TabSearchFragment extends Fragment {
 		HttpResponse response = client.execute(request);
 
 		InputStream in = response.getEntity().getContent();
-		BufferedReader reader = new BufferedReader(
-			new InputStreamReader(in));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 		StringBuilder str = new StringBuilder();
 		String line = null;
 		while ((line = reader.readLine()) != null) {
@@ -163,8 +155,8 @@ public class TabSearchFragment extends Fragment {
     }
 
     private void setText(String html) {
-	((WebView) getActivity().findViewById(R.id.tab_text))
-		.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+	((WebView) getActivity().findViewById(R.id.tab_text)).loadDataWithBaseURL(null, html, "text/html", "utf-8",
+		null);
     }
 
     /**

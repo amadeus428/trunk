@@ -127,8 +127,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 	// Need to add correction to account for human error when touching
 	// screen.
 	int correction = spaceHeight / 4;
-	Vector2<Integer, Integer> snappedPosition = getSnappedNotePos(x, y
-		+ correction);
+	Vector2<Integer, Integer> snappedPosition = getSnappedNotePos(x, y + correction);
 	x = snappedPosition.x;
 	y = snappedPosition.y;
 
@@ -156,17 +155,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
     public void addNote(Note note) {
 	adjustNoteSize(note.type);
 
-	int lastNoteRight = 0;
-	for (int i = 0; i < getChildCount(); i++) {
-	    View child = getChildAt(i);
-
-	    int right = child.getRight();
-	    if (right > lastNoteRight) {
-		lastNoteRight = right;
-	    }
-	}
-
-	int x = lastNoteRight + noteSpacing;
+	int x = (getChildCount() * noteSpacing) + noteSpacing;
 	int y = getSnappedYFromNote(note);
 
 	if (noteExistsAtSnappedPos(x, y)) {
@@ -254,22 +243,16 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 	setOnTouchListener(this);
 	setWillNotDraw(false);
 
-	wholeNoteBitmap = BitmapFactory.decodeResource(getResources(),
-		R.drawable.whole_note);
-	halfNoteBitmap = BitmapFactory.decodeResource(getResources(),
-		R.drawable.half_note_down);
-	quarterNoteBitmap = BitmapFactory.decodeResource(getResources(),
-		R.drawable.quarter_note_down);
-	eighthNoteBitmap = BitmapFactory.decodeResource(getResources(),
-		R.drawable.eighth_note_down);
-	sixteenthNoteBitmap = BitmapFactory.decodeResource(getResources(),
-		R.drawable.sixteenth_note_down);
+	wholeNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.whole_note);
+	halfNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.half_note_down);
+	quarterNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.quarter_note_down);
+	eighthNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.eighth_note_down);
+	sixteenthNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sixteenth_note_down);
     }
 
     private void addNote(Note note, int x, int y) {
 	NoteView noteView = new NoteView(getContext(), this, note);
-	AbsoluteLayout.LayoutParams lp = new AbsoluteLayout.LayoutParams(
-		noteWidth, noteHeight, x, y);
+	AbsoluteLayout.LayoutParams lp = new AbsoluteLayout.LayoutParams(noteWidth, noteHeight, x, y);
 
 	addView(noteView, getAddPos(x), lp);
 	invalidate();
@@ -413,8 +396,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 	// Map notes for treble clef and above (C4-G8).
 	mapNotes('C', 4, 'C', 9, trebleClefStartY, step);
 
-	String[] lineNoteOctaves = new String[] { "F2", "A2", "C3", "E3", "G3",
-		"D4", "F4", "A4", "C5", "E5" };
+	String[] lineNoteOctaves = new String[] { "F2", "A2", "C3", "E3", "G3", "D4", "F4", "A4", "C5", "E5" };
 	mapLines(lineNoteOctaves);
     }
 
@@ -433,8 +415,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
      * @param step
      *            - the y distance between each note position
      */
-    private void mapNotes(char startNote, int startOctave, char endNote,
-	    int endOctave, int startY, int step) {
+    private void mapNotes(char startNote, int startOctave, char endNote, int endOctave, int startY, int step) {
 	char currNote = startNote;
 	int currOctave = startOctave;
 	int currY = startY;

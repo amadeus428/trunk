@@ -63,8 +63,7 @@ public class TabView extends View {
 	song.replace(" ", "_");
 	song = song + "_" + extension;
 
-	return "http://tabs.ultimate-guitar.com/" + firstLetterArtist + "/"
-		+ artist + "/" + song + ".htm";
+	return "http://tabs.ultimate-guitar.com/" + firstLetterArtist + "/" + artist + "/" + song + ".htm";
     }
 
     /**
@@ -83,8 +82,7 @@ public class TabView extends View {
 	    HttpResponse response = client.execute(request);
 
 	    InputStream in = response.getEntity().getContent();
-	    BufferedReader reader = new BufferedReader(
-		    new InputStreamReader(in));
+	    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 	    StringBuilder str = new StringBuilder();
 	    String line = null;
 	    while ((line = reader.readLine()) != null) {

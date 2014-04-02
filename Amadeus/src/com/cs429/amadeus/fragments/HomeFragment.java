@@ -25,10 +25,8 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	    Bundle savedInstanceState) {
-	View rootView = inflater.inflate(R.layout.fragment_home, container,
-		false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
 	return rootView;
     }
@@ -39,20 +37,18 @@ public class HomeFragment extends Fragment {
 	getActivity().setTitle("Home");
 
 	final MainActivity parent = (MainActivity) getActivity();
-	((Button) getActivity().findViewById(R.id.pd_demo_button))
-		.setOnClickListener(new OnClickListener() {
-		    @Override
-		    public void onClick(View arg0) {
-			parent.replaceContentViewOnItemSelected(1);
-		    }
-		});
+	((Button) getActivity().findViewById(R.id.pd_demo_button)).setOnClickListener(new OnClickListener() {
+	    @Override
+	    public void onClick(View arg0) {
+		parent.replaceContentViewOnItemSelected(1);
+	    }
+	});
 
-	((Button) getActivity().findViewById(R.id.guitar_chords_button))
-		.setOnClickListener(new OnClickListener() {
-		    @Override
-		    public void onClick(View arg0) {
-			parent.replaceContentViewOnItemSelected(3);
-		    }
-		});
+	((Button) getActivity().findViewById(R.id.guitar_chords_button)).setOnClickListener(new OnClickListener() {
+	    @Override
+	    public void onClick(View arg0) {
+		parent.replaceContentViewOnItemSelected(3);
+	    }
+	});
     }
 }
