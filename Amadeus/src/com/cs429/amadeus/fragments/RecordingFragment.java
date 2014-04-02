@@ -31,11 +31,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -45,19 +48,20 @@ import com.cs429.amadeus.R;
 import com.cs429.amadeus.activities.MainActivity;
 import com.cs429.amadeus.helpers.Metronome;
 import com.cs429.amadeus.helpers.NoteCalculator;
+import com.cs429.amadeus.helpers.OpenSaveSheetHelper;
 import com.cs429.amadeus.helpers.Recorder;
 import com.cs429.amadeus.helpers.StaffMIDIPlayer;
 import com.cs429.amadeus.views.StaffLayout;
 
 public class RecordingFragment extends Fragment {
 
-    private ImageButton playStopNotesButton; // need to be able to change its
-					     // text
-    private Spinner bpmSpinner; // need to be able to get its selected value
+    private ImageButton playStopNotesButton;
+    private Spinner bpmSpinner;
     private StaffLayout staffLayout;
     private Recorder recorder;
     private Metronome metronome;
     private StaffMIDIPlayer midiPlayer;
+    private AlertDialog.Builder openDialog;
     private AlertDialog.Builder saveDialog;
     private PdUiDispatcher dispatcher;
     private PdService pdService = null;
@@ -96,8 +100,9 @@ public class RecordingFragment extends Fragment {
 	super.onActivityCreated(savedInstanceState);
 	getActivity().setTitle("Record");
 
-	staffLayout = (StaffLayout) getActivity().findViewById(R.id.fragment_recording_staff_layout);
-	
+	staffLayout = (StaffLayout) getActivity().findViewById(
+		R.id.fragment_recording_staff_layout);
+
 	initSpinners();
 	createButtonListeners();
 
@@ -111,18 +116,20 @@ public class RecordingFragment extends Fragment {
 	super.onDestroy();
 	getActivity().unbindService(pdConnection);
     }
-    
-    private void initSpinners()
-    {
-	bpmSpinner = (Spinner) getActivity().findViewById(R.id.fragment_recording_bpm_spinner);
-	
-	final Spinner noteTypeSpinner = (Spinner) getActivity().findViewById(R.id.fragment_recording_note_spinner);
+
+    private void initSpinners() {
+	bpmSpinner = (Spinner) getActivity().findViewById(
+		R.id.fragment_recording_bpm_spinner);
+
+	final Spinner noteTypeSpinner = (Spinner) getActivity().findViewById(
+		R.id.fragment_recording_note_spinner);
 	noteTypeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 	    @Override
-	    public void onItemSelected(AdapterView<?> adapter, View view, int pos, long id) {
+	    public void onItemSelected(AdapterView<?> adapter, View view,
+		    int pos, long id) {
 		switch (pos) {
 		case 0:
-		    staffLayout.setAddNoteType(Note.WHOLE_NOTE);	    
+		    staffLayout.setAddNoteType(Note.WHOLE_NOTE);
 		    break;
 		case 1:
 		    staffLayout.setAddNoteType(Note.HALF_NOTE);
@@ -146,14 +153,16 @@ public class RecordingFragment extends Fragment {
     }
 
     private void createButtonListeners() {
-	final Button openButton = (Button) getActivity().findViewById(R.id.fragment_recording_open_recording_button);
+	final Button openButton = (Button) getActivity().findViewById(
+		R.id.fragment_recording_open_recording_button);
 	openButton.setOnClickListener(new OnClickListener() {
 	    @Override
 	    public void onClick(View v) {
-
+		createOpenDialog();
+		openDialog.show();
 	    }
 	});
-	
+
 	final Button saveButton = (Button) getActivity().findViewById(
 		R.id.fragment_recording_save_recording_button);
 	saveButton.setOnClickListener(new OnClickListener() {
@@ -237,7 +246,8 @@ public class RecordingFragment extends Fragment {
 	    public void onClick(View v) {
 		// If playing or recording notes, don't allow user to clear the
 		// notes.
-		if (!isPlaying() && (recorder == null || !recorder.isRecording())) {
+		if (!isPlaying()
+			&& (recorder == null || !recorder.isRecording())) {
 		    RecordingFragment.this.staffLayout.clearAllNoteViews();
 		    TextView noteRecorded = (TextView) getActivity()
 			    .findViewById(
@@ -282,6 +292,12 @@ public class RecordingFragment extends Fragment {
 		.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 		    @Override
 		    public void onClick(DialogInterface dialog, int whichButton) {
+			String filename = ((EditText) input).getText()
+				.toString();
+			if (filename != null && filename.length() > 0) {
+			    OpenSaveSheetHelper
+				    .saveSheet(filename, staffLayout);
+			}
 		    }
 		})
 		.setNegativeButton("Cancel",
@@ -292,6 +308,53 @@ public class RecordingFragment extends Fragment {
 				dialog.cancel();
 			    }
 			});
+    }
+
+    private void createOpenDialog() {
+	final ListView filenameListView = getFilenameListView();
+	openDialog = new AlertDialog.Builder(getActivity());
+	openDialog
+		.setTitle("Open recording")
+		.setMessage("Choose filename")
+		.setView(filenameListView)
+		.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+		    @Override
+		    public void onClick(DialogInterface dialog, int whichButton) {
+			TextView selected = (TextView) filenameListView
+				.getSelectedView();
+			if (selected != null) {
+			    String filename = selected.getText().toString();
+			    OpenSaveSheetHelper
+				    .openSheet(filename, staffLayout);
+			}
+		    }
+		})
+		.setNegativeButton("Cancel",
+			new DialogInterface.OnClickListener() {
+			    @Override
+			    public void onClick(DialogInterface dialog,
+				    int whichButton) {
+				dialog.cancel();
+			    }
+			});
+    }
+
+    private ListView getFilenameListView() {
+	try {
+	    ListView filenameListView = new ListView(getActivity());
+	    String[] filenames = getActivity().getAssets().list("recordings");
+	    if (filenames != null) {
+		filenameListView.setAdapter(new ArrayAdapter<String>(
+			getActivity(),
+			R.layout.recording_fragment_open_dialog_list_item,
+			filenames));
+	    }
+
+	    return filenameListView;
+	} catch (IOException e) {
+	    e.printStackTrace();
+	    return null;
+	}
     }
 
     private void initPd() throws IOException {

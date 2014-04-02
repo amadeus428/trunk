@@ -34,10 +34,11 @@ public class SheetMusicActivity extends Activity {
 	final Spinner noteTypeSpinner = (Spinner) findViewById(R.id.activity_sheet_music_note_spinner);
 	noteTypeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 	    @Override
-	    public void onItemSelected(AdapterView<?> adapter, View view, int pos, long id) {
+	    public void onItemSelected(AdapterView<?> adapter, View view,
+		    int pos, long id) {
 		switch (pos) {
 		case 0:
-		    staffLayout.setAddNoteType(Note.WHOLE_NOTE);	    
+		    staffLayout.setAddNoteType(Note.WHOLE_NOTE);
 		    break;
 		case 1:
 		    staffLayout.setAddNoteType(Note.HALF_NOTE);

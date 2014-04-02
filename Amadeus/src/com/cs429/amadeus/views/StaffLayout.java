@@ -177,17 +177,6 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
     }
 
     /**
-     * Saves the current sheet to an XML file with the given fileName.
-     * 
-     * @param fileName
-     *            - the name of the file to save the sheet to (without the
-     *            extension)
-     */
-    public void saveSheet(String fileName) {
-	// TODO: How do we want to implement this?
-    }
-
-    /**
      * Sets the current note type for future adds.
      * 
      * @param addNoteType

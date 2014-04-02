@@ -10,6 +10,9 @@ public class NoteCalculator {
     private static String[] midiTranslationArray = { "C", "C#", "D", "D#", "E",
 	    "F", "F#", "G", "G#", "A", "A#", "B" };
 
+    private NoteCalculator() {
+    }
+
     /**
      * Returns the staff note associated with the given midi note. By default,
      * the returned note's type is a quarter note.
