@@ -33,18 +33,18 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
     public static Bitmap eighthNoteBitmap;
     public static Bitmap sixteenthNoteBitmap;
 
-    private int noteWidth;
-    private int noteHeight;
-    private int noteSpacing; // horizontal distance between notes
-    private int spaceHeight; // vertical distance between two staff lines
-    private int lineHeight;
-    private int trebleClefStartY; // C4
-    private int bassClefStartY; // E2
-    private int addNoteType = Note.QUARTER_NOTE;
-    private Paint paint = new Paint();
+    protected int noteWidth;
+    protected int noteHeight;
+    protected int noteSpacing; // horizontal distance between notes
+    protected int spaceHeight; // vertical distance between two staff lines
+    protected int lineHeight;
+    protected int trebleClefStartY; // C4
+    protected int bassClefStartY; // E2
+    protected int addNoteType = Note.QUARTER_NOTE;
+    protected Paint paint = new Paint();
 
-    private final ArrayList<Integer> LINE_Y_POSITIONS = new ArrayList<Integer>();
-    private final HashMap<String, Integer> NOTE_OCTAVE_TO_Y_MAP = new HashMap<String, Integer>();
+    protected final ArrayList<Integer> LINE_Y_POSITIONS = new ArrayList<Integer>();
+    protected final HashMap<String, Integer> NOTE_OCTAVE_TO_Y_MAP = new HashMap<String, Integer>();
 
     public StaffLayout(Context context) {
 	super(context);
@@ -237,20 +237,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 	return noteHeight;
     }
 
-    private void init() {
-	paint.setColor(Color.BLACK);
-
-	setOnTouchListener(this);
-	setWillNotDraw(false);
-
-	wholeNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.whole_note);
-	halfNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.half_note_down);
-	quarterNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.quarter_note_down);
-	eighthNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.eighth_note_down);
-	sixteenthNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sixteenth_note_down);
-    }
-
-    private void addNote(Note note, int x, int y) {
+    protected void addNote(Note note, int x, int y) {
 	NoteView noteView = new NoteView(getContext(), this, note);
 	AbsoluteLayout.LayoutParams lp = new AbsoluteLayout.LayoutParams(noteWidth, noteHeight, x, y);
 
@@ -265,7 +252,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 	}
     }
 
-    private Vector2<Integer, Integer> getSnappedNotePos(int x, int y) {
+    protected Vector2<Integer, Integer> getSnappedNotePos(int x, int y) {
 	int snappedX = (int) (x / noteSpacing) * noteSpacing;
 
 	// Find out which of the y positions in our map most closely matches the
@@ -284,7 +271,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 	return new Vector2<Integer, Integer>(snappedX, snappedY);
     }
 
-    private Note getNoteFromSnappedY(int y) {
+    protected Note getNoteFromSnappedY(int y) {
 	// We need to find the note key based on the y value in our map.
 	for (Entry<String, Integer> entry : NOTE_OCTAVE_TO_Y_MAP.entrySet()) {
 	    int currY = entry.getValue();
@@ -299,12 +286,12 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 	return null;
     }
 
-    private int getSnappedYFromNote(Note note) {
+    protected int getSnappedYFromNote(Note note) {
 	String noteOctave = note.note + "" + note.octave;
 	return NOTE_OCTAVE_TO_Y_MAP.get(noteOctave);
     }
 
-    private boolean noteExistsAtSnappedPos(int x, int y) {
+    protected boolean noteExistsAtSnappedPos(int x, int y) {
 	for (int i = 0; i < getChildCount(); i++) {
 	    View child = getChildAt(i);
 	    if (child.getX() == x && child.getY() == y) {
@@ -315,7 +302,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 	return false;
     }
 
-    private NoteView getNoteViewAtSnappedX(int x) {
+    protected NoteView getNoteViewAtSnappedX(int x) {
 	for (int i = 0; i < getChildCount(); i++) {
 	    NoteView child = (NoteView) getChildAt(i);
 	    if (child.getX() == x) {
@@ -326,7 +313,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 	return null;
     }
 
-    private int getAddPos(int x) {
+    protected int getAddPos(int x) {
 	// Calculate where to place a view with this x coord in the children
 	// list
 	// in order to keep the children list ordered by increasing x coord?
@@ -345,7 +332,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 	return 0;
     }
 
-    private void adjustNoteSize(int noteType) {
+    protected void adjustNoteSize(int noteType) {
 	Bitmap addNoteBitmap = StaffLayout.getBitmap(noteType);
 	float bitmapWidth = addNoteBitmap.getWidth();
 	float bitmapHeight = addNoteBitmap.getHeight();
@@ -371,6 +358,19 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 	}
 
 	noteWidth = (int) (whRatio * noteHeight);
+    }
+
+    private void init() {
+	paint.setColor(Color.BLACK);
+
+	setOnTouchListener(this);
+	setWillNotDraw(false);
+
+	wholeNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.whole_note);
+	halfNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.half_note_down);
+	quarterNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.quarter_note_down);
+	eighthNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.eighth_note_down);
+	sixteenthNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sixteenth_note_down);
     }
 
     private int calculateNoteSpacing() {

@@ -18,20 +18,21 @@ import com.cs429.amadeus.views.StaffLayout;
  * This class plays (and animates) a staff's notes.
  */
 public abstract class StaffMIDIPlayer {
+    protected ArrayList<NoteView> noteViews;
+    protected Activity parentActivity;
+    protected StaffLayout staffLayout;
     private int bpm;
     private int numBeatsPassed = 0;
     private int currNoteIndex = 0;
     private boolean isPlaying = false;
-    private Activity parentActivity;
-    private StaffLayout staffLayout;
-    private ArrayList<NoteView> noteViews;
     private Timer timer = new Timer();
 
     public StaffMIDIPlayer(Activity parentActivity, StaffLayout staffLayout, int bpm) {
 	this.parentActivity = parentActivity;
 	this.staffLayout = staffLayout;
-	this.noteViews = staffLayout.getAllNoteViews();
 	this.bpm = bpm;
+
+	noteViews = staffLayout.getAllNoteViews();
     }
 
     /**
@@ -108,7 +109,7 @@ public abstract class StaffMIDIPlayer {
 	return isPlaying;
     }
 
-    private void setNoteViewAlpha(final NoteView noteView, final float alpha) {
+    protected void setNoteViewAlpha(final NoteView noteView, final float alpha) {
 	parentActivity.runOnUiThread(new Runnable() {
 	    @Override
 	    public void run() {

@@ -7,12 +7,14 @@
     
     <string name="title_home">Home</string>
     <string name="title_create_music">CREATE SHEET MUSIC!</string>
+    <string name="title_play_along">PLAY ALONG!</string>
     <string name="title_guitar_chords">LEARN GUITAR CHORDS!</string>
     <string name="title_guitar_tabs">GET TABS!!</string>
     
     <string-array name="navigation_drawer_items">
         <item>@string/title_home</item>
         <item>@string/title_create_music</item>
+        <item>@string/title_play_along</item>
         <item>@string/title_guitar_chords</item>
         <item>@string/title_guitar_tabs</item>
     </string-array>

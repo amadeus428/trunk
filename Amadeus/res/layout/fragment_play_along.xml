@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:orientation="horizontal" 
+        style="@android:style/ButtonBar" >
+        
+        <Button
+            android:id="@+id/fragment_play_along_open_recording_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Open" />
+        
+        <Button
+            android:id="@+id/fragment_play_along_start_stop_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Start" />  
+            
+       	<ImageButton
+       	    android:id="@+id/fragment_play_along_play_stop_notes_button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            android:src="@drawable/play" />  
+            
+       	<Spinner
+            android:id="@+id/fragment_play_along_bpm_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:entries="@array/bpm_items" />
+    </LinearLayout>
+    
+    <TextView
+        android:id="@+id/fragment_play_along_note_recorded_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Note recorded: "
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+        
+        	<com.cs429.amadeus.views.PlayAlongStaffLayout 
+        	    android:id="@+id/fragment_play_along_staff_layout"
+        	    android:layout_width="wrap_content"
+        	    android:layout_height="match_parent" />
+        
+    </HorizontalScrollView>
+
+</LinearLayout>

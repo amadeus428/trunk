@@ -55,7 +55,6 @@ import com.cs429.amadeus.helpers.StaffMIDIPlayer;
 import com.cs429.amadeus.views.StaffLayout;
 
 public class RecordingFragment extends Fragment {
-
     private ImageButton playStopNotesButton;
     private Spinner bpmSpinner;
     private StaffLayout staffLayout;
@@ -197,7 +196,20 @@ public class RecordingFragment extends Fragment {
 		    };
 		    recorder.start();
 
-		    metronome = new Metronome(getActivity(), getBPM());
+		    final TextView noteRecordedTextView = (TextView) getActivity().findViewById(
+			    R.id.fragment_recording_note_recorded_textview);
+		    metronome = new Metronome(getActivity(), getBPM()) {
+			@Override
+			public void onTickStart() {
+			    noteRecordedTextView.setBackgroundColor(Color.RED);
+			}
+
+			@Override
+			public void onTickEnd() {
+			    noteRecordedTextView.setBackgroundColor(Color.TRANSPARENT);
+
+			}
+		    };
 		    metronome.start();
 		}
 		String newText = recorder.isRecording() ? "Stop" : "Record";
@@ -316,7 +328,7 @@ public class RecordingFragment extends Fragment {
 	    @Override
 	    public void receiveFloat(String source, final float midiNote) {
 		if (recorder != null) {
-		    recorder.tryRecordFloat(midiNote);
+		    recorder.tryRecordFloat(midiNote, false);
 		}
 	    }
 	});

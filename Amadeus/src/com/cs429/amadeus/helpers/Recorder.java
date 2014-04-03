@@ -3,6 +3,7 @@ package com.cs429.amadeus.helpers;
 import java.util.Calendar;
 
 import com.cs429.amadeus.Note;
+import com.cs429.amadeus.views.PlayAlongStaffLayout;
 import com.cs429.amadeus.views.StaffLayout;
 
 /**
@@ -36,7 +37,7 @@ public abstract class Recorder {
      * @param midiNote
      *            - the midiNote given from PDService
      */
-    public void tryRecordFloat(float midiNote) {
+    public void tryRecordFloat(float midiNote, boolean isPlayAlong) {
 	if (!isRecording) {
 	    return;
 	}
@@ -44,10 +45,15 @@ public abstract class Recorder {
 	long currTime = Calendar.getInstance().getTimeInMillis();
 	if (currTime - lastRecordedNoteTime > period) {
 	    Note note = NoteCalculator.getNoteFromMIDI((double) midiNote);
-	    if (note.octave >= 4 && note.octave <= 8) {
+	    if (note.octave >= 2 && note.octave <= 8) {
 		if (lastNote != null) {
 		    lastNote.type = getNoteTypeOfLastNote();
-		    staffLayout.addNote(lastNote);
+
+		    if (isPlayAlong) {
+			((PlayAlongStaffLayout) staffLayout).addRecordedNote(lastNote);
+		    } else {
+			staffLayout.addNote(lastNote);
+		    }
 		}
 		lastNote = note;
 		lastRecordedNoteTime = currTime;

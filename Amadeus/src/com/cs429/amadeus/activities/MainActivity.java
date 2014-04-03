@@ -32,6 +32,7 @@ import android.widget.ListView;
 import com.cs429.amadeus.R;
 import com.cs429.amadeus.fragments.GuitarChordFragment;
 import com.cs429.amadeus.fragments.HomeFragment;
+import com.cs429.amadeus.fragments.PlayAlongFragment;
 import com.cs429.amadeus.fragments.RecordingFragment;
 
 public class MainActivity extends Activity {
@@ -145,11 +146,11 @@ public class MainActivity extends Activity {
 	    fragment = HomeFragment.newInstance();
 	} else if (position == getIndexOfItemInDrawer(R.string.title_create_music)) {
 	    fragment = RecordingFragment.newInstance();
+	} else if (position == getIndexOfItemInDrawer(R.string.title_play_along)) {
+	    fragment = PlayAlongFragment.newInstance();
 	} else if (position == getIndexOfItemInDrawer(R.string.title_guitar_tabs)) {
 	    fragment = TabSearchFragment.newInstance();
-	}
-
-	else if (position == getIndexOfItemInDrawer(R.string.title_guitar_chords)) {
+	} else if (position == getIndexOfItemInDrawer(R.string.title_guitar_chords)) {
 	    fragment = GuitarChordFragment.newInstance();
 	} else {
 	    fragment = HomeFragment.newInstance();
@@ -172,11 +173,6 @@ public class MainActivity extends Activity {
     public void setTitle(CharSequence title) {
 	mTitle = title;
 	getActionBar().setTitle(mTitle);
-    }
-
-    private void startSheetMusicActivity() {
-	Intent sheetMusicActivity = new Intent(this, SheetMusicActivity.class);
-	startActivity(sheetMusicActivity);
     }
 
     /**

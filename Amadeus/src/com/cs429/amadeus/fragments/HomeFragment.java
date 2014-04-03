@@ -37,18 +37,28 @@ public class HomeFragment extends Fragment {
 	getActivity().setTitle("Home");
 
 	final MainActivity parent = (MainActivity) getActivity();
-	((Button) getActivity().findViewById(R.id.pd_demo_button)).setOnClickListener(new OnClickListener() {
-	    @Override
-	    public void onClick(View arg0) {
-		parent.replaceContentViewOnItemSelected(1);
-	    }
-	});
+	((Button) getActivity().findViewById(R.id.fragment_home_create_sheet_music_button))
+		.setOnClickListener(new OnClickListener() {
+		    @Override
+		    public void onClick(View arg0) {
+			parent.replaceContentViewOnItemSelected(1);
+		    }
+		});
 
-	((Button) getActivity().findViewById(R.id.guitar_chords_button)).setOnClickListener(new OnClickListener() {
-	    @Override
-	    public void onClick(View arg0) {
-		parent.replaceContentViewOnItemSelected(3);
-	    }
-	});
+	((Button) getActivity().findViewById(R.id.fragment_home_play_along_button))
+		.setOnClickListener(new OnClickListener() {
+		    @Override
+		    public void onClick(View arg0) {
+			parent.replaceContentViewOnItemSelected(2);
+		    }
+		});
+
+	((Button) getActivity().findViewById(R.id.fragment_home_guitar_chords_button))
+		.setOnClickListener(new OnClickListener() {
+		    @Override
+		    public void onClick(View arg0) {
+			parent.replaceContentViewOnItemSelected(3);
+		    }
+		});
     }
 }
