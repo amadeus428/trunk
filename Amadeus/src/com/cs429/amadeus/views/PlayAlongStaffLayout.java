@@ -127,7 +127,18 @@ public class PlayAlongStaffLayout extends StaffLayout {
 
     protected void addNote(Note note, int x, int y, boolean isRecorded) {
 	NoteView noteView = new NoteView(getContext(), this, note);
-	AbsoluteLayout.LayoutParams lp = new AbsoluteLayout.LayoutParams(noteWidth, noteHeight, x, y);
+	int yCorrection = 0;
+	int widthCorrection = 0;
+	int heightCorrection = 0;
+	if (noteView.getNote().isSharp) {
+	    yCorrection = (int) (-sharpHeight * .33f);
+	    widthCorrection = (int) (noteWidth * 1.1f);
+	    boolean isWhole = note.type == Note.WHOLE_NOTE;
+	    heightCorrection = isWhole ? (int) (sharpHeight * .66f) : (int) (sharpHeight * .33f);
+	}
+
+	AbsoluteLayout.LayoutParams lp = new AbsoluteLayout.LayoutParams(noteWidth + widthCorrection, noteHeight
+		+ heightCorrection, x, y + yCorrection);
 	if (!isRecorded) {
 	    // Non-recorded notes are half transparent.
 	    noteView.setAlpha(.5f);

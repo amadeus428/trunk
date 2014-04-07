@@ -232,8 +232,8 @@ public class PlayAlongFragment extends Fragment {
     private void createScoreDialog() {
 	float score = PlayAlongAnalyzer.getPlayAlongScore(staffLayout);
 	scoreDialog = new AlertDialog.Builder(getActivity());
-	scoreDialog.setTitle("PlayAlong score").setMessage("You scored " + score + "%")
-		.setPositiveButton("Sweet", new DialogInterface.OnClickListener() {
+	scoreDialog.setTitle("Grade").setMessage("You scored " + score + "%")
+		.setPositiveButton("Sweet!", new DialogInterface.OnClickListener() {
 		    @Override
 		    public void onClick(DialogInterface dialog, int whichButton) {
 			dialog.cancel();

@@ -32,9 +32,11 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
     public static Bitmap quarterNoteBitmap;
     public static Bitmap eighthNoteBitmap;
     public static Bitmap sixteenthNoteBitmap;
+    public static Bitmap sharpBitmap;
 
     protected int noteWidth;
     protected int noteHeight;
+    protected int sharpHeight;
     protected int noteSpacing; // horizontal distance between notes
     protected int spaceHeight; // vertical distance between two staff lines
     protected int lineHeight;
@@ -72,6 +74,8 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 
 	lineHeight = 2;
 	spaceHeight = getHeight() / 20;
+	sharpHeight = (int) ((spaceHeight * 3) * .75f); // 3/4 a non-whole
+							// note's height
 	noteSpacing = calculateNoteSpacing();
 	trebleClefStartY = (spaceHeight * 9) - (spaceHeight / 2);
 	bassClefStartY = getBottom() - (spaceHeight * 3) - (spaceHeight / 2);
@@ -124,10 +128,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
     public void addNote(int x, int y) {
 	adjustNoteSize(addNoteType);
 
-	// Need to add correction to account for human error when touching
-	// screen.
-	int correction = spaceHeight / 4;
-	Vector2<Integer, Integer> snappedPosition = getSnappedNotePos(x, y + correction);
+	Vector2<Integer, Integer> snappedPosition = getSnappedNotePos(x, y);
 	x = snappedPosition.x;
 	y = snappedPosition.y;
 
@@ -237,9 +238,25 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 	return noteHeight;
     }
 
+    public int getSharpHeight() {
+	return sharpHeight;
+    }
+
     protected void addNote(Note note, int x, int y) {
 	NoteView noteView = new NoteView(getContext(), this, note);
-	AbsoluteLayout.LayoutParams lp = new AbsoluteLayout.LayoutParams(noteWidth, noteHeight, x, y);
+
+	// May need to correct everything due to a sharp.
+	int yCorrection = 0;
+	int widthCorrection = 0;
+	int heightCorrection = 0;
+	if (noteView.getNote().isSharp) {
+	    yCorrection = (int) (-sharpHeight * .33f);
+	    widthCorrection = (int) (noteWidth * 1.1f);
+	    boolean isWhole = note.type == Note.WHOLE_NOTE;
+	    heightCorrection = isWhole ? (int) (sharpHeight * .66f) : (int) (sharpHeight * .33f);
+	}
+	AbsoluteLayout.LayoutParams lp = new AbsoluteLayout.LayoutParams(noteWidth + widthCorrection, noteHeight
+		+ heightCorrection, x, y + yCorrection);
 
 	addView(noteView, getAddPos(x), lp);
 	invalidate();
@@ -293,8 +310,15 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 
     protected boolean noteExistsAtSnappedPos(int x, int y) {
 	for (int i = 0; i < getChildCount(); i++) {
-	    View child = getChildAt(i);
-	    if (child.getX() == x && child.getY() == y) {
+	    NoteView child = (NoteView) getChildAt(i);
+
+	    // May need to correct if a sharp.
+	    int correction = 0;
+	    if (child.getNote().isSharp) {
+		correction = (int) (-sharpHeight * .33f);
+	    }
+
+	    if (child.getX() == x && child.getY() == y + correction) {
 		return true;
 	    }
 	}
@@ -339,22 +363,10 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 	float whRatio = bitmapWidth / bitmapHeight;
 
 	// Adjust the size of the notes to fit properly on the staff.
-	switch (noteType) {
-	case Note.WHOLE_NOTE:
+	if (noteType == Note.WHOLE_NOTE) {
 	    noteHeight = spaceHeight;
-	    break;
-	case Note.HALF_NOTE:
+	} else {
 	    noteHeight = spaceHeight * 3;
-	    break;
-	case Note.QUARTER_NOTE:
-	    noteHeight = spaceHeight * 3;
-	    break;
-	case Note.EIGHTH_NOTE:
-	    noteHeight = spaceHeight * 3;
-	    break;
-	case Note.SIXTEENTH_NOTE:
-	    noteHeight = spaceHeight * 3;
-	    break;
 	}
 
 	noteWidth = (int) (whRatio * noteHeight);
@@ -371,14 +383,15 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 	quarterNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.quarter_note_down);
 	eighthNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.eighth_note_down);
 	sixteenthNoteBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sixteenth_note_down);
+	sharpBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sharp);
     }
 
     private int calculateNoteSpacing() {
-	// The whole note has the widest bitmap.
+	// A sharped whole note has the largest width.
 	// Thus, its width determines the note margin.
 	Bitmap wholeNoteBitmap = StaffLayout.wholeNoteBitmap;
-	float width = wholeNoteBitmap.getWidth();
-	float height = wholeNoteBitmap.getHeight();
+	float width = wholeNoteBitmap.getWidth() * 2.1f;
+	float height = wholeNoteBitmap.getHeight() + (sharpBitmap.getHeight() * .33f);
 	float whRatio = width / height;
 
 	return (int) (whRatio * spaceHeight * 2);

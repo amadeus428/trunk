@@ -21,6 +21,7 @@ public class NoteView extends View {
     private Note note;
     private Bitmap bitmap;
     private Rect transformation;
+    private Rect sharpTransformation;
 
     public NoteView(Context context, StaffLayout parent, Note note) {
 	super(context);
@@ -31,7 +32,16 @@ public class NoteView extends View {
 
 	int width = parent.getNoteWidth();
 	int height = parent.getNoteHeight();
-	transformation = new Rect(0, 0, width, height);
+
+	if (note.isSharp) {
+	    int sharpHeight = parent.getSharpHeight();
+	    int noteStartX = (int) (width * 1.1f);
+	    int noteStartY = (int) (sharpHeight * .33f);
+	    sharpTransformation = new Rect(0, 0, width, sharpHeight);
+	    transformation = new Rect(noteStartX, noteStartY, noteStartX + width, noteStartY + height);
+	} else {
+	    transformation = new Rect(0, 0, width, height);
+	}
     }
 
     @Override
@@ -50,7 +60,11 @@ public class NoteView extends View {
 
     @Override
     public void onDraw(Canvas canvas) {
+	if (note.isSharp) {
+	    canvas.drawBitmap(StaffLayout.sharpBitmap, null, sharpTransformation, null);
+	}
 	canvas.drawBitmap(bitmap, null, transformation, null);
+
 	super.onDraw(canvas);
     }
 
