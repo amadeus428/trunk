@@ -23,56 +23,50 @@ import android.widget.EditText;
 
 public class TabSearchFragment extends Fragment {
 
-	public TabSearchFragment() {
-		// Empty constructor required for fragment subclasses
+    public TabSearchFragment() {
+	// Empty constructor required for fragment subclasses
+    }
+
+    public static TabSearchFragment newInstance() {
+	TabSearchFragment frag = new TabSearchFragment();
+
+	// add arguments to bundle here
+	return frag;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+	View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
+
+	return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+	super.onActivityCreated(savedInstanceState);
+	getActivity().setTitle("TabSearch");
+
+	((Button) getActivity().findViewById(R.id.tab_button)).setOnClickListener(new OnClickListener() {
+	    public void onClick(View arg) {
+		onButtonClick();
+	    }
+	});
+    }
+
+    /**
+     * Function called by the listener attached to the button
+     */
+    private void onButtonClick() {
+	String artist = ((EditText) getActivity().findViewById(R.id.tab_artist_box)).getText().toString();
+	String song = ((EditText) getActivity().findViewById(R.id.tab_song_box)).getText().toString();
+	// make sure the user has entered information into the boxes
+	if (song == null || artist == null || song.length() < 1 || artist.length() < 1) {
+	    return;
 	}
-
-	public static TabSearchFragment newInstance() {
-		TabSearchFragment frag = new TabSearchFragment();
-
-		// add arguments to bundle here
-		return frag;
-	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-
-		View rootView = inflater.inflate(R.layout.fragment_tab, container,
-				false);
-
-		return rootView;
-	}
-
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		getActivity().setTitle("TabSearch");
-
-		((Button) getActivity().findViewById(R.id.tab_button))
-				.setOnClickListener(new OnClickListener() {
-					public void onClick(View arg) {
-						onButtonClick();
-					}
-				});
-	}
-
-	/**
-	 * Function called by the listener attached to the button
-	 */
-	private void onButtonClick() {
-		String artist = ((EditText) getActivity().findViewById(
-				R.id.tab_artist_box)).getText().toString();
-		String song = ((EditText) getActivity().findViewById(R.id.tab_song_box))
-				.getText().toString();
-		// make sure the user has entered information into the boxes
-		if (song == null || artist == null || song.length() < 1
-				|| artist.length() < 1) {
-			return;
-		}
-		String url = buildUrl(artist, song);
-		getHtml(url);
-	}
+	String url = buildUrl(artist, song);
+	getHtml(url);
+    }
 
 	/**
 	 * Given the artist and the song that the user wants to pull up the tab for
@@ -160,13 +154,18 @@ public class TabSearchFragment extends Fragment {
 		}
 	}
 
-	/**
-	 * Sets the webview to display the html that we recieved from the webserver
-	 * 
-	 * @param html
-	 */
-	private void setText(String html) {
-		((WebView) getActivity().findViewById(R.id.tab_text))
-				.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
-	}
+    private void setText(String html) {
+	((WebView) getActivity().findViewById(R.id.tab_text)).loadDataWithBaseURL(null, html, "text/html", "utf-8",
+		null);
+    }
+
+    /**
+     * Parses the html in order to keep only the relevant parts of the html
+     * 
+     * @param html
+     * @return
+     */
+    private String parseHtml(String html) {
+	return html;
+    }
 }

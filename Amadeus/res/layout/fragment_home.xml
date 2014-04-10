@@ -39,26 +39,26 @@
     </RelativeLayout>
     
     <Button
-        android:id="@+id/pd_demo_button"
+        android:id="@+id/fragment_home_create_sheet_music_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="RECORD STUFF!"
+        android:text="CREATE SHEET MUSIC!"
         android:textAppearance="?android:attr/textAppearanceLarge" 
         android:background="@drawable/main_menu_button_background" />
-
+    
     <Button
-        android:id="@+id/sheet_music_button"
+        android:id="@+id/fragment_home_play_along_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:text="MAKE SHEET MUSIC!"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="PLAY ALONG!"
+        android:textAppearance="?android:attr/textAppearanceLarge" 
         android:background="@drawable/main_menu_button_background" />
     
     <Button
-        android:id="@+id/guitar_chords_button"
+        android:id="@+id/fragment_home_guitar_chords_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

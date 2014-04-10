@@ -13,60 +13,64 @@ import android.widget.TextView;
  * This class flashes the color of the "note recorded" text view in
  * {@link RecordingFragment}, once per beat, based on its given bpm.
  */
-public class Metronome {
-	private int bpm;
-	private Activity parentActivity;
-	private Timer tickTimer;
+public abstract class Metronome {
+    private int bpm;
+    private Activity parentActivity;
+    private Timer tickTimer;
 
-	public Metronome(Activity parentActivity, int bpm) {
-		this.parentActivity = parentActivity;
-		this.bpm = bpm;
-	}
+    public Metronome(Activity parentActivity, int bpm) {
+	this.parentActivity = parentActivity;
+	this.bpm = bpm;
+    }
 
-	public void start() {
-		float bps = bpm / 60.0f;
-		final int ms = (int) ((1.0 / bps) * 1000);
+    /**
+     * Called when the metronome is initially flashed.
+     */
+    public abstract void onTickStart();
 
-		tickTimer = new Timer();
-		tickTimer.scheduleAtFixedRate(new TimerTask() {
-			@Override
-			public void run() {
-				parentActivity.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						doMetronomeFlash(ms);
-					}
-				});
-			}
-		}, 0, ms);
-	}
+    /**
+     * Called when the metronome is done flashing.
+     */
+    public abstract void onTickEnd();
 
-	public void stop() {
-		final TextView noteRecordedTextView = (TextView) parentActivity
-				.findViewById(R.id.fragment_recording_note_recorded_textview);
-		noteRecordedTextView.setBackgroundColor(Color.TRANSPARENT);
-		tickTimer.cancel();
-	}
+    public void start() {
+	float bps = bpm / 60.0f;
+	final int ms = (int) ((1.0 / bps) * 1000);
 
-	private void doMetronomeFlash(final int ms) {
-		final TextView noteRecordedTextView = (TextView) parentActivity
-				.findViewById(R.id.fragment_recording_note_recorded_textview);
+	tickTimer = new Timer();
+	tickTimer.scheduleAtFixedRate(new TimerTask() {
+	    @Override
+	    public void run() {
+		parentActivity.runOnUiThread(new Runnable() {
+		    @Override
+		    public void run() {
+			doMetronomeFlash(ms);
+		    }
+		});
+	    }
+	}, 0, ms);
+    }
 
-		final Timer flashTimer = new Timer();
-		final TimerTask flashTimerTask = new TimerTask() {
-			@Override
-			public void run() {
-				parentActivity.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						noteRecordedTextView
-								.setBackgroundColor(Color.TRANSPARENT);
-					}
-				});
-			}
-		};
+    public void stop() {
+	onTickEnd();
+	tickTimer.cancel();
+    }
 
-		noteRecordedTextView.setBackgroundColor(Color.RED);
-		flashTimer.schedule(flashTimerTask, ms / 8);
-	}
+    private void doMetronomeFlash(final int ms) {
+	final Timer flashTimer = new Timer();
+	final TimerTask flashTimerTask = new TimerTask() {
+	    @Override
+	    public void run() {
+		parentActivity.runOnUiThread(new Runnable() {
+		    @Override
+		    public void run() {
+			onTickEnd();
+		    }
+		});
+	    }
+	};
+
+	onTickStart();
+	flashTimer.schedule(flashTimerTask, ms / 8);
+    }
 }

@@ -6,15 +6,15 @@
     <string name="hello_world">Hello world!</string>
     
     <string name="title_home">Home</string>
-    <string name="title_record_music">RECORD MUSIC!</string>
-    <string name="title_create_sheet_music">CREATE SHEET MUSIC!</string>
+    <string name="title_create_music">CREATE SHEET MUSIC!</string>
+    <string name="title_play_along">PLAY ALONG!</string>
     <string name="title_guitar_chords">LEARN GUITAR CHORDS!</string>
     <string name="title_guitar_tabs">GET TABS!!</string>
     
     <string-array name="navigation_drawer_items">
         <item>@string/title_home</item>
-        <item>@string/title_record_music</item>
-        <item>@string/title_create_sheet_music</item>
+        <item>@string/title_create_music</item>
+        <item>@string/title_play_along</item>
         <item>@string/title_guitar_chords</item>
         <item>@string/title_guitar_tabs</item>
     </string-array>
@@ -24,11 +24,11 @@
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
     
     <string-array name="note_spinner_items">
-		<item>Quarter Note</item>
-		<item>Whole note</item>
-		<item>Half note</item>
-		<item>Eighth note</item>
-		<item>Sixteenth note</item>
+        <item>Whole</item>
+        <item>Half</item>
+		<item>Quarter</item>
+		<item>Eighth</item>
+		<item>Sixteenth</item>
 	</string-array>
 	
     <string-array name="bpm_items">
