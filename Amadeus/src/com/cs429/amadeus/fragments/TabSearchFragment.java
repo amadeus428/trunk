@@ -1,7 +1,10 @@
 package com.cs429.amadeus.fragments;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.jsoup.Connection;
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,50 +26,56 @@ import android.widget.EditText;
 
 public class TabSearchFragment extends Fragment {
 
-    public TabSearchFragment() {
-	// Empty constructor required for fragment subclasses
-    }
-
-    public static TabSearchFragment newInstance() {
-	TabSearchFragment frag = new TabSearchFragment();
-
-	// add arguments to bundle here
-	return frag;
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-	View rootView = inflater.inflate(R.layout.fragment_tab, container, false);
-
-	return rootView;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-	super.onActivityCreated(savedInstanceState);
-	getActivity().setTitle("TabSearch");
-
-	((Button) getActivity().findViewById(R.id.tab_button)).setOnClickListener(new OnClickListener() {
-	    public void onClick(View arg) {
-		onButtonClick();
-	    }
-	});
-    }
-
-    /**
-     * Function called by the listener attached to the button
-     */
-    private void onButtonClick() {
-	String artist = ((EditText) getActivity().findViewById(R.id.tab_artist_box)).getText().toString();
-	String song = ((EditText) getActivity().findViewById(R.id.tab_song_box)).getText().toString();
-	// make sure the user has entered information into the boxes
-	if (song == null || artist == null || song.length() < 1 || artist.length() < 1) {
-	    return;
+	public TabSearchFragment() {
+		// Empty constructor required for fragment subclasses
 	}
-	String url = buildUrl(artist, song);
-	getHtml(url);
-    }
+
+	public static TabSearchFragment newInstance() {
+		TabSearchFragment frag = new TabSearchFragment();
+
+		// add arguments to bundle here
+		return frag;
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+
+		View rootView = inflater.inflate(R.layout.fragment_tab, container,
+				false);
+
+		return rootView;
+	}
+
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		getActivity().setTitle("TabSearch");
+
+		((Button) getActivity().findViewById(R.id.tab_button))
+				.setOnClickListener(new OnClickListener() {
+					public void onClick(View arg) {
+						onButtonClick();
+					}
+				});
+	}
+
+	/**
+	 * Function called by the listener attached to the button
+	 */
+	private void onButtonClick() {
+		String artist = ((EditText) getActivity().findViewById(
+				R.id.tab_artist_box)).getText().toString();
+		String song = ((EditText) getActivity().findViewById(R.id.tab_song_box))
+				.getText().toString();
+		// make sure the user has entered information into the boxes
+		if (song == null || artist == null || song.length() < 1
+				|| artist.length() < 1) {
+			return;
+		}
+		String url = buildUrl(artist, song);
+		getHtml(url);
+	}
 
 	/**
 	 * Given the artist and the song that the user wants to pull up the tab for
@@ -124,28 +133,25 @@ public class TabSearchFragment extends Fragment {
 			String html = "<p> hello world </p>";
 
 			try {
-				Log.w("doInBackground", "about to connect with url = "
-						+ urls[0]);
-				
-				//connect to the server and get the document
+				// connect to the server and get the document
 				URL url = new URL(urls[0]);
 				Document doc = Jsoup.connect(url.toString()).get();
-				
-				//parse the document in order to only get the tab part
+
+				// parse the document in order to only get the tab part
 				Elements tab_elements = doc.getElementsByClass("tb_ct");
 				Element tab_element = tab_elements.get(0);
 				Elements pres = tab_element.getElementsByTag("pre");
 				html = pres.get(2).toString();
-				//Log.w("num pres", "" + pres.size());
-				//Log.w("tab Elements", tab_element.toString());
-				//Log.w("doInBackground", "connected");				
-				//html = tab_element.toString();
+
+			} catch (MalformedURLException e) {
+				html = "<p>ERROR - Bad URL </p>";
+			} catch (HttpStatusException e) {
+				html = "ERROR reaching page";
 			} catch (Exception e) {
 				e.printStackTrace();
 				html = "<p> An error occured </p>";
 			}
 
-			//Log.w("Tabview", "html = " + html);
 			return html;
 		}
 
@@ -154,18 +160,18 @@ public class TabSearchFragment extends Fragment {
 		}
 	}
 
-    private void setText(String html) {
-	((WebView) getActivity().findViewById(R.id.tab_text)).loadDataWithBaseURL(null, html, "text/html", "utf-8",
-		null);
-    }
+	private void setText(String html) {
+		((WebView) getActivity().findViewById(R.id.tab_text))
+				.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+	}
 
-    /**
-     * Parses the html in order to keep only the relevant parts of the html
-     * 
-     * @param html
-     * @return
-     */
-    private String parseHtml(String html) {
-	return html;
-    }
+	/**
+	 * Parses the html in order to keep only the relevant parts of the html
+	 * 
+	 * @param html
+	 * @return
+	 */
+	private String parseHtml(String html) {
+		return html;
+	}
 }
