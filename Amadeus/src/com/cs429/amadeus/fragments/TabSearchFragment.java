@@ -1,29 +1,17 @@
 package com.cs429.amadeus.fragments;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.net.URL;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.puredata.android.service.PdService;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import com.cs429.amadeus.R;
-import com.cs429.amadeus.R.layout;
-import com.cs429.amadeus.TabView;
-import com.cs429.amadeus.activities.MainActivity;
 
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,8 +20,6 @@ import android.view.View.OnClickListener;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.TextView;
 
 public class TabSearchFragment extends Fragment {
 
@@ -101,7 +87,16 @@ public class TabSearchFragment extends Fragment {
 	private String buildUrl(String artist, String song) {
 
 		String firstLetterArtist = artist.substring(0, 1);
-		// change artist and song to be valid query parts of the url
+
+		// check if the first letter is a number and not a letter
+		try {
+			Integer.parseInt(firstLetterArtist);
+			firstLetterArtist = "0-9";
+		} catch (NumberFormatException e) {
+
+		}
+
+		// clean up the artist and song name to create the url
 		artist = artist.trim();
 		song = song.trim();
 		artist = artist.toLowerCase();
@@ -121,10 +116,8 @@ public class TabSearchFragment extends Fragment {
 	 * @return - html data of the webpage or "" on error
 	 */
 	private void getHtml(String url) {
-
 		FetchInternetData fetcher = new FetchInternetData();
 		fetcher.execute(url);
-
 	}
 
 	/**
@@ -134,26 +127,31 @@ public class TabSearchFragment extends Fragment {
 	 */
 	private class FetchInternetData extends AsyncTask<String, Integer, String> {
 		protected String doInBackground(String... urls) {
-			String html = "";
-			try {
-				HttpClient client = new DefaultHttpClient();
-				HttpGet request = new HttpGet(urls[0]);
-				HttpResponse response = client.execute(request);
+			String html = "<p> hello world </p>";
 
-				InputStream in = response.getEntity().getContent();
-				BufferedReader reader = new BufferedReader(
-						new InputStreamReader(in));
-				StringBuilder str = new StringBuilder();
-				String line = null;
-				while ((line = reader.readLine()) != null) {
-					str.append(line);
-				}
-				in.close();
-				html = str.toString();
-			} catch (IOException io) {
-				Log.w("TabView", "IO Exception");
+			try {
+				Log.w("doInBackground", "about to connect with url = "
+						+ urls[0]);
+				
+				//connect to the server and get the document
+				URL url = new URL(urls[0]);
+				Document doc = Jsoup.connect(url.toString()).get();
+				
+				//parse the document in order to only get the tab part
+				Elements tab_elements = doc.getElementsByClass("tb_ct");
+				Element tab_element = tab_elements.get(0);
+				Elements pres = tab_element.getElementsByTag("pre");
+				html = pres.get(2).toString();
+				//Log.w("num pres", "" + pres.size());
+				//Log.w("tab Elements", tab_element.toString());
+				//Log.w("doInBackground", "connected");				
+				//html = tab_element.toString();
+			} catch (Exception e) {
+				e.printStackTrace();
+				html = "<p> An error occured </p>";
 			}
-			Log.w("Tabview", "html = " + html);
+
+			//Log.w("Tabview", "html = " + html);
 			return html;
 		}
 
@@ -162,18 +160,13 @@ public class TabSearchFragment extends Fragment {
 		}
 	}
 
+	/**
+	 * Sets the webview to display the html that we recieved from the webserver
+	 * 
+	 * @param html
+	 */
 	private void setText(String html) {
 		((WebView) getActivity().findViewById(R.id.tab_text))
 				.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
-	}
-
-	/**
-	 * Parses the html in order to keep only the relevant parts of the html
-	 * 
-	 * @param html
-	 * @return
-	 */
-	private String parseHtml(String html) {
-		return html;
 	}
 }
