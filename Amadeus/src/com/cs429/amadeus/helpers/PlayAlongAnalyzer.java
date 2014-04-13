@@ -52,11 +52,21 @@ public class PlayAlongAnalyzer {
     }
 
     private static float getStepsDiffPenalty(int stepsDiff) {
+	if(stepsDiff < 0)
+	{
+	    return -1;
+	}	
+	
 	stepsDiff = Math.min(3, stepsDiff);
-	return stepsDiff / 3;
+	return stepsDiff / 3.0f;
     }
 
     private static int getTypeDiff(Note note1, Note note2) {
+	if(note1 == null || note2 == null)
+	{
+	    return -1;
+	}
+	
 	return Math.abs(getTypeId(note1.type) - getTypeId(note2.type));
     }
 

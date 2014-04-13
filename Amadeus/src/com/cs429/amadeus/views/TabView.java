@@ -1,4 +1,4 @@
-package com.cs429.amadeus;
+package com.cs429.amadeus.views;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class TabView extends View {
-
     Button search_btn;
     EditText artistNameField;
     EditText songNameField;
@@ -31,13 +30,11 @@ public class TabView extends View {
      */
     public TabView(Context context) {
 	super(context);
-	// TODO Auto-generated constructor stub
 
 	search_btn = new Button(context);
 	artistNameField = new EditText(context);
 	songNameField = new EditText(context);
 	tab = new TextView(context);
-
     }
 
     /**
@@ -56,12 +53,11 @@ public class TabView extends View {
     private String urlBuilder(String artist, String song, String extension) {
 
 	String firstLetterArtist = artist.substring(0, 1);
-	// change artist and song to be valid query parts of the url
-	artist = artist.toLowerCase();
-	song = song.toLowerCase();
-	artist.replace(" ", "_");
-	song.replace(" ", "_");
-	song = song + "_" + extension;
+
+	// Change artist and song to be valid query parts of the url.
+	artist = artist.toLowerCase().replace(" ", "_");
+	song = song.toLowerCase().replace(" ", "_");
+	song += "_" + extension;
 
 	return "http://tabs.ultimate-guitar.com/" + firstLetterArtist + "/" + artist + "/" + song + ".htm";
     }
@@ -89,10 +85,12 @@ public class TabView extends View {
 		str.append(line);
 	    }
 	    in.close();
+
 	    html = str.toString();
 	} catch (IOException io) {
-	    Log.w("TabView", "IO Exception");
+	    Log.w("TEST", "IO Exception");
 	}
+
 	return html;
     }
 
