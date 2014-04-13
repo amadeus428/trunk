@@ -50,6 +50,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
+/**
+ * Handles playing along to a pre-transcribed song
+ */
 public class PlayAlongFragment extends Fragment {
     private ImageButton playStopNotesButton;
     private Spinner bpmSpinner;
@@ -90,6 +93,9 @@ public class PlayAlongFragment extends Fragment {
 	return inflater.inflate(R.layout.fragment_play_along, container, false);
     }
 
+    /**
+     * Creates different menu options
+     */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
 	super.onActivityCreated(savedInstanceState);
@@ -104,6 +110,9 @@ public class PlayAlongFragment extends Fragment {
 	getActivity().bindService(new Intent(getActivity(), PdService.class), pdConnection, Context.BIND_AUTO_CREATE);
     }
 
+    /**
+     * Called when the stop button is pressed. Stops recording the user input.
+     */
     @Override
     public void onStop() {
 	super.onDestroy();
@@ -139,7 +148,8 @@ public class PlayAlongFragment extends Fragment {
 		    staffLayout.clearAllRecordedNoteViews();
 
 		    recorder = new Recorder(staffLayout, getBPM()) {
-			@Override
+			//Called when a note is read
+		    @Override
 			public void onNote(final Note note) {
 			    PlayAlongFragment.this.getActivity().runOnUiThread(new Runnable() {
 				@Override

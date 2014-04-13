@@ -11,6 +11,9 @@ import android.widget.Button;
 import com.cs429.amadeus.R;
 import com.cs429.amadeus.activities.MainActivity;
 
+/**
+ * The home screen of the app
+ */
 public class HomeFragment extends Fragment {
     public HomeFragment() {
 	// Empty constructor required for fragment subclasses
@@ -31,6 +34,9 @@ public class HomeFragment extends Fragment {
 	return rootView;
     }
 
+    /**
+     * Creates different buttons to get to different fragments
+     */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
 	super.onActivityCreated(savedInstanceState);
