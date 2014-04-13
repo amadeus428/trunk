@@ -21,6 +21,9 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 
+/**
+ * Handles searching for tabs and lyrics for a song based on user input
+ */
 public class TabSearchFragment extends Fragment {
 
     public TabSearchFragment() {
