@@ -54,6 +54,9 @@ import com.cs429.amadeus.helpers.Recorder;
 import com.cs429.amadeus.helpers.StaffMIDIPlayer;
 import com.cs429.amadeus.views.StaffLayout;
 
+/**
+ * Handles transcribing user input
+ */
 public class RecordingFragment extends Fragment {
     private ImageButton playStopNotesButton;
     private Spinner bpmSpinner;
@@ -94,6 +97,9 @@ public class RecordingFragment extends Fragment {
 	return inflater.inflate(R.layout.fragment_recording, container, false);
     }
 
+    /**
+     * Sets up the buttons on the screen
+     */
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
 	super.onActivityCreated(savedInstanceState);
