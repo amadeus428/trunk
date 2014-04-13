@@ -76,6 +76,14 @@ public abstract class Recorder {
     public boolean isRecording() {
 	return isRecording;
     }
+    
+    public float getBps(){
+    	return bps;
+    }
+    
+    public float getPeriod(){
+    	return period;
+    }
 
     private int getNoteTypeOfLastNote() {
 	int ms = (int) ((1.0f / bps) * 1000);
