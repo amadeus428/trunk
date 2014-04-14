@@ -51,8 +51,8 @@ public class NoteView extends View {
 	//TODO This code is for highlighting notes vs filling them in
 	//highlightRect = new Rect((int)(transformation.left * .8),(int)( transformation.top *.8),(int) (transformation.right *1.1),(int)( transformation.bottom*1.1));
     highlightRect = new Rect((int)(transformation.left ),(int)( transformation.top),(int) (transformation.right),(int)( transformation.bottom));
-    transformation.inset((int)((transformation.right-transformation.left)*.05), (int)((transformation.bottom-transformation.top)*.05));
-   	transformation.offset((int)(transformation.right-transformation.left*.05), (int)(transformation.bottom-transformation.top*.05));
+    //transformation.inset((int)((transformation.right-transformation.left)*.05), (int)((transformation.bottom-transformation.top)*.05));
+   //transformation.offset((int)(transformation.right-transformation.left*.05), (int)(transformation.bottom-transformation.top*.05));
     }
 
     @Override
@@ -77,12 +77,11 @@ public class NoteView extends View {
 	
 	//If this note should be highlighted for feedback to the user for play-along
 	if(this.highlight == Highlight.Green)
-		canvas.drawBitmap(greenBitmap[this.note.type], null, highlightRect, null);
+		canvas.drawBitmap(greenBitmap[this.note.type], null, transformation, null);
 	else if(this.highlight == Highlight.Red)
-		canvas.drawBitmap(redBitmap[this.note.type], null, highlightRect, null);
-
-	
-	canvas.drawBitmap(bitmap, null, transformation, null);
+		canvas.drawBitmap(redBitmap[this.note.type], null, transformation, null);
+	else
+		canvas.drawBitmap(bitmap, null, transformation, null);
 
 	super.onDraw(canvas);
     }
