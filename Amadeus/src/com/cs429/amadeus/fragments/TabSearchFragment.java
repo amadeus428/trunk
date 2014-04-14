@@ -3,7 +3,6 @@ package com.cs429.amadeus.fragments;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.jsoup.Connection;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -15,7 +14,6 @@ import com.cs429.amadeus.R;
 import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,7 +77,7 @@ public class TabSearchFragment extends Fragment {
 			return;
 		}
 		String url = buildUrl(artist, song);
-		getHtml(url);
+		getGuitarTab(url);
 	}
 
 	/**
@@ -124,7 +122,7 @@ public class TabSearchFragment extends Fragment {
 	 *            - formed ultimate-guitar.com url
 	 * @return - html data of the webpage or "" on error
 	 */
-	private void getHtml(String url) {
+	private void getGuitarTab(String url) {
 		FetchInternetData fetcher = new FetchInternetData();
 		fetcher.execute(url);
 	}
@@ -169,6 +167,11 @@ public class TabSearchFragment extends Fragment {
 		return html;
 	}
 
+	/**
+	 * Sets the html to be displayed in the webview to the html given in
+	 * 
+	 * @param html
+	 */
 	private void setText(String html) {
 		((WebView) getActivity().findViewById(R.id.tab_text))
 				.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
