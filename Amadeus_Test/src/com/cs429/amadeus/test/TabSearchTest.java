@@ -110,7 +110,7 @@ public class TabSearchTest extends
 			NoSuchMethodException {
 		Class[] argumentClasses = new Class[1];
 		argumentClasses[0] = String.class;
-		Method method = tabSearch.getClass().getDeclaredMethod("getHtml",
+		Method method = tabSearch.getClass().getDeclaredMethod("getGuitarTab",
 				argumentClasses);
 		method.setAccessible(true);
 
@@ -129,7 +129,7 @@ public class TabSearchTest extends
 			NoSuchMethodException {
 		Class[] argumentClasses = new Class[1];
 		argumentClasses[0] = String.class;
-		Method method = tabSearch.getClass().getDeclaredMethod("getHtml",
+		Method method = tabSearch.getClass().getDeclaredMethod("getGuitarTab",
 				argumentClasses);
 		method.setAccessible(true);
 

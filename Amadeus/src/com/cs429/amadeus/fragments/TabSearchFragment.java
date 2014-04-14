@@ -173,6 +173,7 @@ public class TabSearchFragment extends Fragment {
 	 * @param html
 	 */
 	private void setText(String html) {
+		this.html = html;
 		((WebView) getActivity().findViewById(R.id.tab_text))
 				.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
 	}
