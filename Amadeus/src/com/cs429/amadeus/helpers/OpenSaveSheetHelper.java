@@ -92,6 +92,10 @@ public class OpenSaveSheetHelper {
     }
 
     private static String createSheetXML(StaffLayout staffLayout) {
+	if(staffLayout == null) {
+	    return null;
+	}
+	
 	try {
 	    StringWriter writer = new StringWriter();
 	    XmlSerializer serializer = Xml.newSerializer();

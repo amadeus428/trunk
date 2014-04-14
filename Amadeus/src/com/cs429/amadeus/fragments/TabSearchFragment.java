@@ -24,8 +24,11 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 
+/**
+ * Handles searching for tabs and lyrics for a song based on user input
+ */
 public class TabSearchFragment extends Fragment {
-	
+
 	private String html = "";
 
 	public TabSearchFragment() {
@@ -95,7 +98,7 @@ public class TabSearchFragment extends Fragment {
 		song = song.trim();
 		artist = artist.toLowerCase();
 		song = song.toLowerCase();
-		
+
 		String firstLetterArtist = artist.substring(0, 1);
 		// check if the first letter is a number and not a letter
 		try {
@@ -111,6 +114,7 @@ public class TabSearchFragment extends Fragment {
 
 		return "http://tabs.ultimate-guitar.com/" + firstLetterArtist + "/"
 				+ artist + "/" + song + "_tab.htm";
+
 	}
 
 	/**
@@ -133,7 +137,6 @@ public class TabSearchFragment extends Fragment {
 	private class FetchInternetData extends AsyncTask<String, Integer, String> {
 		protected String doInBackground(String... urls) {
 			String html = "<p> hello world </p>";
-
 			try {
 				// connect to the server and get the document
 				URL url = new URL(urls[0]);
@@ -161,13 +164,12 @@ public class TabSearchFragment extends Fragment {
 			setText(result);
 		}
 	}
-	
-	public String getHtml(){
+
+	public String getHtml() {
 		return html;
 	}
 
 	private void setText(String html) {
-		this.html = html;
 		((WebView) getActivity().findViewById(R.id.tab_text))
 				.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
 	}
