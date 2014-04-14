@@ -72,7 +72,8 @@ public class PlayAlongStaffLayout extends StaffLayout {
 	int x = (numRecordedNotes * noteSpacing) + noteSpacing;
 	int y = getSnappedYFromNote(note);
 	addNote(note, x, y, true);
-
+	
+	
 	numRecordedNotes++;
     }
 
@@ -145,6 +146,11 @@ public class PlayAlongStaffLayout extends StaffLayout {
 	}
 
 	addView(noteView, getAddPos(x), lp);
+	if(note.equals(this.getNoteAtSnappedPos(getAddPos(x)))){
+		noteView.highlight(NoteView.Highlight.Green);
+	}else{
+		noteView.highlight(NoteView.Highlight.Red);
+	}
 	invalidate();
 
 	if (isRecorded) {

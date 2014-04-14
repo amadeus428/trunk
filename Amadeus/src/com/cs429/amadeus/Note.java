@@ -64,6 +64,8 @@ public class Note {
      */
     @Override
     public boolean equals(Object obj) {
+    	if(obj == null)
+    		return false;
 	if (obj.getClass() == Note.class) {
 	    return toString().equals(((Note) obj).toString());
 	}

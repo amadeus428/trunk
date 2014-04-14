@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.cs429.amadeus.Note;
+import com.cs429.amadeus.views.NoteView.Highlight;
 
 /**
  * This class represents an interactive note used in combination with
@@ -47,6 +48,7 @@ public class NoteView extends View {
 		}
 
 	}
+	
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
@@ -119,6 +121,10 @@ public class NoteView extends View {
 	static private Bitmap[] greenBitmap = new Bitmap[5];
 	static private Bitmap[] redBitmap = new Bitmap[5];
 
+	public void highlight(Highlight highlight){
+		this.highlight = highlight;
+	}
+	
 	public static Bitmap[] getGreenBitmaps() {
 		return greenBitmap;
 	}
@@ -136,4 +142,5 @@ public class NoteView extends View {
 	}
 
 	private Highlight highlight = Highlight.None;
+
 }
