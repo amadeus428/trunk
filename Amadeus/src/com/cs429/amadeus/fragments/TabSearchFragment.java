@@ -25,6 +25,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 public class TabSearchFragment extends Fragment {
+	
+	private String html = "";
 
 	public TabSearchFragment() {
 		// Empty constructor required for fragment subclasses
@@ -89,8 +91,12 @@ public class TabSearchFragment extends Fragment {
 	 */
 	private String buildUrl(String artist, String song) {
 
+		artist = artist.trim();
+		song = song.trim();
+		artist = artist.toLowerCase();
+		song = song.toLowerCase();
+		
 		String firstLetterArtist = artist.substring(0, 1);
-
 		// check if the first letter is a number and not a letter
 		try {
 			Integer.parseInt(firstLetterArtist);
@@ -100,10 +106,6 @@ public class TabSearchFragment extends Fragment {
 		}
 
 		// clean up the artist and song name to create the url
-		artist = artist.trim();
-		song = song.trim();
-		artist = artist.toLowerCase();
-		song = song.toLowerCase();
 		artist = artist.replace(" ", "_");
 		song = song.replace(" ", "_");
 
@@ -146,7 +148,7 @@ public class TabSearchFragment extends Fragment {
 			} catch (MalformedURLException e) {
 				html = "<p>ERROR - Bad URL </p>";
 			} catch (HttpStatusException e) {
-				html = "ERROR reaching page";
+				html = "<p>ERROR reaching page </p>";
 			} catch (Exception e) {
 				e.printStackTrace();
 				html = "<p> An error occured </p>";
@@ -159,19 +161,14 @@ public class TabSearchFragment extends Fragment {
 			setText(result);
 		}
 	}
-
-	private void setText(String html) {
-		((WebView) getActivity().findViewById(R.id.tab_text))
-				.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
+	
+	public String getHtml(){
+		return html;
 	}
 
-	/**
-	 * Parses the html in order to keep only the relevant parts of the html
-	 * 
-	 * @param html
-	 * @return
-	 */
-	private String parseHtml(String html) {
-		return html;
+	private void setText(String html) {
+		this.html = html;
+		((WebView) getActivity().findViewById(R.id.tab_text))
+				.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
 	}
 }

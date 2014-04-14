@@ -194,7 +194,7 @@ public class MainActivity extends Activity {
 	mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private int getIndexOfItemInDrawer(int id) {
+    public int getIndexOfItemInDrawer(int id) {
 	String[] navigationDrawerOptions = getResources().getStringArray(R.array.navigation_drawer_items);
 	return Arrays.asList(navigationDrawerOptions).indexOf(getString(id));
     }
