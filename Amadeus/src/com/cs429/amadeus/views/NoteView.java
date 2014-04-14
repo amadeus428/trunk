@@ -48,7 +48,6 @@ public class NoteView extends View {
 		}
 
 	}
-	
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
@@ -121,10 +120,10 @@ public class NoteView extends View {
 	static private Bitmap[] greenBitmap = new Bitmap[5];
 	static private Bitmap[] redBitmap = new Bitmap[5];
 
-	public void highlight(Highlight highlight){
+	public void highlight(Highlight highlight) {
 		this.highlight = highlight;
 	}
-	
+
 	public static Bitmap[] getGreenBitmaps() {
 		return greenBitmap;
 	}

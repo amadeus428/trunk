@@ -327,6 +327,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 
 		return false;
 	}
+
 	public Note getNoteAtSnappedPos(int x) {
 		for (int i = 0; i < getChildCount(); i++) {
 			NoteView child = (NoteView) getChildAt(i);
@@ -344,7 +345,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 
 		return null;
 	}
-	
+
 	protected NoteView getNoteViewAtSnappedX(int x) {
 		for (int i = 0; i < getChildCount(); i++) {
 			NoteView child = (NoteView) getChildAt(i);
