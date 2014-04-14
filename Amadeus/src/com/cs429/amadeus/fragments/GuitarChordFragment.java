@@ -67,48 +67,63 @@ public class GuitarChordFragment extends Fragment implements OnItemSelectedListe
 	switch (position) {
 	case 0:
 	    image.setImageResource(R.drawable.a);
+	    image.setTag(R.drawable.a);
 	    break;
 	case 1:
 	    image.setImageResource(R.drawable.a2);
+	    image.setTag(R.drawable.a2);
 	    break;
 	case 2:
 	    image.setImageResource(R.drawable.a4);
+	    image.setTag(R.drawable.a4);
 	    break;
 	case 3:
 	    image.setImageResource(R.drawable.aminor);
+	    image.setTag(R.drawable.aminor);
 	    break;
 	case 4:
 	    image.setImageResource(R.drawable.c);
+	    image.setTag(R.drawable.c);
 	    break;
 	case 5:
 	    image.setImageResource(R.drawable.d);
+	    image.setTag(R.drawable.d);
 	    break;
 	case 6:
 	    image.setImageResource(R.drawable.d2);
+	    image.setTag(R.drawable.d2);
 	    break;
 	case 7:
 	    image.setImageResource(R.drawable.d4);
+	    image.setTag(R.drawable.d4);
 	    break;
 	case 8:
 	    image.setImageResource(R.drawable.dminor);
+	    image.setTag(R.drawable.dminor);
 	    break;
 	case 9:
 	    image.setImageResource(R.drawable.dslashfsharp);
+	    image.setTag(R.drawable.dslashfsharp);
 	    break;
 	case 10:
 	    image.setImageResource(R.drawable.e);
+	    image.setTag(R.drawable.e);
 	    break;
 	case 11:
 	    image.setImageResource(R.drawable.e4);
+	    image.setTag(R.drawable.e4);
 	    break;
 	case 12:
 	    image.setImageResource(R.drawable.f);
+	    image.setTag(R.drawable.f);
 	    break;
 	case 13:
 	    image.setImageResource(R.drawable.g);
+	    image.setTag(R.drawable.g);
 	    break;
 	case 14:
 	    image.setImageResource(R.drawable.gslashb);
+	    image.setTag(R.drawable.gslashb);
 	    break;
 	}
     }
