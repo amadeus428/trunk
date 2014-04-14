@@ -1,4 +1,4 @@
-package com.cs429.amadeus.test.junit;
+package com.cs429.amadeus.test;
 
 import junit.framework.TestCase;
 import android.graphics.Bitmap;

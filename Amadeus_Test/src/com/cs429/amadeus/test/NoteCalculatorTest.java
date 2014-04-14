@@ -1,4 +1,4 @@
-package com.cs429.amadeus.test.junit;
+package com.cs429.amadeus.test;
 
 import com.cs429.amadeus.Note;
 import com.cs429.amadeus.helpers.NoteCalculator;
