@@ -35,6 +35,9 @@ import com.cs429.amadeus.fragments.HomeFragment;
 import com.cs429.amadeus.fragments.PlayAlongFragment;
 import com.cs429.amadeus.fragments.RecordingFragment;
 
+/**
+ * Main activity for the Android project
+ */
 public class MainActivity extends Activity {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -95,6 +98,9 @@ public class MainActivity extends Activity {
 	}
     }
 
+    /**
+     * Creates menu options
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 	MenuInflater inflater = getMenuInflater();
