@@ -111,7 +111,7 @@ public class UiTest extends ActivityInstrumentationTestCase2<MainActivity> {
 		Assert.assertNotNull(mStaffLayout);
 	}
 
-	public void testGuitar() {
+	/*public void testGuitar() {
 
 		mActivity.runOnUiThread(new Runnable() {
 			public void run() {
@@ -146,7 +146,7 @@ public class UiTest extends ActivityInstrumentationTestCase2<MainActivity> {
 			this.sendKeys(KeyEvent.KEYCODE_DPAD_DOWN);
 
 		}
-	}
+	}*/
 
 	protected void tearDown() throws Exception {
 		super.tearDown();

@@ -115,7 +115,7 @@ public class NoteView extends View {
 
 	return false;
     }
-    
+
     public Note getNote() {
 	return note;
     }
