@@ -8,14 +8,14 @@
         android:id="@+id/tab_artist_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="artist name" >
+        android:hint="Artist Name" >
     </EditText>
 
     <EditText
         android:id="@+id/tab_song_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="song name" >
+        android:hint="Song Name" >
     </EditText>
 
     <Button
@@ -28,6 +28,6 @@
         android:id="@+id/tab_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Tab Data will go here" />
+        android:text="Enter a Song and Artist and Click GO" />
 
 </LinearLayout>
