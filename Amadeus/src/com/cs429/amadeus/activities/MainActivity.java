@@ -35,6 +35,9 @@ import com.cs429.amadeus.fragments.HomeFragment;
 import com.cs429.amadeus.fragments.PlayAlongFragment;
 import com.cs429.amadeus.fragments.RecordingFragment;
 
+/**
+ * Main activity for the Android project
+ */
 public class MainActivity extends Activity {
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
@@ -129,6 +132,33 @@ public class MainActivity extends Activity {
 		}
 	}
 
+
+    /**
+     * Creates menu options
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+	MenuInflater inflater = getMenuInflater();
+	inflater.inflate(R.menu.main, menu);
+	return super.onCreateOptionsMenu(menu);
+    }
+
+    /* Called whenever we call invalidateOptionsMenu() */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+	// If the nav drawer is open, hide action items related to the content
+	// view
+	boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+	return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+	// The action bar home/up action should open or close the drawer.
+	// ActionBarDrawerToggle will take care of this.
+	if (mDrawerToggle.onOptionsItemSelected(item)) {
+	    return true;
+
 	/* The click listener for ListView in the navigation drawer */
 	private class DrawerItemClickListener implements
 			ListView.OnItemClickListener {
@@ -137,6 +167,7 @@ public class MainActivity extends Activity {
 				long id) {
 			replaceContentViewOnItemSelected(position);
 		}
+>>>>>>> e59bc53c9f56e111e03b3b0589e72040d35946c7
 	}
 
 	public void replaceContentViewOnItemSelected(int position) {
