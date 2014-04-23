@@ -64,11 +64,11 @@ public class HomeFragment extends Fragment {
 		});
 
 	((Button) getActivity().findViewById(
-		R.id.fragment_home_guitar_chords_button))
+		R.id.fragment_home_sound_profile_button))
 		.setOnClickListener(new OnClickListener() {
 		    @Override
 		    public void onClick(View arg0) {
-			parent.replaceContentViewOnItemSelected(3);
+			parent.replaceContentViewOnItemSelected(5);
 		    }
 		});
     }

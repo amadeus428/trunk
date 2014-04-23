@@ -15,7 +15,7 @@ import com.cs429.amadeus.Note;
 import com.cs429.amadeus.R;
 import com.cs429.amadeus.activities.MainActivity;
 import com.cs429.amadeus.helpers.Metronome;
-import com.cs429.amadeus.helpers.OpenSaveSheetHelper;
+import com.cs429.amadeus.helpers.OpenSaveHelper;
 import com.cs429.amadeus.helpers.PlayAlongAnalyzer;
 import com.cs429.amadeus.helpers.PlayAlongStaffMIDIPlayer;
 import com.cs429.amadeus.helpers.Recorder;
@@ -249,7 +249,7 @@ public class PlayAlongFragment extends Fragment {
 		    @Override
 		    public void onClick(DialogInterface dialog, int which) {
 			String filename = filenames[which];
-			OpenSaveSheetHelper.openSheet(getActivity(), filename,
+			OpenSaveHelper.openSheet(getActivity(), filename,
 				staffLayout);
 			dialog.dismiss();
 		    }

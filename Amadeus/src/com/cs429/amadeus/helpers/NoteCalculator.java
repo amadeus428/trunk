@@ -13,6 +13,11 @@ public class NoteCalculator {
     private NoteCalculator() {
     }
 
+    public static float getFreqFromMIDI(float midi) {
+	float pow = (midi - 69) / 12.0f;
+	return (float) (Math.pow(2, pow) * 440.0f);
+    }
+
     /**
      * Returns the staff note associated with the given midi note. By default,
      * the returned note's type is a quarter note.

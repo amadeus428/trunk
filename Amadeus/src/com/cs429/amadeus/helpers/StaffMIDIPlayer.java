@@ -7,6 +7,9 @@ import java.util.TimerTask;
 import org.puredata.core.PdBase;
 
 import android.app.Activity;
+import android.media.AudioManager;
+import android.media.AudioTrack;
+import android.media.SoundPool;
 import android.util.Log;
 import android.widget.HorizontalScrollView;
 
@@ -21,16 +24,18 @@ public abstract class StaffMIDIPlayer {
     protected ArrayList<NoteView> noteViews;
     protected Activity parentActivity;
     protected StaffLayout staffLayout;
-    private int bpm;
+    private float bpm;
     private int numBeatsPassed = 0;
     private int currNoteIndex = 0;
     private boolean isPlaying = false;
     private Timer timer = new Timer();
+    private SoundProfile soundProfile;
 
     public StaffMIDIPlayer(Activity parentActivity, StaffLayout staffLayout,
-	    int bpm) {
+	    SoundProfile soundProfile, float bpm) {
 	this.parentActivity = parentActivity;
 	this.staffLayout = staffLayout;
+	this.soundProfile = soundProfile;
 	this.bpm = bpm;
 
 	noteViews = staffLayout.getAllNoteViews();
@@ -42,8 +47,12 @@ public abstract class StaffMIDIPlayer {
     public abstract void onFinished();
 
     /**
-     * Plays every note on the staff from left to right. Also changes the
-     * appearance of the current playing note's {@link NoteView}.
+     * Plays every note on the staff from left to right, using PureData. Also
+     * changes the appearance of the current playing note's {@link NoteView}. If
+     * audioFilePath is null, PureData will be used to play the notes.
+     * 
+     * @param audioFilePath
+     *            - path to the audio file to play
      */
     public void play() {
 	numBeatsPassed = 0;
@@ -87,8 +96,13 @@ public abstract class StaffMIDIPlayer {
 		float midiNote = (float) NoteCalculator
 			.getMIDIFromNote(currNote);
 
-		PdBase.sendFloat("midinote", midiNote);
-		PdBase.sendBang("trigger");
+		if (soundProfile == null) {
+		    PdBase.sendFloat("midinote", midiNote);
+		    PdBase.sendBang("trigger");
+		} else {
+		    float freq = NoteCalculator.getFreqFromMIDI(midiNote);
+		    soundProfile.play(freq);
+		}
 
 		currNoteIndex++;
 	    }
@@ -103,11 +117,6 @@ public abstract class StaffMIDIPlayer {
 	onFinished();
     }
 
-    /**
-     * Returns whether or not notes are being played.
-     * 
-     * @return - if notes are being played or not
-     */
     public boolean isPlaying() {
 	return isPlaying;
     }

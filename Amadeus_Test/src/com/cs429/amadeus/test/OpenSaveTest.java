@@ -7,7 +7,7 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import com.cs429.amadeus.Note;
 import com.cs429.amadeus.activities.MainActivity;
-import com.cs429.amadeus.helpers.OpenSaveSheetHelper;
+import com.cs429.amadeus.helpers.OpenSaveHelper;
 import com.cs429.amadeus.views.StaffLayout;
 
 public class OpenSaveTest extends
@@ -27,7 +27,7 @@ public class OpenSaveTest extends
 
 		activity = getActivity();
 		staff = new StaffLayout(activity);
-		method = OpenSaveSheetHelper.class.getDeclaredMethod("createSheetXML",
+		method = OpenSaveHelper.class.getDeclaredMethod("createSheetXML",
 				StaffLayout.class);
 		method.setAccessible(true);
 	}

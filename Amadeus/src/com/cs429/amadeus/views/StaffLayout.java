@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -27,6 +28,8 @@ import com.cs429.amadeus.R;
  */
 @SuppressWarnings("deprecation")
 public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
+    public static Bitmap bassClefBitmap;
+    public static Bitmap trebleClefBitmap;
     public static Bitmap wholeNoteBitmap;
     public static Bitmap halfNoteBitmap;
     public static Bitmap quarterNoteBitmap;
@@ -43,6 +46,9 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
     protected int trebleClefStartY; // C4
     protected int bassClefStartY; // E2
     protected int addNoteType = Note.QUARTER_NOTE;
+    protected boolean addNoteSharp = false;
+    protected Rect trebleClefTransformation = new Rect();
+    protected Rect bassClefTransformation = new Rect();
     protected Paint paint = new Paint();
 
     protected final ArrayList<Integer> LINE_Y_POSITIONS = new ArrayList<Integer>();
@@ -81,6 +87,17 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 	bassClefStartY = getBottom() - (spaceHeight * 3) - (spaceHeight / 2);
 	calculateNoteAndLinePositions();
 
+	trebleClefTransformation.left = noteSpacing / 4;
+	trebleClefTransformation.top = NOTE_OCTAVE_TO_Y_MAP.get("G5");
+	trebleClefTransformation.bottom = NOTE_OCTAVE_TO_Y_MAP.get("C4");
+	trebleClefTransformation.right = trebleClefTransformation.left
+		+ (int) ((trebleClefTransformation.bottom - trebleClefTransformation.top) / 2.8f);
+
+	bassClefTransformation.left = trebleClefTransformation.left;
+	bassClefTransformation.top = NOTE_OCTAVE_TO_Y_MAP.get("G3");
+	bassClefTransformation.bottom = NOTE_OCTAVE_TO_Y_MAP.get("A2");
+	bassClefTransformation.right = trebleClefTransformation.right;
+
 	paint.setStrokeWidth(lineHeight);
     }
 
@@ -91,6 +108,10 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 
 	// Draw added note views.
 	super.onDraw(canvas);
+
+	canvas.drawBitmap(trebleClefBitmap, null, trebleClefTransformation,
+		paint);
+	canvas.drawBitmap(bassClefBitmap, null, bassClefTransformation, paint);
     }
 
     private void drawLines(Canvas canvas) {
@@ -110,7 +131,7 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 	int x = (int) event.getX();
 	int y = (int) event.getY();
 
-	if (action == MotionEvent.ACTION_UP) {
+	if (action == MotionEvent.ACTION_UP && x >= noteSpacing) {
 	    addNote(x, y);
 	}
 
@@ -173,8 +194,9 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
      *            - the type of note used for future adds (use {@link Note}
      *            constants)
      */
-    public void setAddNoteType(int addNoteType) {
+    public void setAddNoteType(int addNoteType, boolean sharp) {
 	this.addNoteType = addNoteType;
+	this.addNoteSharp = sharp;
     }
 
     /**
@@ -218,6 +240,19 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 	parent.scrollBy(amount, 0);
     }
 
+    public int getNumLedgerLines(Note note) {
+	String noteOctave = note.note + "" + note.octave;
+	if (noteOctave.equals("C4") || noteOctave.equals("E2")
+		|| noteOctave.equals("C2")) {
+	    return 1;
+	}
+
+	int dy = NOTE_OCTAVE_TO_Y_MAP.get("F5")
+		- NOTE_OCTAVE_TO_Y_MAP.get(noteOctave);
+	int numLines = dy / spaceHeight;
+	return Math.max(0, numLines);
+    }
+
     public int getLineHeight() {
 	return lineHeight;
     }
@@ -245,15 +280,16 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
     protected void addNote(Note note, int x, int y) {
 	NoteView noteView = new NoteView(getContext(), this, note);
 
-	// May need to correct everything due to a sharp.
+	// May need to correct everything due to sharps and ledger lines.
 	int yCorrection = 0;
 	int widthCorrection = 0;
-	int heightCorrection = 0;
+	int heightCorrection = Math.max(0, getNumLedgerLines(note) - 0)
+		* spaceHeight;
 	if (noteView.getNote().isSharp) {
 	    yCorrection = (int) (-sharpHeight * .33f);
 	    widthCorrection = (int) (noteWidth * 1.1f);
 	    boolean isWhole = note.type == Note.WHOLE_NOTE;
-	    heightCorrection = isWhole ? (int) (sharpHeight * .66f)
+	    heightCorrection += isWhole ? (int) (sharpHeight * .66f)
 		    : (int) (sharpHeight * .33f);
 	}
 	AbsoluteLayout.LayoutParams lp = new AbsoluteLayout.LayoutParams(
@@ -298,7 +334,10 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 		// This method is called when a note is manually being added.
 		// Thus, we can use the selected note type as the added note's
 		// type.
-		return new Note(entry.getKey(), addNoteType);
+		String sharpPart = addNoteSharp ? "#" : "";
+		String note = entry.getKey().charAt(0) + sharpPart
+			+ entry.getKey().charAt(1);
+		return new Note(note, addNoteType);
 	    }
 	}
 
@@ -326,24 +365,6 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 	}
 
 	return false;
-    }
-
-    public Note getNoteAtSnappedPos(int x) {
-	for (int i = 0; i < getChildCount(); i++) {
-	    NoteView child = (NoteView) getChildAt(i);
-
-	    // May need to correct if a sharp.
-	    int correction = 0;
-	    if (child.getNote().isSharp) {
-		correction = (int) (-sharpHeight * .33f);
-	    }
-
-	    if (child.getX() == x) {
-		return child.getNote();
-	    }
-	}
-
-	return null;
     }
 
     protected NoteView getNoteViewAtSnappedX(int x) {
@@ -410,6 +431,11 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 		R.drawable.sixteenth_note_down);
 	sharpBitmap = BitmapFactory.decodeResource(getResources(),
 		R.drawable.sharp);
+
+	trebleClefBitmap = BitmapFactory.decodeResource(getResources(),
+		R.drawable.treble_clef);
+	bassClefBitmap = BitmapFactory.decodeResource(getResources(),
+		R.drawable.bass_clef);
     }
 
     private int calculateNoteSpacing() {
