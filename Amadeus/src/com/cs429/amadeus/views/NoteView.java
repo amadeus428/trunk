@@ -18,128 +18,128 @@ import com.cs429.amadeus.views.NoteView.Highlight;
  * {@link StaffLayout}.
  */
 public class NoteView extends View {
-	private StaffLayout parent;
-	private Note note;
-	private Bitmap bitmap;
-	private Rect transformation;
-	private Rect sharpTransformation;
+    private StaffLayout parent;
+    private Note note;
+    private Bitmap bitmap;
+    private Rect transformation;
+    private Rect sharpTransformation;
 
-	public NoteView(Context context, StaffLayout parent, Note note) {
-		super(context);
+    public NoteView(Context context, StaffLayout parent, Note note) {
+	super(context);
 
-		this.parent = parent;
-		this.note = note;
-		this.bitmap = StaffLayout.getBitmap(note.type);
+	this.parent = parent;
+	this.note = note;
+	this.bitmap = StaffLayout.getBitmap(note.type);
 
-		makeHighlightBitmaps(bitmap);
+	makeHighlightBitmaps(bitmap);
 
-		int width = parent.getNoteWidth();
-		int height = parent.getNoteHeight();
+	int width = parent.getNoteWidth();
+	int height = parent.getNoteHeight();
 
-		if (note.isSharp) {
-			int sharpHeight = parent.getSharpHeight();
-			int noteStartX = (int) (width * 1.1f);
-			int noteStartY = (int) (sharpHeight * .33f);
-			sharpTransformation = new Rect(0, 0, width, sharpHeight);
-			transformation = new Rect(noteStartX, noteStartY, noteStartX
-					+ width, noteStartY + height);
-		} else {
-			transformation = new Rect(0, 0, width, height);
-		}
-
+	if (note.isSharp) {
+	    int sharpHeight = parent.getSharpHeight();
+	    int noteStartX = (int) (width * 1.1f);
+	    int noteStartY = (int) (sharpHeight * .33f);
+	    sharpTransformation = new Rect(0, 0, width, sharpHeight);
+	    transformation = new Rect(noteStartX, noteStartY, noteStartX
+		    + width, noteStartY + height);
+	} else {
+	    transformation = new Rect(0, 0, width, height);
 	}
 
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		// If the parent is disabled, also disable touch events on this note.
-		if (!parent.isEnabled()) {
-			return true;
-		}
+    }
 
-		if (event.getAction() == MotionEvent.ACTION_UP) {
-			parent.removeView(NoteView.this);
-		}
-
-		return true;
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+	// If the parent is disabled, also disable touch events on this note.
+	if (!parent.isEnabled()) {
+	    return true;
 	}
 
-	@Override
-	public void onDraw(Canvas canvas) {
-		if (note.isSharp) {
-			canvas.drawBitmap(StaffLayout.sharpBitmap, null,
-					sharpTransformation, null);
-		}
-
-		// If this note should be highlighted for feedback to the user for
-		// play-along
-		if (this.highlight == Highlight.Green)
-			canvas.drawBitmap(greenBitmap[this.note.type], null,
-					transformation, null);
-		else if (this.highlight == Highlight.Red)
-			canvas.drawBitmap(redBitmap[this.note.type], null, transformation,
-					null);
-		else
-			canvas.drawBitmap(bitmap, null, transformation, null);
-
-		super.onDraw(canvas);
+	if (event.getAction() == MotionEvent.ACTION_UP) {
+	    parent.removeView(NoteView.this);
 	}
 
-	public Note getNote() {
-		return note;
+	return true;
+    }
+
+    @Override
+    public void onDraw(Canvas canvas) {
+	if (note.isSharp) {
+	    canvas.drawBitmap(StaffLayout.sharpBitmap, null,
+		    sharpTransformation, null);
 	}
 
-	/*
-	 * This method is used to generate green and red bitmaps for notes
-	 * 
-	 * It is called every time a note object is made, but it only makes bitmaps
-	 * if colored bitmaps have note already been made for this note type
-	 * (As-needed generation)
-	 */
-	private void makeHighlightBitmaps(Bitmap bitmap) {
+	// If this note should be highlighted for feedback to the user for
+	// play-along
+	if (this.highlight == Highlight.Green)
+	    canvas.drawBitmap(greenBitmap[this.note.type], null,
+		    transformation, null);
+	else if (this.highlight == Highlight.Red)
+	    canvas.drawBitmap(redBitmap[this.note.type], null, transformation,
+		    null);
+	else
+	    canvas.drawBitmap(bitmap, null, transformation, null);
 
-		if (greenBitmap[this.note.type] != null) { // A colored bitmap has
-													// already been generated
-													// for this note type
-			return;
-		}
+	super.onDraw(canvas);
+    }
 
-		greenBitmap[this.note.type] = Bitmap.createBitmap(bitmap.getWidth(),
-				bitmap.getHeight(), bitmap.getConfig());
-		redBitmap[this.note.type] = Bitmap.createBitmap(bitmap.getWidth(),
-				bitmap.getHeight(), bitmap.getConfig());
+    public Note getNote() {
+	return note;
+    }
 
-		for (int i = 0; i < bitmap.getWidth(); i++) {
-			for (int j = 0; j < bitmap.getHeight(); j++) {
-				int pixel = bitmap.getPixel(i, j);
-				redBitmap[this.note.type].setPixel(i, j, pixel | (511 << 16));
-				greenBitmap[this.note.type].setPixel(i, j, pixel | (511 << 8));
-			}
-		}
+    /*
+     * This method is used to generate green and red bitmaps for notes
+     * 
+     * It is called every time a note object is made, but it only makes bitmaps
+     * if colored bitmaps have note already been made for this note type
+     * (As-needed generation)
+     */
+    private void makeHighlightBitmaps(Bitmap bitmap) {
+
+	if (greenBitmap[this.note.type] != null) { // A colored bitmap has
+						   // already been generated
+						   // for this note type
+	    return;
 	}
 
-	static private Bitmap[] greenBitmap = new Bitmap[5];
-	static private Bitmap[] redBitmap = new Bitmap[5];
+	greenBitmap[this.note.type] = Bitmap.createBitmap(bitmap.getWidth(),
+		bitmap.getHeight(), bitmap.getConfig());
+	redBitmap[this.note.type] = Bitmap.createBitmap(bitmap.getWidth(),
+		bitmap.getHeight(), bitmap.getConfig());
 
-	public void highlight(Highlight highlight) {
-		this.highlight = highlight;
+	for (int i = 0; i < bitmap.getWidth(); i++) {
+	    for (int j = 0; j < bitmap.getHeight(); j++) {
+		int pixel = bitmap.getPixel(i, j);
+		redBitmap[this.note.type].setPixel(i, j, pixel | (511 << 16));
+		greenBitmap[this.note.type].setPixel(i, j, pixel | (511 << 8));
+	    }
 	}
+    }
 
-	public static Bitmap[] getGreenBitmaps() {
-		return greenBitmap;
-	}
+    static private Bitmap[] greenBitmap = new Bitmap[5];
+    static private Bitmap[] redBitmap = new Bitmap[5];
 
-	public static Bitmap[] getRedBitmaps() {
-		return redBitmap;
-	}
+    public void highlight(Highlight highlight) {
+	this.highlight = highlight;
+    }
 
-	public Bitmap getBitmap() {
-		return bitmap;
-	}
+    public static Bitmap[] getGreenBitmaps() {
+	return greenBitmap;
+    }
 
-	protected enum Highlight {
-		Red, Green, None
-	}
+    public static Bitmap[] getRedBitmaps() {
+	return redBitmap;
+    }
 
-	private Highlight highlight = Highlight.None;
+    public Bitmap getBitmap() {
+	return bitmap;
+    }
+
+    protected enum Highlight {
+	Red, Green, None
+    }
+
+    private Highlight highlight = Highlight.None;
 
 }
