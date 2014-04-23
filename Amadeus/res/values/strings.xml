@@ -10,6 +10,7 @@
     <string name="title_play_along">PLAY ALONG!</string>
     <string name="title_guitar_chords">LEARN GUITAR CHORDS!</string>
     <string name="title_guitar_tabs">GET TABS!!</string>
+    <string name="title_sound_profile">CREATE SOUND PROFILE!</string>
     
     <string-array name="navigation_drawer_items">
         <item>@string/title_home</item>
@@ -17,6 +18,7 @@
         <item>@string/title_play_along</item>
         <item>@string/title_guitar_chords</item>
         <item>@string/title_guitar_tabs</item>
+        <item>@string/title_sound_profile</item>
     </string-array>
     
     <string name="drawer_open">Open navigation drawer</string>
@@ -46,5 +48,27 @@
 		<item>190</item>
 		<item>200</item>
 	</string-array>
+	
+    <string name="daidalos_hello">Hello World!</string>
+	<string name="daidalos_app_name">aFileDialog</string>
+	<color name="daidalos_gray">#888</color>
+	<string name="daidalos_select">Select</string>
+	<string name="daidalos_cancel">Cancel</string>
+	<string name="daidalos_ok">OK</string>
+	<string name="daidalos_new_file">New</string>
+	<string name="daidalos_create_file">Create file</string>
+	<string name="daidalos_create_folder">Create folder</string>
+	<string name="daidalos_accept">Accept</string>
+	<string name="daidalos_enter_file_name">Enter the name of the file that you want to create</string>
+	<string name="daidalos_enter_folder_name">Enter the name of the folder that you want to create</string>
+	<string name="daidalos_yes">Yes</string>
+	<string name="daidalos_no">No</string>
+	<string name="daidalos_confirm_select_file">Are you sure that you want to select the file \'$file_name\'?</string>
+	<string name="daidalos_confirm_create_file">The file \'$file_name\' do not exists, are you sure that you want to create it?</string>
+	<string name="daidalos_confirm_select_folder">Are you sure that you want to select the folder \'$file_name\'?</string>
+	<string name="daidalos_confirm_create_folder">The folder \'$file_name\' do not exists, are you sure that you want to create it?</string>
+	<color name="daidalos_backgroud">#000</color>
+	<color name="daidalos_active_file">#fff</color>
+	<color name="daidalos_inactive_file">#888</color>
 
 </resources>

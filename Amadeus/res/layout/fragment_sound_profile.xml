@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <LinearLayout
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="horizontal" >
+        
+        <Button
+			android:id="@+id/fragment_sound_profile_open_button"
+	   		android:layout_width="match_parent"
+	   		android:layout_height="wrap_content"
+	   		android:layout_weight="1"
+	   		android:text="Open profile" />
+        
+        <Button
+			android:id="@+id/fragment_sound_profile_save_button"
+	   		android:layout_width="match_parent"
+	   		android:layout_height="wrap_content"
+	   		android:layout_weight="1"
+	   		android:text="Save profile" />
+        
+    </LinearLayout>
+    
+   	<Button
+		android:id="@+id/fragment_sound_profile_add_button"
+   		android:layout_width="match_parent"
+   		android:layout_height="wrap_content"
+   		android:text="Add mapping" />
+   	
+   	<ScrollView 
+   	    android:layout_width="match_parent"
+   	    android:layout_height="match_parent" >
+   	    
+   	<LinearLayout
+   	    android:id="@+id/fragment_sound_profile_mapping_list"
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:orientation="vertical" />
+
+   	</ScrollView>
+
+</LinearLayout>
