@@ -14,63 +14,63 @@ import android.widget.TextView;
  * {@link RecordingFragment}, once per beat, based on its given bpm.
  */
 public abstract class Metronome {
-    private int bpm;
-    private Activity parentActivity;
-    private Timer tickTimer;
+	private int bpm;
+	private Activity parentActivity;
+	private Timer tickTimer;
 
-    public Metronome(Activity parentActivity, int bpm) {
-	this.parentActivity = parentActivity;
-	this.bpm = bpm;
-    }
+	public Metronome(Activity parentActivity, int bpm) {
+		this.parentActivity = parentActivity;
+		this.bpm = bpm;
+	}
 
-    /**
-     * Called when the metronome is initially flashed.
-     */
-    public abstract void onTickStart();
+	/**
+	 * Called when the metronome is initially flashed.
+	 */
+	public abstract void onTickStart();
 
-    /**
-     * Called when the metronome is done flashing.
-     */
-    public abstract void onTickEnd();
+	/**
+	 * Called when the metronome is done flashing.
+	 */
+	public abstract void onTickEnd();
 
-    public void start() {
-	float bps = bpm / 60.0f;
-	final int ms = (int) ((1.0 / bps) * 1000);
+	public void start() {
+		float bps = bpm / 60.0f;
+		final int ms = (int) ((1.0 / bps) * 1000);
 
-	tickTimer = new Timer();
-	tickTimer.scheduleAtFixedRate(new TimerTask() {
-	    @Override
-	    public void run() {
-		parentActivity.runOnUiThread(new Runnable() {
-		    @Override
-		    public void run() {
-			doMetronomeFlash(ms);
-		    }
-		});
-	    }
-	}, 0, ms);
-    }
+		tickTimer = new Timer();
+		tickTimer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				parentActivity.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						doMetronomeFlash(ms);
+					}
+				});
+			}
+		}, 0, ms);
+	}
 
-    public void stop() {
-	onTickEnd();
-	tickTimer.cancel();
-    }
+	public void stop() {
+		onTickEnd();
+		tickTimer.cancel();
+	}
 
-    private void doMetronomeFlash(final int ms) {
-	final Timer flashTimer = new Timer();
-	final TimerTask flashTimerTask = new TimerTask() {
-	    @Override
-	    public void run() {
-		parentActivity.runOnUiThread(new Runnable() {
-		    @Override
-		    public void run() {
-			onTickEnd();
-		    }
-		});
-	    }
-	};
+	private void doMetronomeFlash(final int ms) {
+		final Timer flashTimer = new Timer();
+		final TimerTask flashTimerTask = new TimerTask() {
+			@Override
+			public void run() {
+				parentActivity.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						onTickEnd();
+					}
+				});
+			}
+		};
 
-	onTickStart();
-	flashTimer.schedule(flashTimerTask, ms / 8);
-    }
+		onTickStart();
+		flashTimer.schedule(flashTimerTask, ms / 8);
+	}
 }

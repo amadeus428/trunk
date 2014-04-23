@@ -1,4 +1,4 @@
-package com.cs429.amadeus.test.junit;
+package com.cs429.amadeus.test;
 
 import com.cs429.amadeus.Note;
 import com.cs429.amadeus.helpers.NoteCalculator;
@@ -35,21 +35,21 @@ public class NoteCalculatorTest extends TestCase {
 	public void testAboveMax() {
 		assertEquals(null, NoteCalculator.getNoteFromMIDI(129));
 	}
-	
+
 	public void testGetMidiFromUnknownNote() {
 		Note note = new Note("Z#5", 1);
 		assertEquals(null, NoteCalculator.getMIDIFromNote(note));
 	}
-	
+
 	public void testGetMidiFromKnownNote() {
 		Note note = new Note("C4", 1);
 		assertEquals(48.0f, NoteCalculator.getMIDIFromNote(note));
 	}
-	
+
 	public void testGetMidiFromNullNote() {
 		assertEquals(null, NoteCalculator.getMIDIFromNote(null));
 	}
-	
+
 	public void testGetMidiFromNegativeOctaveNote() {
 		Note note = new Note("C4", 1);
 		note.octave = -1;
