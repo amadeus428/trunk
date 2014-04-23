@@ -3,6 +3,8 @@ package com.cs429.amadeus.views;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -23,6 +25,8 @@ public class NoteView extends View {
     private Bitmap bitmap;
     private Rect transformation;
     private Rect sharpTransformation;
+    private int numLedgerLines = 0;
+    private Paint paint = new Paint();
 
     public NoteView(Context context, StaffLayout parent, Note note) {
 	super(context);
@@ -46,7 +50,9 @@ public class NoteView extends View {
 	} else {
 	    transformation = new Rect(0, 0, width, height);
 	}
-
+	paint.setStrokeWidth(parent.getLineHeight());
+	paint.setColor(Color.BLACK);
+	numLedgerLines = parent.getNumLedgerLines(note);
     }
 
     @Override
@@ -84,6 +90,32 @@ public class NoteView extends View {
 	super.onDraw(canvas);
     }
 
+    private void drawLedgerLines(Canvas canvas) {
+	int correction = note.isSharp ? (int) (parent.getSharpHeight() * .33f)
+		: 0;
+	correction += isOnStaffLine() ? -parent.getSpaceHeight() / 2 : 0;
+	float top = (parent.getNoteHeight() * .33f) + correction;
+	float left = note.isSharp ? parent.getNoteWidth() : 0;
+	float width = note.isSharp ? getWidth() / 2 : getWidth();
+	for (int i = 0; i < numLedgerLines; i++) {
+	    canvas.drawLine(left, top, left + width, top, paint);
+	    top += parent.getSpaceHeight();
+	}
+    }
+
+    private boolean isOnStaffLine() {
+	String noteOctave = note.note + "" + note.octave;
+	String[] against = new String[] { "C2", "E2", "C4", "A5", "C6", "E6",
+		"G6", "B6", "D7", "F7", "A7", "C8", "E8", "G8", "B8" };
+	for (String s : against) {
+	    if (noteOctave.equals(s)) {
+		return true;
+	    }
+	}
+
+	return false;
+    }
+    
     public Note getNote() {
 	return note;
     }

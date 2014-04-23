@@ -9,8 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal" >
         
         <ImageView 
@@ -28,7 +28,7 @@
             android:textColor="@android:color/white"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/fragment_home_icon"
-            android:textSize="40sp" />
+            android:textSize="35sp" />
         
         <ImageView 
             android:layout_width="wrap_content"
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="CREATE SHEET MUSIC!"
-        android:textAppearance="?android:attr/textAppearanceLarge" 
+        android:textAppearance="?android:attr/textAppearanceMedium" 
         android:background="@drawable/main_menu_button_background" />
     
     <Button
@@ -54,17 +54,17 @@
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:text="PLAY ALONG!"
-        android:textAppearance="?android:attr/textAppearanceLarge" 
+        android:textAppearance="?android:attr/textAppearanceMedium" 
         android:background="@drawable/main_menu_button_background" />
     
     <Button
-        android:id="@+id/fragment_home_guitar_chords_button"
+        android:id="@+id/fragment_home_sound_profile_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:text="LEARN GUITAR CHORDS!"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="CREATE SOUND PROFILE!"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:background="@drawable/main_menu_button_background" />
 
 </LinearLayout>

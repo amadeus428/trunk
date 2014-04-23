@@ -13,7 +13,7 @@ import com.cs429.amadeus.views.StaffLayout;
 public abstract class PlayAlongStaffMIDIPlayer extends StaffMIDIPlayer {
     public PlayAlongStaffMIDIPlayer(Activity parentActivity,
 	    StaffLayout staffLayout, int bpm) {
-	super(parentActivity, staffLayout, bpm);
+	super(parentActivity, staffLayout, null, bpm);
 
 	// Only play notes that were opened via dialog (all non-recorded notes).
 	noteViews = ((PlayAlongStaffLayout) staffLayout)

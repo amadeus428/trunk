@@ -14,11 +14,11 @@ import android.widget.TextView;
  * {@link RecordingFragment}, once per beat, based on its given bpm.
  */
 public abstract class Metronome {
-    private int bpm;
+    private float bpm;
     private Activity parentActivity;
     private Timer tickTimer;
 
-    public Metronome(Activity parentActivity, int bpm) {
+    public Metronome(Activity parentActivity, float bpm) {
 	this.parentActivity = parentActivity;
 	this.bpm = bpm;
     }

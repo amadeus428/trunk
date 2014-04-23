@@ -25,8 +25,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -34,11 +37,14 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupMenu;
+import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -49,23 +55,29 @@ import com.cs429.amadeus.R;
 import com.cs429.amadeus.activities.MainActivity;
 import com.cs429.amadeus.helpers.Metronome;
 import com.cs429.amadeus.helpers.NoteCalculator;
-import com.cs429.amadeus.helpers.OpenSaveSheetHelper;
+import com.cs429.amadeus.helpers.OpenSaveHelper;
 import com.cs429.amadeus.helpers.Recorder;
+import com.cs429.amadeus.helpers.SoundProfile;
 import com.cs429.amadeus.helpers.StaffMIDIPlayer;
 import com.cs429.amadeus.views.StaffLayout;
 
 /**
- * Handles transcribing user input
+ * Handles transcribing user input.
  */
 public class RecordingFragment extends Fragment {
+    private float bpm;
     private ImageButton playStopNotesButton;
-    private Spinner bpmSpinner;
     private StaffLayout staffLayout;
     private Recorder recorder;
     private Metronome metronome;
     private StaffMIDIPlayer midiPlayer;
+    private SoundProfile soundProfile;
     private AlertDialog.Builder openDialog;
     private AlertDialog.Builder saveDialog;
+    private AlertDialog.Builder deleteDialog;
+    private AlertDialog.Builder bpmDialog;
+    private AlertDialog.Builder addNoteDialog;
+    private AlertDialog.Builder settingsDialog;
     private PdUiDispatcher dispatcher;
     private PdService pdService = null;
 
@@ -109,7 +121,6 @@ public class RecordingFragment extends Fragment {
 	staffLayout = (StaffLayout) getActivity().findViewById(
 		R.id.fragment_recording_staff_layout);
 
-	initSpinners();
 	createButtonListeners();
 
 	initSystemServices();
@@ -123,63 +134,47 @@ public class RecordingFragment extends Fragment {
 	getActivity().unbindService(pdConnection);
     }
 
-    private void initSpinners() {
-	bpmSpinner = (Spinner) getActivity().findViewById(
-		R.id.fragment_recording_bpm_spinner);
-
-	final Spinner noteTypeSpinner = (Spinner) getActivity().findViewById(
-		R.id.fragment_recording_note_spinner);
-	noteTypeSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-	    @Override
-	    public void onItemSelected(AdapterView<?> adapter, View view,
-		    int pos, long id) {
-		switch (pos) {
-		case 0:
-		    staffLayout.setAddNoteType(Note.WHOLE_NOTE);
-		    break;
-		case 1:
-		    staffLayout.setAddNoteType(Note.HALF_NOTE);
-		    break;
-		case 2:
-		    staffLayout.setAddNoteType(Note.QUARTER_NOTE);
-		    break;
-		case 3:
-		    staffLayout.setAddNoteType(Note.EIGHTH_NOTE);
-		    break;
-		case 4:
-		    staffLayout.setAddNoteType(Note.SIXTEENTH_NOTE);
-		    break;
-		}
-	    }
-
-	    @Override
-	    public void onNothingSelected(AdapterView<?> adapter) {
-	    }
-	});
-    }
-
     private void createButtonListeners() {
-	final Button openButton = (Button) getActivity().findViewById(
-		R.id.fragment_recording_open_recording_button);
-	openButton.setOnClickListener(new OnClickListener() {
+	final Button fileButton = (Button) getActivity().findViewById(
+		R.id.fragment_recording_file_button);
+	fileButton.setOnClickListener(new OnClickListener() {
 	    @Override
 	    public void onClick(View v) {
-		createOpenDialog();
-		openDialog.show();
+		PopupMenu popup = new PopupMenu(getActivity(), v);
+		popup.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+		    @Override
+		    public boolean onMenuItemClick(MenuItem item) {
+			switch (item.getItemId()) {
+			case R.id.fragment_recording_file_menu_open:
+			    createOpenDialog();
+			    openDialog.show();
+			    break;
+			case R.id.fragment_recording_file_menu_save:
+			    createSaveDialog();
+			    saveDialog.show();
+			    break;
+			case R.id.fragment_recording_file_menu_delete:
+			    createDeleteDialog();
+			    deleteDialog.show();
+			    break;
+			case R.id.fragment_recording_file_menu_settings:
+			    createSettingsDialog();
+			    settingsDialog.show();
+			    break;
+			}
+
+			return true;
+		    }
+		});
+
+		MenuInflater menuInflater = popup.getMenuInflater();
+		menuInflater.inflate(R.layout.fragment_recording_file_menu,
+			popup.getMenu());
+		popup.show();
 	    }
 	});
 
-	final Button saveButton = (Button) getActivity().findViewById(
-		R.id.fragment_recording_save_recording_button);
-	saveButton.setOnClickListener(new OnClickListener() {
-	    @Override
-	    public void onClick(View view) {
-		createSaveDialog();
-		saveDialog.show();
-	    }
-	});
-
-	final Button startStopRecordingButton = (Button) getActivity()
+	final ImageButton startStopRecordingButton = (ImageButton) getActivity()
 		.findViewById(
 			R.id.fragment_recording_start_stop_recording_button);
 	startStopRecordingButton.setOnClickListener(new OnClickListener() {
@@ -193,49 +188,11 @@ public class RecordingFragment extends Fragment {
 		if (recorder != null && recorder.isRecording()) {
 		    metronome.stop();
 		    recorder.stop();
+		    flipRecordButtonImage();
 		} else {
-		    ((HorizontalScrollView) staffLayout.getParent()).scrollTo(
-			    0, 0);
-
-		    recorder = new Recorder(staffLayout, getBPM()) {
-			@Override
-			public void onNote(final Note note) {
-			    RecordingFragment.this.getActivity().runOnUiThread(
-				    new Runnable() {
-					@Override
-					public void run() {
-					    TextView noteRecorded = (TextView) getActivity()
-						    .findViewById(
-							    R.id.fragment_recording_note_recorded_textview);
-					    noteRecorded
-						    .setText("Note recorded: "
-							    + note.toString());
-					}
-				    });
-			}
-		    };
-		    recorder.start();
-
-		    final TextView noteRecordedTextView = (TextView) getActivity()
-			    .findViewById(
-				    R.id.fragment_recording_note_recorded_textview);
-		    metronome = new Metronome(getActivity(), getBPM()) {
-			@Override
-			public void onTickStart() {
-			    noteRecordedTextView.setBackgroundColor(Color.RED);
-			}
-
-			@Override
-			public void onTickEnd() {
-			    noteRecordedTextView
-				    .setBackgroundColor(Color.TRANSPARENT);
-
-			}
-		    };
-		    metronome.start();
+		    createBPMDialog(true);
+		    bpmDialog.show();
 		}
-		String newText = recorder.isRecording() ? "Stop" : "Record";
-		startStopRecordingButton.setText(newText);
 	    }
 	});
 
@@ -252,11 +209,21 @@ public class RecordingFragment extends Fragment {
 		    playStopNotesButton.setImageResource(R.drawable.play);
 		    midiPlayer.stop();
 		} else {
-		    playStopNotesButton.setImageResource(R.drawable.stop);
-		    ((HorizontalScrollView) staffLayout.getParent()).scrollTo(
-			    0, 0);
-		    playNotes();
+		    if (staffLayout.getChildCount() > 0) {
+			createBPMDialog(false);
+			bpmDialog.show();
+		    }
 		}
+	    }
+	});
+
+	final ImageButton addNoteButton = (ImageButton) getActivity()
+		.findViewById(R.id.fragment_recording_add_note_button);
+	addNoteButton.setOnClickListener(new OnClickListener() {
+	    @Override
+	    public void onClick(View v) {
+		createAddNoteDialog();
+		addNoteDialog.show();
 	    }
 	});
 
@@ -283,7 +250,8 @@ public class RecordingFragment extends Fragment {
 	// While playing notes, disable touch events on the staff.
 	staffLayout.setEnabled(false);
 
-	midiPlayer = new StaffMIDIPlayer(getActivity(), staffLayout, getBPM()) {
+	midiPlayer = new StaffMIDIPlayer(getActivity(), staffLayout,
+		soundProfile, bpm) {
 	    @Override
 	    public void onFinished() {
 		RecordingFragment.this.getActivity().runOnUiThread(
@@ -316,8 +284,8 @@ public class RecordingFragment extends Fragment {
 			String filename = ((EditText) input).getText()
 				.toString();
 			if (filename != null && filename.length() > 0) {
-			    OpenSaveSheetHelper.saveSheet(getActivity(),
-				    filename, staffLayout);
+			    OpenSaveHelper.saveSheet(getActivity(), filename,
+				    staffLayout);
 			}
 		    }
 		})
@@ -332,8 +300,8 @@ public class RecordingFragment extends Fragment {
     }
 
     private void createOpenDialog() {
-	File recordingsRoot = getActivity().getDir("recordings",
-		Context.MODE_PRIVATE);
+	File recordingsRoot = getActivity().getDir(
+		OpenSaveHelper.RECORDINGS_DIR, Context.MODE_PRIVATE);
 	final String[] filenames = recordingsRoot.list();
 
 	openDialog = new AlertDialog.Builder(getActivity());
@@ -343,7 +311,7 @@ public class RecordingFragment extends Fragment {
 		    @Override
 		    public void onClick(DialogInterface dialog, int which) {
 			String filename = filenames[which];
-			OpenSaveSheetHelper.openSheet(getActivity(), filename,
+			OpenSaveHelper.openSheet(getActivity(), filename,
 				staffLayout);
 			dialog.dismiss();
 		    }
@@ -356,6 +324,209 @@ public class RecordingFragment extends Fragment {
 				dialog.cancel();
 			    }
 			});
+    }
+
+    private void createDeleteDialog() {
+	File recordingsRoot = getActivity().getDir(
+		OpenSaveHelper.RECORDINGS_DIR, Context.MODE_PRIVATE);
+	final String[] filenames = recordingsRoot.list();
+
+	deleteDialog = new AlertDialog.Builder(getActivity());
+	deleteDialog
+		.setTitle("Delete recording")
+		.setItems(filenames, new DialogInterface.OnClickListener() {
+		    @Override
+		    public void onClick(DialogInterface dialog, final int which1) {
+			AlertDialog.Builder areYouSureDialog = new AlertDialog.Builder(
+				getActivity());
+			areYouSureDialog
+				.setTitle("Are you sure?")
+				.setPositiveButton("Ok",
+					new DialogInterface.OnClickListener() {
+					    @Override
+					    public void onClick(
+						    DialogInterface dialog,
+						    int which2) {
+						String filename = filenames[which1];
+						File rootDir = getActivity()
+							.getDir(OpenSaveHelper.RECORDINGS_DIR,
+								Context.MODE_PRIVATE);
+						File file = new File(rootDir,
+							filename);
+						file.delete();
+
+						dialog.dismiss();
+					    }
+					})
+				.setNegativeButton("Cancel",
+					new DialogInterface.OnClickListener() {
+					    @Override
+					    public void onClick(
+						    DialogInterface dialog,
+						    int which) {
+						dialog.cancel();
+					    }
+					}).show();
+		    }
+		})
+		.setNegativeButton("Cancel",
+			new DialogInterface.OnClickListener() {
+			    @Override
+			    public void onClick(DialogInterface dialog,
+				    int whichButton) {
+				dialog.cancel();
+			    }
+			});
+    }
+
+    private void createBPMDialog(final boolean fromRecord) {
+	final EditText input = new EditText(getActivity());
+	input.setInputType(InputType.TYPE_CLASS_NUMBER);
+	bpmDialog = new AlertDialog.Builder(getActivity());
+	bpmDialog
+		.setTitle("Enter BPM")
+		.setMessage("Enter the beats per minute")
+		.setView(input)
+		.setPositiveButton("Cool!",
+			new DialogInterface.OnClickListener() {
+			    @Override
+			    public void onClick(DialogInterface dialog,
+				    int whichButton) {
+				String bpm = ((EditText) input).getText()
+					.toString();
+				if (bpm != null && bpm.length() > 0) {
+				    RecordingFragment.this.bpm = Float
+					    .parseFloat(bpm);
+				}
+
+				if (fromRecord) {
+				    startRecording();
+				} else {
+				    playStopNotesButton
+					    .setImageResource(R.drawable.stop);
+				    ((HorizontalScrollView) staffLayout
+					    .getParent()).scrollTo(0, 0);
+				    playNotes();
+				}
+			    }
+			});
+    }
+
+    private void createAddNoteDialog() {
+	final LinearLayout view = (LinearLayout) getActivity()
+		.getLayoutInflater().inflate(
+			R.layout.fragment_recording_add_note_dialog, null);
+	final Spinner spinner = (Spinner) view
+		.findViewById(R.id.fragment_recording_add_note_dialog_note_spinner);
+	final CheckBox sharpCheckBox = (CheckBox) view
+		.findViewById(R.id.fragment_recording_add_note_dialog_sharp_check_box);
+
+	addNoteDialog = new AlertDialog.Builder(getActivity());
+	addNoteDialog
+		.setTitle("Select add note type")
+		.setView(view)
+		.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+		    @Override
+		    public void onClick(DialogInterface dialog, int whichButton) {
+			int spinnerItemPos = spinner.getSelectedItemPosition();
+			boolean sharpChecked = sharpCheckBox.isChecked();
+			setAddNoteType(spinnerItemPos, sharpChecked);
+		    }
+		})
+		.setNegativeButton("Cancel",
+			new DialogInterface.OnClickListener() {
+			    @Override
+			    public void onClick(DialogInterface dialog,
+				    int whichButton) {
+				dialog.cancel();
+			    }
+			});
+    }
+
+    private void createSettingsDialog() {
+	File profilesRoot = getActivity().getDir(
+		OpenSaveHelper.SOUND_PROFILES_DIR, Context.MODE_PRIVATE);
+	final String[] filenames = profilesRoot.list();
+
+	settingsDialog = new AlertDialog.Builder(getActivity());
+	settingsDialog
+		.setTitle("Open sound profile")
+		.setItems(filenames, new DialogInterface.OnClickListener() {
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+			String fileName = filenames[which];
+			soundProfile = OpenSaveHelper.openSoundProfile(
+				getActivity(), fileName);
+			dialog.dismiss();
+		    }
+		})
+		.setNegativeButton("Cancel",
+			new DialogInterface.OnClickListener() {
+			    @Override
+			    public void onClick(DialogInterface dialog,
+				    int whichButton) {
+				dialog.cancel();
+			    }
+			});
+    }
+
+    private void setAddNoteType(int spinnerPos, boolean sharp) {
+	switch (spinnerPos) {
+	case 0:
+	    staffLayout.setAddNoteType(Note.WHOLE_NOTE, sharp);
+	    break;
+	case 1:
+	    staffLayout.setAddNoteType(Note.HALF_NOTE, sharp);
+	    break;
+	case 2:
+	    staffLayout.setAddNoteType(Note.QUARTER_NOTE, sharp);
+	    break;
+	case 3:
+	    staffLayout.setAddNoteType(Note.EIGHTH_NOTE, sharp);
+	    break;
+	case 4:
+	    staffLayout.setAddNoteType(Note.SIXTEENTH_NOTE, sharp);
+	    break;
+	}
+    }
+
+    private void startRecording() {
+	((HorizontalScrollView) staffLayout.getParent()).scrollTo(0, 0);
+
+	recorder = new Recorder(staffLayout, bpm) {
+	    @Override
+	    public void onNote(final Note note) {
+		getActivity().runOnUiThread(new Runnable() {
+		    @Override
+		    public void run() {
+			TextView noteRecorded = (TextView) getActivity()
+				.findViewById(
+					R.id.fragment_recording_note_recorded_textview);
+			noteRecorded.setText("Note recorded: "
+				+ note.toString());
+		    }
+		});
+	    }
+	};
+	recorder.start();
+
+	final TextView noteRecordedTextView = (TextView) getActivity()
+		.findViewById(R.id.fragment_recording_note_recorded_textview);
+	metronome = new Metronome(getActivity(), bpm) {
+	    @Override
+	    public void onTickStart() {
+		noteRecordedTextView.setBackgroundColor(Color.RED);
+	    }
+
+	    @Override
+	    public void onTickEnd() {
+		noteRecordedTextView.setBackgroundColor(Color.TRANSPARENT);
+
+	    }
+	};
+	metronome.start();
+
+	flipRecordButtonImage();
     }
 
     private void initPd() throws IOException {
@@ -414,12 +585,17 @@ public class RecordingFragment extends Fragment {
 	}, PhoneStateListener.LISTEN_CALL_STATE);
     }
 
-    private boolean isPlaying() {
-	return midiPlayer != null && midiPlayer.isPlaying();
+    private void flipRecordButtonImage() {
+	final ImageButton startStopRecordingButton = (ImageButton) getActivity()
+		.findViewById(
+			R.id.fragment_recording_start_stop_recording_button);
+	int srcId = recorder.isRecording() ? R.drawable.record_on
+		: R.drawable.record_off;
+	startStopRecordingButton.setImageResource(srcId);
     }
 
-    private int getBPM() {
-	return Integer.parseInt(bpmSpinner.getSelectedItem().toString());
+    private boolean isPlaying() {
+	return midiPlayer != null && midiPlayer.isPlaying();
     }
 
     public static RecordingFragment newInstance() {

@@ -17,7 +17,7 @@ public abstract class Recorder {
     private Note lastNote;
     private final StaffLayout staffLayout;
 
-    public Recorder(StaffLayout staffLayout, int bpm) {
+    public Recorder(StaffLayout staffLayout, float bpm) {
 	this.staffLayout = staffLayout;
 	bps = bpm / 60.f;
 	if (bps == 0)
