@@ -7,15 +7,38 @@ import junit.framework.TestCase;
 
 import junit.*;
 
-
 public class RecorderTest extends TestCase {
 	
 	
-	//Test divide by zero
 	
+	/*
+	 * This test case tests whether the code correctly throws
+	 * a divide by zero exception given that we supplied
+	 * it with an illegal input
+	 */
 	public void testException(){
-	try{
-		Recorder recorder = new Recorder(null,0)
+		try{
+			Recorder recorder = new Recorder(null,0)
+			{
+				@Override
+				public void onNote(final Note note) {
+				
+				}
+			};
+			
+		}
+		catch(IllegalArgumentException e){
+			assertEquals(e.getMessage(),"bps is zero");
+		}
+	
+	}
+	
+	/*
+	 * Tests whether the Recorder.java file correctly calculated the 
+	 * BPS for the given parameters.
+	 */
+	public void testBPs(){
+		Recorder recorder = new Recorder(null,500)
 		{
 			@Override
 			public void onNote(final Note note) {
@@ -23,29 +46,17 @@ public class RecorderTest extends TestCase {
 			}
 		};
 		
-	}
-	catch(IllegalArgumentException e){
-		assertEquals(e.getMessage(),"bps is zero");
-	}
-	
-	}
-	
-	public void testBPs(){
-	Recorder recorder = new Recorder(null,500)
-	{
-		@Override
-		public void onNote(final Note note) {
-		
-		}
-	};
-	
-	float bps = recorder.getBPS();
-	float req = (float)(25.0/3);
-	assertEquals(bps,req);
+		float bps = recorder.getBPS();
+		float req = (float)(25.0/3);
+		assertEquals(bps,req);
 	}
 
 	
-	
+	/*
+	 * Tests whether the Recorder.java file 
+	 * correctly calculated the period given 
+	 * the input parameters.
+	 */
 	public void testPeriod(){
 		Recorder recorder = new Recorder(null,500)
 		{
@@ -60,6 +71,10 @@ public class RecorderTest extends TestCase {
 		assertEquals(period,req);
 		}
 
+	/*
+	 * Tests whether the initial value of
+	 * isRecording is set correctly.
+	 */
 	public void testRecordingBeforeInit(){
 		Recorder recorder = new Recorder(null,500)
 		{
@@ -71,6 +86,10 @@ public class RecorderTest extends TestCase {
 		assertFalse(recorder.isRecording());
 	}
 
+	/*
+	 * Tests whether the recorder understands
+	 * when the recording has started.
+	 */
 	public void testStarted(){
 		Recorder recorder = new Recorder(null,500)
 		{
@@ -83,6 +102,10 @@ public class RecorderTest extends TestCase {
 		assertTrue(recorder.isRecording());
 	}
 	
+	/*
+	 * Tests whether the recorder understands 
+	 * when the recording has ended.
+	 */
 	public void testStopped(){
 		Recorder recorder = new Recorder(null,500)
 		{
