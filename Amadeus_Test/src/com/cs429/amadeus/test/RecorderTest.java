@@ -7,7 +7,6 @@ import junit.framework.TestCase;
 
 import junit.*;
 
-
 public class RecorderTest extends TestCase {
 	
 	
