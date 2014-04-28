@@ -99,6 +99,7 @@ public class NoteView extends View {
 	float top = (parent.getNoteHeight() * .33f) + correction;
 	float left = note.isSharp ? parent.getNoteWidth() : 0;
 	float width = note.isSharp ? getWidth() / 2 : getWidth();
+	paint.setStyle(Paint.Style.STROKE); 
 	for (int i = 0; i < numLedgerLines; i++) {
 	    canvas.drawLine(left, top, left + width, top, paint);
 	    top += parent.getSpaceHeight();
