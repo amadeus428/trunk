@@ -246,10 +246,16 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 		|| noteOctave.equals("C2")) {
 	    return 1;
 	}
-
-	int dy = NOTE_OCTAVE_TO_Y_MAP.get("F5")
+	int dy;
+	int numLines;
+	try{
+		dy = NOTE_OCTAVE_TO_Y_MAP.get("F5")
 		- NOTE_OCTAVE_TO_Y_MAP.get(noteOctave);
-	int numLines = dy / spaceHeight;
+		 numLines = dy / spaceHeight;
+	}catch(Exception e){
+		dy = 0;
+		numLines = 0; //Fails silently
+	}
 	return Math.max(0, numLines);
     }
 
