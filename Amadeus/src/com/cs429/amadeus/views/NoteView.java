@@ -71,6 +71,8 @@ public class NoteView extends View {
 
     @Override
     public void onDraw(Canvas canvas) {
+	drawLedgerLines(canvas);
+
 	if (note.isSharp) {
 	    canvas.drawBitmap(StaffLayout.sharpBitmap, null,
 		    sharpTransformation, null);

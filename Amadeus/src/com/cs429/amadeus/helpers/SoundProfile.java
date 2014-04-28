@@ -15,6 +15,10 @@ public class SoundProfile {
 
     public void addMapping(float low, float high, String audioFilePath) {
 	try {
+	    if (low < 0 || high < 0 || low > high || audioFilePath == null) {
+		return;
+	    }
+
 	    Range range = new Range(low, high);
 	    rangeToFileMap.put(range, audioFilePath);
 	} catch (Exception e) {

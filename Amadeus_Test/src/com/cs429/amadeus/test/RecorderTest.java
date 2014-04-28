@@ -7,95 +7,101 @@ import junit.framework.TestCase;
 
 import junit.*;
 
-
 public class RecorderTest extends TestCase {
-	
-	
-	//Test divide by zero
-	
-	public void testException(){
-	try{
-		Recorder recorder = new Recorder(null,0)
-		{
-			@Override
-			public void onNote(final Note note) {
-			
-			}
-		};
-		
-	}
-	catch(IllegalArgumentException e){
-		assertEquals(e.getMessage(),"bps is zero");
-	}
-	
-	}
-	
-	public void testBPs(){
-	Recorder recorder = new Recorder(null,500)
-	{
+
+    /*
+     * This test case tests whether the code correctly throws a divide by zero
+     * exception given that we supplied it with an illegal input
+     */
+    public void testException() {
+	try {
+	    Recorder recorder = new Recorder(null, 0) {
 		@Override
 		public void onNote(final Note note) {
-		
+
 		}
+	    };
+
+	} catch (IllegalArgumentException e) {
+	    assertEquals(e.getMessage(), "bps is zero");
+	}
+
+    }
+
+    /*
+     * Tests whether the Recorder.java file correctly calculated the BPS for the
+     * given parameters.
+     */
+    public void testBPs() {
+	Recorder recorder = new Recorder(null, 500) {
+	    @Override
+	    public void onNote(final Note note) {
+
+	    }
 	};
-	
+
 	float bps = recorder.getBPS();
-	float req = (float)(25.0/3);
-	assertEquals(bps,req);
-	}
+	float req = (float) (25.0 / 3);
+	assertEquals(bps, req);
+    }
 
-	
-	
-	public void testPeriod(){
-		Recorder recorder = new Recorder(null,500)
-		{
-			@Override
-			public void onNote(final Note note) {
-			
-			}
-		};
-		
-		float period = recorder.getPeriod();
-		float req = (float)(30.0);
-		assertEquals(period,req);
-		}
+    /*
+     * Tests whether the Recorder.java file correctly calculated the period
+     * given the input parameters.
+     */
+    public void testPeriod() {
+	Recorder recorder = new Recorder(null, 500) {
+	    @Override
+	    public void onNote(final Note note) {
 
-	public void testRecordingBeforeInit(){
-		Recorder recorder = new Recorder(null,500)
-		{
-			@Override
-			public void onNote(final Note note) {
-			
-			}
-		};
-		assertFalse(recorder.isRecording());
-	}
+	    }
+	};
 
-	public void testStarted(){
-		Recorder recorder = new Recorder(null,500)
-		{
-			@Override
-			public void onNote(final Note note) {
-			
-			}
-		};
-		recorder.start();
-		assertTrue(recorder.isRecording());
-	}
-	
-	public void testStopped(){
-		Recorder recorder = new Recorder(null,500)
-		{
-			@Override
-			public void onNote(final Note note) {
-			
-			}
-		};
-		recorder.start();
-		recorder.stop();
-		assertFalse(recorder.isRecording());
-	}
-	
-	
-		
-	}
+	float period = recorder.getPeriod();
+	float req = (float) (30.0);
+	assertEquals(period, req);
+    }
+
+    /*
+     * Tests whether the initial value of isRecording is set correctly.
+     */
+    public void testRecordingBeforeInit() {
+	Recorder recorder = new Recorder(null, 500) {
+	    @Override
+	    public void onNote(final Note note) {
+
+	    }
+	};
+	assertFalse(recorder.isRecording());
+    }
+
+    /*
+     * Tests whether the recorder understands when the recording has started.
+     */
+    public void testStarted() {
+	Recorder recorder = new Recorder(null, 500) {
+	    @Override
+	    public void onNote(final Note note) {
+
+	    }
+	};
+	recorder.start();
+	assertTrue(recorder.isRecording());
+    }
+
+    /*
+     * Tests whether the recorder understands when the recording has ended.
+     */
+    public void testStopped() {
+	Recorder recorder = new Recorder(null, 500) {
+	    @Override
+	    public void onNote(final Note note) {
+
+	    }
+	};
+	recorder.start();
+	recorder.stop();
+	assertFalse(recorder.isRecording());
+    }
+
+}
