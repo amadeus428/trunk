@@ -22,7 +22,6 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 
-
 /**
  * Handles searching for tabs and lyrics for a song based on user input
  */
@@ -65,7 +64,8 @@ public class TabSearchFragment extends Fragment {
 	}
 
 	/**
-	 * Function called by the listener attached to the button
+	 * Called when the GO button is clicked. Function creates the url from the
+	 * artist and song entered by the user and will then get the guitar tab
 	 */
 	private void onButtonClick() {
 		String artist = ((EditText) getActivity().findViewById(
@@ -93,6 +93,7 @@ public class TabSearchFragment extends Fragment {
 	 */
 	private String buildUrl(String artist, String song) {
 
+		// parse information from text boxes
 		artist = artist.trim();
 		song = song.trim();
 		artist = artist.toLowerCase();
@@ -160,10 +161,15 @@ public class TabSearchFragment extends Fragment {
 		}
 
 		protected void onPostExecute(String result) {
-			setText(result);
+			setWebViewHtml(result);
 		}
 	}
 
+	/**
+	 * Returns the html currently in the webview
+	 * 
+	 * @return
+	 */
 	public String getHtml() {
 		return html;
 	}
@@ -173,7 +179,7 @@ public class TabSearchFragment extends Fragment {
 	 * 
 	 * @param html
 	 */
-	private void setText(String html) {
+	private void setWebViewHtml(String html) {
 		this.html = html;
 		((WebView) getActivity().findViewById(R.id.tab_text))
 				.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
