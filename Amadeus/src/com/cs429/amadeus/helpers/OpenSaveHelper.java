@@ -178,6 +178,10 @@ public class OpenSaveHelper {
     }
 
     private static String createSoundProfileXML(SoundProfile profile) {
+	if(profile == null) {
+	    return null;
+	}
+	
 	try {
 	    StringWriter writer = new StringWriter();
 	    XmlSerializer serializer = Xml.newSerializer();
