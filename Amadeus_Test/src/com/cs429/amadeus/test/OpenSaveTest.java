@@ -12,59 +12,59 @@ import com.cs429.amadeus.helpers.SoundProfile;
 import com.cs429.amadeus.views.StaffLayout;
 
 public class OpenSaveTest extends
-	ActivityInstrumentationTestCase2<MainActivity> {
-    private MainActivity activity;
-    private StaffLayout staff;
-    private Method createSheetMethod;
-    private Method createProfileMethod;
+		ActivityInstrumentationTestCase2<MainActivity> {
+	private MainActivity activity;
+	private StaffLayout staff;
+	private Method createSheetMethod;
+	private Method createProfileMethod;
 
-    public OpenSaveTest() {
-	super(MainActivity.class);
+	public OpenSaveTest() {
+		super(MainActivity.class);
 
-	setActivityInitialTouchMode(false);
-    }
+		setActivityInitialTouchMode(false);
+	}
 
-    public void setUp() throws Exception {
-	super.setUp();
+	public void setUp() throws Exception {
+		super.setUp();
 
-	activity = getActivity();
-	staff = new StaffLayout(activity);
-	createSheetMethod = OpenSaveHelper.class.getDeclaredMethod(
-		"createSheetXML", StaffLayout.class);
-	createSheetMethod.setAccessible(true);
-	createProfileMethod = OpenSaveHelper.class.getDeclaredMethod(
-		"createSoundProfileXML", SoundProfile.class);
-	createProfileMethod.setAccessible(true);
-    }
+		activity = getActivity();
+		staff = new StaffLayout(activity);
+		createSheetMethod = OpenSaveHelper.class.getDeclaredMethod(
+				"createSheetXML", StaffLayout.class);
+		createSheetMethod.setAccessible(true);
+		createProfileMethod = OpenSaveHelper.class.getDeclaredMethod(
+				"createSoundProfileXML", SoundProfile.class);
+		createProfileMethod.setAccessible(true);
+	}
 
-    public void testEmptyStaffXML() throws NoSuchMethodException,
-	    IllegalAccessException, IllegalArgumentException,
-	    InvocationTargetException {
-	String xml = (String) createSheetMethod.invoke(null, staff);
-	assertFalse(xml.contains("<note"));
-    }
+	public void testEmptyStaffXML() throws NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
+		String xml = (String) createSheetMethod.invoke(null, staff);
+		assertFalse(xml.contains("<note"));
+	}
 
-    public void testNullStaffXML() throws NoSuchMethodException,
-	    IllegalAccessException, IllegalArgumentException,
-	    InvocationTargetException {
-	StaffLayout testStaff = null;
-	String xml = (String) createSheetMethod.invoke(null, testStaff);
-	assertTrue(xml == null);
-    }
+	public void testNullStaffXML() throws NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
+		StaffLayout testStaff = null;
+		String xml = (String) createSheetMethod.invoke(null, testStaff);
+		assertTrue(xml == null);
+	}
 
-    public void testEmptySoundProfileXML() throws NoSuchMethodException,
-	    IllegalAccessException, IllegalArgumentException,
-	    InvocationTargetException {
-	SoundProfile profile = new SoundProfile();
-	String xml = (String) createProfileMethod.invoke(null, profile);
-	assertFalse(xml.contains("<mapping"));
-    }
+	public void testEmptySoundProfileXML() throws NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
+		SoundProfile profile = new SoundProfile();
+		String xml = (String) createProfileMethod.invoke(null, profile);
+		assertFalse(xml.contains("<mapping"));
+	}
 
-    public void testNullSoundProfileXML() throws NoSuchMethodException,
-	    IllegalAccessException, IllegalArgumentException,
-	    InvocationTargetException {
-	SoundProfile profile = null;
-	String xml = (String) createProfileMethod.invoke(null, profile);
-	assertTrue(xml == null);
-    }
+	public void testNullSoundProfileXML() throws NoSuchMethodException,
+			IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
+		SoundProfile profile = null;
+		String xml = (String) createProfileMethod.invoke(null, profile);
+		assertTrue(xml == null);
+	}
 }

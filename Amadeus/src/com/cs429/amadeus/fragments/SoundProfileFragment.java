@@ -27,211 +27,211 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class SoundProfileFragment extends Fragment {
-    private LinearLayout list;
-    private AlertDialog.Builder openDialog;
-    private AlertDialog.Builder saveDialog;
-    private FileChooserDialog browseDialog;
+	private LinearLayout list;
+	private AlertDialog.Builder openDialog;
+	private AlertDialog.Builder saveDialog;
+	private FileChooserDialog browseDialog;
 
-    public SoundProfileFragment() {
-    }
+	public SoundProfileFragment() {
+	}
 
-    public static SoundProfileFragment newInstance() {
-	return new SoundProfileFragment();
-    }
+	public static SoundProfileFragment newInstance() {
+		return new SoundProfileFragment();
+	}
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-	    Bundle savedInstanceState) {
-	return inflater.inflate(R.layout.fragment_sound_profile, container,
-		false);
-    }
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.fragment_sound_profile, container,
+				false);
+	}
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-	super.onActivityCreated(savedInstanceState);
-	getActivity().setTitle("Sound Profile");
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		getActivity().setTitle("Sound Profile");
 
-	list = (LinearLayout) getActivity().findViewById(
-		R.id.fragment_sound_profile_mapping_list);
+		list = (LinearLayout) getActivity().findViewById(
+				R.id.fragment_sound_profile_mapping_list);
 
-	createButtonListeners();
+		createButtonListeners();
 
-	((Button) getActivity().findViewById(
-		R.id.fragment_sound_profile_add_button))
-		.setOnClickListener(new OnClickListener() {
-		    @Override
-		    public void onClick(View view) {
-			final LinearLayout item = (LinearLayout) getActivity()
-				.getLayoutInflater()
-				.inflate(
-					R.layout.fragment_sound_profile_add_item,
-					null);
+		((Button) getActivity().findViewById(
+				R.id.fragment_sound_profile_add_button))
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						final LinearLayout item = (LinearLayout) getActivity()
+								.getLayoutInflater()
+								.inflate(
+										R.layout.fragment_sound_profile_add_item,
+										null);
+						createButtonListeners(item);
+
+						list.addView(item);
+					}
+				});
+	}
+
+	private void createButtonListeners() {
+		((Button) getActivity().findViewById(
+				R.id.fragment_sound_profile_open_button))
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						createOpenDialog();
+						openDialog.show();
+					}
+				});
+
+		((Button) getActivity().findViewById(
+				R.id.fragment_sound_profile_save_button))
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						createSaveDialog();
+						saveDialog.show();
+					}
+				});
+	}
+
+	private void createButtonListeners(final LinearLayout item) {
+		((Button) item
+				.findViewById(R.id.fragment_sound_profile_add_item_remove_button))
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						list.removeView(item);
+					}
+				});
+
+		((Button) item
+				.findViewById(R.id.fragment_sound_profile_add_item_browse_button))
+				.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View view) {
+						createBrowseDialog(item);
+						browseDialog.show();
+					}
+				});
+	}
+
+	private void createOpenDialog() {
+		File profilesRoot = getActivity().getDir(
+				OpenSaveHelper.SOUND_PROFILES_DIR, Context.MODE_PRIVATE);
+		final String[] fileNames = profilesRoot.list();
+
+		openDialog = new AlertDialog.Builder(getActivity());
+		openDialog
+				.setTitle("Open sound profile")
+				.setItems(fileNames, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						String filename = fileNames[which];
+						openProfile(filename);
+						dialog.dismiss();
+					}
+				})
+				.setNegativeButton("Cancel",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int whichButton) {
+								dialog.cancel();
+							}
+						});
+	}
+
+	private void createSaveDialog() {
+		final EditText input = new EditText(getActivity());
+		saveDialog = new AlertDialog.Builder(getActivity());
+		saveDialog
+				.setTitle("Save profile")
+				.setMessage("Enter file name")
+				.setView(input)
+				.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						String path = input.getText().toString();
+						saveProfile(path);
+					}
+				})
+				.setNegativeButton("Cancel",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								dialog.cancel();
+							}
+						});
+	}
+
+	private void createBrowseDialog(final LinearLayout item) {
+		browseDialog = new FileChooserDialog(getActivity());
+		browseDialog.addListener(new OnFileSelectedListener() {
+			@Override
+			public void onFileSelected(Dialog source, File file) {
+				TextView pathText = (TextView) item
+						.findViewById(R.id.fragment_sound_profile_add_item_file_path);
+				pathText.setText(file.getAbsolutePath());
+				Log.e("TEST", file.getAbsolutePath());
+				source.hide();
+			}
+
+			@Override
+			public void onFileSelected(Dialog source, File folder, String name) {
+			}
+		});
+	}
+
+	private void openProfile(String filePath) {
+		list.removeAllViews();
+
+		SoundProfile profile = OpenSaveHelper.openSoundProfile(getActivity(),
+				filePath);
+		for (Entry<Range, String> entry : profile.getMap().entrySet()) {
+			Range range = entry.getKey();
+			String low = "" + range.low;
+			String high = "" + range.high;
+			String path = entry.getValue();
+
+			LinearLayout item = (LinearLayout) getActivity()
+					.getLayoutInflater().inflate(
+							R.layout.fragment_sound_profile_add_item, null);
+			EditText lowText = (EditText) item
+					.findViewById(R.id.fragment_sound_profile_add_item_low);
+			EditText highText = (EditText) item
+					.findViewById(R.id.fragment_sound_profile_add_item_high);
+			TextView pathText = (TextView) item
+					.findViewById(R.id.fragment_sound_profile_add_item_file_path);
+
+			lowText.setText(low);
+			highText.setText(high);
+			pathText.setText(path);
+
 			createButtonListeners(item);
 
 			list.addView(item);
-		    }
-		});
-    }
-
-    private void createButtonListeners() {
-	((Button) getActivity().findViewById(
-		R.id.fragment_sound_profile_open_button))
-		.setOnClickListener(new OnClickListener() {
-		    @Override
-		    public void onClick(View view) {
-			createOpenDialog();
-			openDialog.show();
-		    }
-		});
-
-	((Button) getActivity().findViewById(
-		R.id.fragment_sound_profile_save_button))
-		.setOnClickListener(new OnClickListener() {
-		    @Override
-		    public void onClick(View view) {
-			createSaveDialog();
-			saveDialog.show();
-		    }
-		});
-    }
-
-    private void createButtonListeners(final LinearLayout item) {
-	((Button) item
-		.findViewById(R.id.fragment_sound_profile_add_item_remove_button))
-		.setOnClickListener(new OnClickListener() {
-		    @Override
-		    public void onClick(View view) {
-			list.removeView(item);
-		    }
-		});
-
-	((Button) item
-		.findViewById(R.id.fragment_sound_profile_add_item_browse_button))
-		.setOnClickListener(new OnClickListener() {
-		    @Override
-		    public void onClick(View view) {
-			createBrowseDialog(item);
-			browseDialog.show();
-		    }
-		});
-    }
-
-    private void createOpenDialog() {
-	File profilesRoot = getActivity().getDir(
-		OpenSaveHelper.SOUND_PROFILES_DIR, Context.MODE_PRIVATE);
-	final String[] fileNames = profilesRoot.list();
-
-	openDialog = new AlertDialog.Builder(getActivity());
-	openDialog
-		.setTitle("Open sound profile")
-		.setItems(fileNames, new DialogInterface.OnClickListener() {
-		    @Override
-		    public void onClick(DialogInterface dialog, int which) {
-			String filename = fileNames[which];
-			openProfile(filename);
-			dialog.dismiss();
-		    }
-		})
-		.setNegativeButton("Cancel",
-			new DialogInterface.OnClickListener() {
-			    @Override
-			    public void onClick(DialogInterface dialog,
-				    int whichButton) {
-				dialog.cancel();
-			    }
-			});
-    }
-
-    private void createSaveDialog() {
-	final EditText input = new EditText(getActivity());
-	saveDialog = new AlertDialog.Builder(getActivity());
-	saveDialog
-		.setTitle("Save profile")
-		.setMessage("Enter file name")
-		.setView(input)
-		.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-		    @Override
-		    public void onClick(DialogInterface dialog, int which) {
-			String path = input.getText().toString();
-			saveProfile(path);
-		    }
-		})
-		.setNegativeButton("Cancel",
-			new DialogInterface.OnClickListener() {
-			    @Override
-			    public void onClick(DialogInterface dialog,
-				    int which) {
-				dialog.cancel();
-			    }
-			});
-    }
-
-    private void createBrowseDialog(final LinearLayout item) {
-	browseDialog = new FileChooserDialog(getActivity());
-	browseDialog.addListener(new OnFileSelectedListener() {
-	    @Override
-	    public void onFileSelected(Dialog source, File file) {
-		TextView pathText = (TextView) item
-			.findViewById(R.id.fragment_sound_profile_add_item_file_path);
-		pathText.setText(file.getAbsolutePath());
-		Log.e("TEST", file.getAbsolutePath());
-		source.hide();
-	    }
-
-	    @Override
-	    public void onFileSelected(Dialog source, File folder, String name) {
-	    }
-	});
-    }
-
-    private void openProfile(String filePath) {
-	list.removeAllViews();
-
-	SoundProfile profile = OpenSaveHelper.openSoundProfile(getActivity(),
-		filePath);
-	for (Entry<Range, String> entry : profile.getMap().entrySet()) {
-	    Range range = entry.getKey();
-	    String low = "" + range.low;
-	    String high = "" + range.high;
-	    String path = entry.getValue();
-
-	    LinearLayout item = (LinearLayout) getActivity()
-		    .getLayoutInflater().inflate(
-			    R.layout.fragment_sound_profile_add_item, null);
-	    EditText lowText = (EditText) item
-		    .findViewById(R.id.fragment_sound_profile_add_item_low);
-	    EditText highText = (EditText) item
-		    .findViewById(R.id.fragment_sound_profile_add_item_high);
-	    TextView pathText = (TextView) item
-		    .findViewById(R.id.fragment_sound_profile_add_item_file_path);
-
-	    lowText.setText(low);
-	    highText.setText(high);
-	    pathText.setText(path);
-
-	    createButtonListeners(item);
-
-	    list.addView(item);
-	}
-    }
-
-    private void saveProfile(String filePath) {
-	SoundProfile profile = new SoundProfile();
-	for (int i = 0; i < list.getChildCount(); i++) {
-	    LinearLayout item = (LinearLayout) list.getChildAt(i);
-	    EditText lowText = (EditText) item
-		    .findViewById(R.id.fragment_sound_profile_add_item_low);
-	    EditText highText = (EditText) item
-		    .findViewById(R.id.fragment_sound_profile_add_item_high);
-	    TextView filePathText = (TextView) item
-		    .findViewById(R.id.fragment_sound_profile_add_item_file_path);
-
-	    float low = Float.parseFloat(lowText.getText().toString());
-	    float high = Float.parseFloat(highText.getText().toString());
-	    String path = filePathText.getText().toString();
-	    profile.addMapping(low, high, path);
+		}
 	}
 
-	OpenSaveHelper.saveSoundProfile(getActivity(), filePath, profile);
-    }
+	private void saveProfile(String filePath) {
+		SoundProfile profile = new SoundProfile();
+		for (int i = 0; i < list.getChildCount(); i++) {
+			LinearLayout item = (LinearLayout) list.getChildAt(i);
+			EditText lowText = (EditText) item
+					.findViewById(R.id.fragment_sound_profile_add_item_low);
+			EditText highText = (EditText) item
+					.findViewById(R.id.fragment_sound_profile_add_item_high);
+			TextView filePathText = (TextView) item
+					.findViewById(R.id.fragment_sound_profile_add_item_file_path);
+
+			float low = Float.parseFloat(lowText.getText().toString());
+			float high = Float.parseFloat(highText.getText().toString());
+			String path = filePathText.getText().toString();
+			profile.addMapping(low, high, path);
+		}
+
+		OpenSaveHelper.saveSoundProfile(getActivity(), filePath, profile);
+	}
 }

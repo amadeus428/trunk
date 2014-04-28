@@ -28,25 +28,25 @@ import android.widget.LinearLayout;
  */
 interface FileChooser {
 
-    /**
-     * Gets the root of the layout 'file_chooser.xml'.
-     * 
-     * @return A linear layout.
-     */
-    LinearLayout getRootLayout();
+	/**
+	 * Gets the root of the layout 'file_chooser.xml'.
+	 * 
+	 * @return A linear layout.
+	 */
+	LinearLayout getRootLayout();
 
-    /**
-     * Set the name of the current folder.
-     * 
-     * @param name
-     *            The current folder's name.
-     */
-    void setCurrentFolderName(String name);
+	/**
+	 * Set the name of the current folder.
+	 * 
+	 * @param name
+	 *            The current folder's name.
+	 */
+	void setCurrentFolderName(String name);
 
-    /**
-     * Returns the current context of the file chooser.
-     * 
-     * @return The current context.
-     */
-    Context getContext();
+	/**
+	 * Returns the current context of the file chooser.
+	 * 
+	 * @return The current context.
+	 */
+	Context getContext();
 }

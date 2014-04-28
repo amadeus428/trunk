@@ -153,11 +153,12 @@ public class PlayAlongFragment extends Fragment {
 					String newText = recorder.isRecording() ? "Stop" : "Start";
 					startStopButton.setText(newText);
 				} else {
-					showCountDownDialog(); 	//starts a dialog that counts down from 4 to 1
-									   		//and then starts the process of playalong/analyzing
+					showCountDownDialog(); // starts a dialog that counts down
+											// from 4 to 1
+											// and then starts the process of
+											// playalong/analyzing
 				}
 
-				
 			}
 		});
 
@@ -182,12 +183,11 @@ public class PlayAlongFragment extends Fragment {
 			}
 		});
 	}
-	
+
 	private void startPlayAlong() {
 		final Button startStopButton = (Button) getActivity().findViewById(
 				R.id.fragment_play_along_start_stop_button);
-		((HorizontalScrollView) staffLayout.getParent()).scrollTo(
-				0, 0);
+		((HorizontalScrollView) staffLayout.getParent()).scrollTo(0, 0);
 		staffLayout.clearAllRecordedNoteViews();
 
 		recorder = new Recorder(staffLayout, getBPM()) {
@@ -201,9 +201,8 @@ public class PlayAlongFragment extends Fragment {
 								TextView noteRecorded = (TextView) getActivity()
 										.findViewById(
 												R.id.fragment_play_along_note_recorded_textview);
-								noteRecorded
-										.setText("Note recorded: "
-												+ note.toString());
+								noteRecorded.setText("Note recorded: "
+										+ note.toString());
 							}
 						});
 			}
@@ -211,8 +210,7 @@ public class PlayAlongFragment extends Fragment {
 		recorder.start();
 
 		final TextView noteRecordedTextView = (TextView) getActivity()
-				.findViewById(
-						R.id.fragment_play_along_note_recorded_textview);
+				.findViewById(R.id.fragment_play_along_note_recorded_textview);
 		metronome = new Metronome(getActivity(), getBPM()) {
 			@Override
 			public void onTickStart() {
@@ -221,44 +219,44 @@ public class PlayAlongFragment extends Fragment {
 
 			@Override
 			public void onTickEnd() {
-				noteRecordedTextView
-						.setBackgroundColor(Color.TRANSPARENT);
+				noteRecordedTextView.setBackgroundColor(Color.TRANSPARENT);
 			}
 		};
 		metronome.start();
-		
 
 		String newText = recorder.isRecording() ? "Stop" : "Start";
 		startStopButton.setText(newText);
 	}
-	
-	
+
 	/**
-	 * After user presses record button, this will show a dialog that counts down in seconds
-	 * 4...3...2...1 to allow user sometime to prepare before recording
+	 * After user presses record button, this will show a dialog that counts
+	 * down in seconds 4...3...2...1 to allow user sometime to prepare before
+	 * recording
 	 */
 	private AlertDialog showCountDownDialog() {
-		final AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+		final AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+				.create();
 		alertDialog.setMessage("Starting in...");
-		alertDialog.show();   // 
+		alertDialog.show(); //
 		new CountDownTimer(6000, 1000) {
-		    @Override
-		    public void onTick(long millisUntilFinished) {
-		       alertDialog.setMessage("Starting in... " + (millisUntilFinished/1000-1));
-		       if ((int)millisUntilFinished/1000 == 1){
-		    	   if (alertDialog.isShowing()) {
-				        alertDialog.dismiss();
-				        startPlayAlong();
-			    	}
-		       }
-		    }
+			@Override
+			public void onTick(long millisUntilFinished) {
+				alertDialog.setMessage("Starting in... "
+						+ (millisUntilFinished / 1000 - 1));
+				if ((int) millisUntilFinished / 1000 == 1) {
+					if (alertDialog.isShowing()) {
+						alertDialog.dismiss();
+						startPlayAlong();
+					}
+				}
+			}
 
-		    @Override
-		    public void onFinish() {
-		    	if (alertDialog.isShowing()) {
-			        alertDialog.dismiss();
-		    	}
-		    }
+			@Override
+			public void onFinish() {
+				if (alertDialog.isShowing()) {
+					alertDialog.dismiss();
+				}
+			}
 		}.start();
 		return alertDialog;
 	}

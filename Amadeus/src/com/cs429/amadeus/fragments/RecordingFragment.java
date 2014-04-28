@@ -414,34 +414,37 @@ public class RecordingFragment extends Fragment {
 							}
 						});
 	}
-	
+
 	/**
-	 * After user presses record button, this will show a dialog that counts down in seconds
-	 * 4...3...2...1 to allow user sometime to prepare before recording
+	 * After user presses record button, this will show a dialog that counts
+	 * down in seconds 4...3...2...1 to allow user sometime to prepare before
+	 * recording
 	 */
 	private void showCountDownDialog() {
-		final AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+		final AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+				.create();
 		alertDialog.setMessage("Starting in...");
-		alertDialog.show();   // 
+		alertDialog.show(); //
 		new CountDownTimer(6000, 1000) {
-		    @Override
-		    public void onTick(long millisUntilFinished) {
-		       alertDialog.setMessage("Starting in... " + (millisUntilFinished/1000-1));
-		       if ((int)millisUntilFinished/1000 == 1){
-		    	   if (alertDialog.isShowing()) {
-				        alertDialog.dismiss();
+			@Override
+			public void onTick(long millisUntilFinished) {
+				alertDialog.setMessage("Starting in... "
+						+ (millisUntilFinished / 1000 - 1));
+				if ((int) millisUntilFinished / 1000 == 1) {
+					if (alertDialog.isShowing()) {
+						alertDialog.dismiss();
 						startRecording();
-			    	}
-		       }
-		    }
+					}
+				}
+			}
 
-		    @Override
-		    public void onFinish() {
-		    	if (alertDialog.isShowing()) {
-			        alertDialog.dismiss();
+			@Override
+			public void onFinish() {
+				if (alertDialog.isShowing()) {
+					alertDialog.dismiss();
 					startRecording();
-		    	}
-		    }
+				}
+			}
 		}.start();
 	}
 
