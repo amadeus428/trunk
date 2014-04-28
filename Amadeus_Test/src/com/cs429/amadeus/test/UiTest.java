@@ -1,8 +1,10 @@
 package com.cs429.amadeus.test;
 
 import com.cs429.amadeus.activities.MainActivity;
+import com.cs429.amadeus.helpers.SoundProfile;
 import com.cs429.amadeus.views.StaffLayout;
 
+import android.app.AlertDialog;
 import android.app.Instrumentation;
 import android.support.v4.widget.DrawerLayout;
 import android.test.ActivityInstrumentationTestCase2;
@@ -52,6 +54,77 @@ public class UiTest extends ActivityInstrumentationTestCase2<MainActivity> {
 				.findViewById(R.id.fragment_play_along_staff_layout);
 		Assert.assertNotNull(mStaffLayout);
 
+		selectDrawer(R.string.title_guitar_chords);
+		mImage = (ImageView) mActivity
+				.findViewById(R.id.fragment_guitar_chords_chord_image);
+		Assert.assertNotNull(mImage);
+
+		selectDrawer(R.string.title_guitar_tabs);
+		WebView mWeb = ((WebView) getActivity().findViewById(R.id.tab_text));
+		assertNotNull(mWeb);
+
+		selectDrawer(R.string.title_home);
+		Button button = (Button) mActivity
+				.findViewById(R.id.fragment_home_play_along_button);
+		assertNotNull(button);
+		
+		selectDrawer(R.string.title_sound_profile);
+		button = (Button)mActivity.findViewById(R.id.fragment_sound_profile_open_button);
+		assertNotNull(button);
+		
+		selectDrawer(R.string.title_guitar_tabs);
+		button = (Button)mActivity.findViewById(R.id.tab_button);
+		assertNotNull(button);
+		
+		button=(Button)mActivity.findViewById(R.id.buttonAdd);
+		assertNull(button);
+
+	}
+
+	private void selectDrawer(final int id) {
+		mActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				mActivity.replaceContentViewOnItemSelected(mActivity
+						.getIndexOfItemInDrawer(id));
+			}
+		});
+		mInstrumentation.waitForIdleSync();
+	}
+
+	public void testOnDrawCanvas() {
+
+		mActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				((Button) mActivity
+						.findViewById(R.id.fragment_home_create_sheet_music_button))
+						.performClick();
+
+			}
+		});
+
+		mInstrumentation.waitForIdleSync();
+
+		mStaffLayout = (StaffLayout) mActivity
+				.findViewById(R.id.fragment_recording_staff_layout);
+		Assert.assertNotNull(mStaffLayout);
+	}
+
+	public void testPlayAlong() {
+
+		mActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				((Button) mActivity
+						.findViewById(R.id.fragment_home_play_along_button))
+						.performClick();
+			}
+		});
+		mInstrumentation.waitForIdleSync();
+		mStaffLayout = (StaffLayout) mActivity
+				.findViewById(R.id.fragment_play_along_staff_layout);
+		Assert.assertNotNull(mStaffLayout);
+	}
+
+	public void testGuitar() {
 		selectDrawer(R.string.title_guitar_chords);
 		mImage = (ImageView) mActivity
 				.findViewById(R.id.fragment_guitar_chords_chord_image);
@@ -125,69 +198,26 @@ public class UiTest extends ActivityInstrumentationTestCase2<MainActivity> {
 					break;
 			}
 			this.sendKeys(KeyEvent.KEYCODE_DPAD_DOWN);
-
 		}
+	}
+	
+/*	public void testSoundProfile() {
+		mActivity.runOnUiThread(new Runnable() {
+			public void run() {
+				((Button) mActivity
+						.findViewById(R.id.fragment_home_sound_profile_button))
+						.performClick();
 
-		selectDrawer(R.string.title_guitar_tabs);
-		WebView mWeb = ((WebView) getActivity().findViewById(R.id.tab_text));
-		assertNotNull(mWeb);
+			}
+		});
 
-		selectDrawer(R.string.title_home);
-		Button button = (Button) mActivity
-				.findViewById(R.id.fragment_home_play_along_button);
-		assertNotNull(button);
+		mInstrumentation.waitForIdleSync();
+		Button button = (Button)mActivity.findViewById(R.id.fragment_sound_profile_open_button);
+		button.performClick();
 		
-		selectDrawer(R.string.title_sound_profile);
-		Button button
-
-	}
-
-	private void selectDrawer(final int id) {
-		mActivity.runOnUiThread(new Runnable() {
-			public void run() {
-				mActivity.replaceContentViewOnItemSelected(mActivity
-						.getIndexOfItemInDrawer(id));
-			}
-		});
-		mInstrumentation.waitForIdleSync();
-	}
-
-	public void testOnDrawCanvas() {
-
-		mActivity.runOnUiThread(new Runnable() {
-			public void run() {
-				((Button) mActivity
-						.findViewById(R.id.fragment_home_create_sheet_music_button))
-						.performClick();
-
-			}
-		});
-
-		mInstrumentation.waitForIdleSync();
-
-		mStaffLayout = (StaffLayout) mActivity
-				.findViewById(R.id.fragment_recording_staff_layout);
-		Assert.assertNotNull(mStaffLayout);
-	}
-
-	public void testPlayAlong() {
-
-		mActivity.runOnUiThread(new Runnable() {
-			public void run() {
-				((Button) mActivity
-						.findViewById(R.id.fragment_home_play_along_button))
-						.performClick();
-			}
-		});
-		mInstrumentation.waitForIdleSync();
-		mStaffLayout = (StaffLayout) mActivity
-				.findViewById(R.id.fragment_play_along_staff_layout);
-		Assert.assertNotNull(mStaffLayout);
-	}
-
-
+	}*/
+	
 	protected void tearDown() throws Exception {
 		super.tearDown();
 	}
-
 }
