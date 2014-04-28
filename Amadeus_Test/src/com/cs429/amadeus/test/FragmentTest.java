@@ -9,28 +9,25 @@ import com.cs429.amadeus.fragments.TabSearchFragment;
 import junit.framework.TestCase;
 
 public class FragmentTest extends TestCase {
-	
-	public void testGuitarChordFragment(){
-		assertNotNull(GuitarChordFragment.newInstance());
-	}
-	
-	public void testHomeFragment(){
-		assertNotNull(HomeFragment.newInstance());
-	}
-	
-	public void testPlayAlongFragment(){
-		assertNotNull(PlayAlongFragment.newInstance());
-	}
-	
-	public void testRecordingFragment(){
-		assertNotNull(RecordingFragment.newInstance());
-	}
-	
-	public void testTabSearchFragment(){
-		assertNotNull(TabSearchFragment.newInstance());
-	}
-	
-	
-	
+
+    public void testGuitarChordFragment() {
+	assertNotNull(GuitarChordFragment.newInstance());
+    }
+
+    public void testHomeFragment() {
+	assertNotNull(HomeFragment.newInstance());
+    }
+
+    public void testPlayAlongFragment() {
+	assertNotNull(PlayAlongFragment.newInstance());
+    }
+
+    public void testRecordingFragment() {
+	assertNotNull(RecordingFragment.newInstance());
+    }
+
+    public void testTabSearchFragment() {
+	assertNotNull(TabSearchFragment.newInstance());
+    }
 
 }
