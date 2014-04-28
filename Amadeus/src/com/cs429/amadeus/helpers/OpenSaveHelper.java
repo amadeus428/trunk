@@ -99,6 +99,13 @@ public class OpenSaveHelper {
 	}
     }
 
+    /**
+     * Retrieves the sound profile with the given filename
+     * 
+     * @param context
+     * @param fileName
+     * @return
+     */
     public static SoundProfile openSoundProfile(Context context, String fileName) {
 	try {
 	    SoundProfile profile = new SoundProfile();
@@ -131,6 +138,13 @@ public class OpenSaveHelper {
 	}
     }
 
+    /**
+     * Saves the user created sound profile to file
+     * 
+     * @param context
+     * @param fileName
+     * @param profile
+     */
     public static void saveSoundProfile(Context context, String fileName,
 	    SoundProfile profile) {
 	try {
@@ -146,6 +160,13 @@ public class OpenSaveHelper {
 	}
     }
 
+    /**
+     * Creates xml representation of the sheet music so it can be easily stored
+     * on file and retrieved later
+     * 
+     * @param staffLayout
+     * @return
+     */
     private static String createSheetXML(StaffLayout staffLayout) {
 	if (staffLayout == null) {
 	    return null;
@@ -177,11 +198,18 @@ public class OpenSaveHelper {
 	}
     }
 
+    /**
+     * Creates xml representation of the sound profile so that it can be easily
+     * stored on file and retrieved later
+     * 
+     * @param profile
+     * @return
+     */
     private static String createSoundProfileXML(SoundProfile profile) {
-	if(profile == null) {
+	if (profile == null) {
 	    return null;
 	}
-	
+
 	try {
 	    StringWriter writer = new StringWriter();
 	    XmlSerializer serializer = Xml.newSerializer();

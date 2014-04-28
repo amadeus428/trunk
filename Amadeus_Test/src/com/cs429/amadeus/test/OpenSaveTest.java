@@ -29,11 +29,11 @@ public class OpenSaveTest extends
 
 	activity = getActivity();
 	staff = new StaffLayout(activity);
-	createSheetMethod = OpenSaveHelper.class.getDeclaredMethod("createSheetXML",
-		StaffLayout.class);
+	createSheetMethod = OpenSaveHelper.class.getDeclaredMethod(
+		"createSheetXML", StaffLayout.class);
 	createSheetMethod.setAccessible(true);
-	createProfileMethod = OpenSaveHelper.class.getDeclaredMethod("createSoundProfileXML",
-		SoundProfile.class);
+	createProfileMethod = OpenSaveHelper.class.getDeclaredMethod(
+		"createSoundProfileXML", SoundProfile.class);
 	createProfileMethod.setAccessible(true);
     }
 
