@@ -34,6 +34,7 @@ import com.cs429.amadeus.fragments.GuitarChordFragment;
 import com.cs429.amadeus.fragments.HomeFragment;
 import com.cs429.amadeus.fragments.PlayAlongFragment;
 import com.cs429.amadeus.fragments.RecordingFragment;
+import com.cs429.amadeus.fragments.SoundProfileFragment;
 
 /**
  * Main activity for the Android project
@@ -160,8 +161,8 @@ public class MainActivity extends Activity {
 	    fragment = TabSearchFragment.newInstance();
 	} else if (position == getIndexOfItemInDrawer(R.string.title_guitar_chords)) {
 	    fragment = GuitarChordFragment.newInstance();
-	} else {
-	    fragment = HomeFragment.newInstance();
+	} else if (position == getIndexOfItemInDrawer(R.string.title_sound_profile)) {
+	    fragment = SoundProfileFragment.newInstance();
 	}
 
 	// create the bundle of arguments to send to new fragment
