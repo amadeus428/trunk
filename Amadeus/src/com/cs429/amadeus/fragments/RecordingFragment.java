@@ -126,6 +126,14 @@ public class RecordingFragment extends Fragment {
 		createButtonListeners();
 
 		initSystemServices();
+		
+		Log.e("TEST", "created");
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		
 		getActivity().bindService(new Intent(getActivity(), PdService.class),
 				pdConnection, Context.BIND_AUTO_CREATE);
 	}
@@ -134,6 +142,7 @@ public class RecordingFragment extends Fragment {
 	public void onStop() {
 		super.onDestroy();
 		getActivity().unbindService(pdConnection);
+		Log.e("TEST", "stopped");
 	}
 
 	private void createButtonListeners() {
@@ -508,11 +517,19 @@ public class RecordingFragment extends Fragment {
 						dialog.dismiss();
 					}
 				})
+				.setPositiveButton("DEFAULT", new DialogInterface.OnClickListener()
+				{				
+					@Override
+					public void onClick(DialogInterface dialog, int which)
+					{
+						soundProfile = null;
+						dialog.dismiss();
+					}
+				})
 				.setNegativeButton("Cancel",
 						new DialogInterface.OnClickListener() {
 							@Override
-							public void onClick(DialogInterface dialog,
-									int whichButton) {
+							public void onClick(DialogInterface dialog, int whichButton) {
 								dialog.cancel();
 							}
 						});

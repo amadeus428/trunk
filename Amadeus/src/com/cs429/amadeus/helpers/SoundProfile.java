@@ -9,7 +9,7 @@ import android.media.SoundPool;
 import android.util.Log;
 
 public class SoundProfile {
-	private SoundPool soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+	private SoundPool soundPool = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
 	private HashMap<Range, String> rangeToFilePathMap = new HashMap<Range, String>();
 	private HashMap<String, Integer> filePathToSoundIdMap = new HashMap<String, Integer>();
 
