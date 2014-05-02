@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SoundProfileFragment extends Fragment {
 	private LinearLayout list;
@@ -89,8 +90,9 @@ public class SoundProfileFragment extends Fragment {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View view) {
-						createSaveDialog();
-						saveDialog.show();
+						if(createSaveDialog()) {
+							saveDialog.show();
+						}
 					}
 				});
 	}
@@ -142,7 +144,14 @@ public class SoundProfileFragment extends Fragment {
 						});
 	}
 
-	private void createSaveDialog() {
+	private boolean createSaveDialog() {
+		String error = saveProfile("test", true);
+		if(error != null) {
+			Log.e("TEST", "FUCKKKKK");
+			Toast.makeText(SoundProfileFragment.this.getActivity(), error, Toast.LENGTH_LONG).show();
+			return false;
+		}
+		
 		final EditText input = new EditText(getActivity());
 		saveDialog = new AlertDialog.Builder(getActivity());
 		saveDialog
@@ -153,7 +162,7 @@ public class SoundProfileFragment extends Fragment {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						String path = input.getText().toString();
-						saveProfile(path);
+						saveProfile(path, false);
 					}
 				})
 				.setNegativeButton("Cancel",
@@ -164,6 +173,8 @@ public class SoundProfileFragment extends Fragment {
 								dialog.cancel();
 							}
 						});
+		
+		return true;
 	}
 
 	private void createBrowseDialog(final LinearLayout item) {
@@ -215,7 +226,7 @@ public class SoundProfileFragment extends Fragment {
 		}
 	}
 
-	private void saveProfile(String filePath) {
+	private String saveProfile(String filePath, boolean isTest) {
 		SoundProfile profile = new SoundProfile();
 		for (int i = 0; i < list.getChildCount(); i++) {
 			LinearLayout item = (LinearLayout) list.getChildAt(i);
@@ -225,13 +236,25 @@ public class SoundProfileFragment extends Fragment {
 					.findViewById(R.id.fragment_sound_profile_add_item_high);
 			TextView filePathText = (TextView) item
 					.findViewById(R.id.fragment_sound_profile_add_item_file_path);
-
-			float low = Float.parseFloat(lowText.getText().toString());
-			float high = Float.parseFloat(highText.getText().toString());
-			String path = filePathText.getText().toString();
-			profile.addMapping(low, high, path);
+			
+			try 
+			{
+				final float low = Float.parseFloat(lowText.getText().toString());
+				final float high = Float.parseFloat(highText.getText().toString());
+				final String path = filePathText.getText().toString();
+				profile.addMapping(low, high, path);
+			}
+			catch(Exception e)
+			{
+				return e.getMessage();
+			}
 		}
 
-		OpenSaveHelper.saveSoundProfile(getActivity(), filePath, profile);
+		if(!isTest)
+		{
+			OpenSaveHelper.saveSoundProfile(getActivity(), filePath, profile);
+		}
+		
+		return null;
 	}
 }

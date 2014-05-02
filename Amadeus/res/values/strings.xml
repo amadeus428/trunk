@@ -34,6 +34,9 @@
 	</string-array>
 	
     <string-array name="bpm_items">
+        <item>50</item>
+        <item>60</item>
+        <item>70</item>
 		<item>80</item>
 		<item>90</item>
 		<item>100</item>
@@ -47,6 +50,11 @@
 		<item>180</item>
 		<item>190</item>
 		<item>200</item>
+		<item>210</item>
+		<item>220</item>
+		<item>230</item>
+		<item>240</item>
+		<item>250</item>
 	</string-array>
 	
     <string name="daidalos_hello">Hello World!</string>

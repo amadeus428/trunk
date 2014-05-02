@@ -266,7 +266,6 @@ public class RecordingFragment extends Fragment {
 								// Re-enable touch events on the staff.
 								staffLayout.setEnabled(true);
 							}
-
 						});
 			}
 		};
@@ -382,21 +381,34 @@ public class RecordingFragment extends Fragment {
 	}
 
 	private void createBPMDialog(final boolean fromRecord) {
-		final EditText input = new EditText(getActivity());
-		input.setHint(Float.toString(bpm));
-		input.setInputType(InputType.TYPE_CLASS_NUMBER);
+		final Spinner bpmSpinner = new Spinner(getActivity());
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), 
+				R.array.bpm_items, android.R.layout.simple_spinner_item);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		bpmSpinner.setAdapter(adapter);
+		
+		int pos = 0;
+		String[] bpmArr = getResources().getStringArray(R.array.bpm_items);
+		for(String bpmItem : bpmArr) {
+			if(bpmItem.equals(String.valueOf((int)bpm))) {
+				break;
+			}
+			
+			pos++;
+		}
+		bpmSpinner.setSelection(pos);
+		
 		bpmDialog = new AlertDialog.Builder(getActivity());
 		bpmDialog
-				.setTitle("Enter BPM")
-				.setMessage("Enter the beats per minute")
-				.setView(input)
+				.setTitle("Choose the BPM")
+				.setMessage("Select the beats per minute")
+				.setView(bpmSpinner)
 				.setPositiveButton("Cool!",
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog,
 									int whichButton) {
-								String bpm = ((EditText) input).getText()
-										.toString();
+								String bpm = bpmSpinner.getSelectedItem().toString();
 								if (bpm != null && bpm.length() > 0) {
 									RecordingFragment.this.bpm = Float
 											.parseFloat(bpm);
