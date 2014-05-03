@@ -112,7 +112,6 @@ public class FallingNotesView extends SurfaceView implements SurfaceHolder.Callb
 		
 		for(int i = 0; i < bitmaps.size(); i++)
 		{
-			Log.e("TEST", "drawing bitmap " + i);
 			Bitmap bitmap = bitmaps.get(i);
 			Rect transformation = transformations.get(i);				
 			canvas.drawBitmap(bitmap, null, transformation, null);
@@ -140,7 +139,6 @@ public class FallingNotesView extends SurfaceView implements SurfaceHolder.Callb
 	private Rect getRandTransformation()
 	{
 		int left = (int)(Math.random() * (screenWidth - noteWidth));
-		Log.e("test", "left = " + left);
 		int right = left + noteWidth;
 		int top = -noteHeight - 10;
 		int bottom = top + noteHeight;
