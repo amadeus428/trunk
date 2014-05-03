@@ -6,19 +6,19 @@
     <string name="hello_world">Hello world!</string>
     
     <string name="title_home">Home</string>
-    <string name="title_create_music">CREATE SHEET MUSIC!</string>
-    <string name="title_play_along">PLAY ALONG!</string>
-    <string name="title_guitar_chords">LEARN GUITAR CHORDS!</string>
-    <string name="title_guitar_tabs">GET TABS!!</string>
-    <string name="title_sound_profile">CREATE SOUND PROFILE!</string>
+    <string name="title_create_music">Sheet music</string>
+    <string name="title_play_along">Play along</string>
+    <string name="title_guitar_chords">Guitar chords</string>
+    <string name="title_guitar_tabs">Tabs</string>
+    <string name="title_sound_profile">Sound profile</string>
     
     <string-array name="navigation_drawer_items">
         <item>@string/title_home</item>
         <item>@string/title_create_music</item>
         <item>@string/title_play_along</item>
+        <item>@string/title_sound_profile</item>
         <item>@string/title_guitar_chords</item>
         <item>@string/title_guitar_tabs</item>
-        <item>@string/title_sound_profile</item>
     </string-array>
     
     <string name="drawer_open">Open navigation drawer</string>
@@ -78,5 +78,6 @@
 	<color name="daidalos_backgroud">#000</color>
 	<color name="daidalos_active_file">#fff</color>
 	<color name="daidalos_inactive_file">#888</color>
+	<color name="fragment_home_button_color">#55FFC966</color>
 
 </resources>

@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -425,22 +427,27 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 		setOnTouchListener(this);
 		setWillNotDraw(false);
 
-		wholeNoteBitmap = BitmapFactory.decodeResource(getResources(),
+		StaffLayout.initBitmaps(getResources());
+	}
+	
+	public static void initBitmaps(Resources res)
+	{
+		wholeNoteBitmap = BitmapFactory.decodeResource(res,
 				R.drawable.whole_note);
-		halfNoteBitmap = BitmapFactory.decodeResource(getResources(),
+		halfNoteBitmap = BitmapFactory.decodeResource(res,
 				R.drawable.half_note_down);
-		quarterNoteBitmap = BitmapFactory.decodeResource(getResources(),
+		quarterNoteBitmap = BitmapFactory.decodeResource(res,
 				R.drawable.quarter_note_down);
-		eighthNoteBitmap = BitmapFactory.decodeResource(getResources(),
+		eighthNoteBitmap = BitmapFactory.decodeResource(res,
 				R.drawable.eighth_note_down);
-		sixteenthNoteBitmap = BitmapFactory.decodeResource(getResources(),
+		sixteenthNoteBitmap = BitmapFactory.decodeResource(res,
 				R.drawable.sixteenth_note_down);
-		sharpBitmap = BitmapFactory.decodeResource(getResources(),
+		sharpBitmap = BitmapFactory.decodeResource(res,
 				R.drawable.sharp);
 
-		trebleClefBitmap = BitmapFactory.decodeResource(getResources(),
+		trebleClefBitmap = BitmapFactory.decodeResource(res,
 				R.drawable.treble_clef);
-		bassClefBitmap = BitmapFactory.decodeResource(getResources(),
+		bassClefBitmap = BitmapFactory.decodeResource(res,
 				R.drawable.bass_clef);
 	}
 
