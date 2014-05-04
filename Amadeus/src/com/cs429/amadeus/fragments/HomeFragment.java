@@ -80,7 +80,7 @@ public class HomeFragment extends Fragment {
 		soundProfileBtn.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View arg0) {
-						parent.replaceContentViewOnItemSelected(5);
+						parent.replaceContentViewOnItemSelected(3);
 					}
 				});
 		
