@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -16,7 +17,8 @@ import android.view.SurfaceView;
 
 public class FallingNotesView extends SurfaceView implements SurfaceHolder.Callback
 {	
-	private static final float NOTE_COOLDOWN = 1000;
+	private static final float NOTE_COOLDOWN = 500;
+	private static final int NOTE_SPEED = 4;
 	
 	private long lastNoteTime = 0;
 	private int noteWidth;
@@ -25,6 +27,7 @@ public class FallingNotesView extends SurfaceView implements SurfaceHolder.Callb
 	private int screenHeight;
 	private LinkedList<Bitmap> bitmaps = new LinkedList<Bitmap>();
 	private LinkedList<Rect> transformations = new LinkedList<Rect>();
+	private LinkedList<Paint> paints = new LinkedList<Paint>();
 	private MainThread thread;
 
 	public FallingNotesView(Activity activity) 
@@ -97,6 +100,7 @@ public class FallingNotesView extends SurfaceView implements SurfaceHolder.Callb
 			lastNoteTime = currTime;
 			bitmaps.add(getRandBitmap());
 			transformations.add(getRandTransformation());
+			paints.add(new Paint());
 		}
 	}
 	
@@ -113,8 +117,9 @@ public class FallingNotesView extends SurfaceView implements SurfaceHolder.Callb
 		for(int i = 0; i < bitmaps.size(); i++)
 		{
 			Bitmap bitmap = bitmaps.get(i);
-			Rect transformation = transformations.get(i);				
-			canvas.drawBitmap(bitmap, null, transformation, null);
+			Rect transformation = transformations.get(i);	
+			Paint paint = paints.get(i);
+			canvas.drawBitmap(bitmap, null, transformation, paint);
 		}
 	}
 	
@@ -146,16 +151,21 @@ public class FallingNotesView extends SurfaceView implements SurfaceHolder.Callb
 	}
 	
 	private void moveBitmaps()
-	{
+	{	
+		int dAlpha = 255 / ((getHeight() - (int)(noteHeight * 1.5)) / NOTE_SPEED);
 		for(int i = 0; i < transformations.size(); i++)
-		{
+		{			
+			Paint paint = paints.get(i);
+			paint.setAlpha(paint.getAlpha() - dAlpha);
+			
 			Rect transformation = transformations.get(i);
-			transformation.offset(0, 4);
+			transformation.offset(0, NOTE_SPEED);
 			
 			if(transformation.top > getHeight())
 			{
 				bitmaps.remove(i);
 				transformations.remove(i);
+				paints.remove(i);
 				i--;
 			}
 		}
