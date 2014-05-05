@@ -51,10 +51,12 @@ public class HomeFragment extends Fragment {
 		getActivity().setTitle("Home");
 
 		final MainActivity parent = (MainActivity) getActivity();
-		TextView title = (TextView)getActivity().findViewById(R.id.fragment_home_title_textview);
-		Typeface font = Typeface.createFromAsset(getActivity().getAssets(), "SF_Archery_Black.ttf");
+		TextView title = (TextView) getActivity().findViewById(
+				R.id.fragment_home_title_textview);
+		Typeface font = Typeface.createFromAsset(getActivity().getAssets(),
+				"SF_Archery_Black.ttf");
 		title.setTypeface(font);
-		
+
 		Button sheetMusicBtn = ((Button) getActivity().findViewById(
 				R.id.fragment_home_create_sheet_music_button));
 		sheetMusicBtn.setOnClickListener(new OnClickListener() {
@@ -63,35 +65,37 @@ public class HomeFragment extends Fragment {
 				parent.replaceContentViewOnItemSelected(1);
 			}
 		});
-		
+
 		title.setTextSize(sheetMusicBtn.getTextSize() * 1.1f);
 
 		Button playAlongBtn = ((Button) getActivity().findViewById(
 				R.id.fragment_home_play_along_button));
 		playAlongBtn.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View arg0) {
-						parent.replaceContentViewOnItemSelected(2);
-					}
-				});
+			@Override
+			public void onClick(View arg0) {
+				parent.replaceContentViewOnItemSelected(2);
+			}
+		});
 
 		Button soundProfileBtn = ((Button) getActivity().findViewById(
 				R.id.fragment_home_sound_profile_button));
 		soundProfileBtn.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View arg0) {
-						parent.replaceContentViewOnItemSelected(3);
-					}
-				});
-		
+			@Override
+			public void onClick(View arg0) {
+				parent.replaceContentViewOnItemSelected(3);
+			}
+		});
+
 		DisplayMetrics metrics = new DisplayMetrics();
-		getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		getActivity().getWindowManager().getDefaultDisplay()
+				.getMetrics(metrics);
 		int width = metrics.widthPixels / 2;
 		sheetMusicBtn.setWidth(width);
 		playAlongBtn.setWidth(width);
 		soundProfileBtn.setWidth(width);
-		
-		FrameLayout frame = (FrameLayout)getActivity().findViewById(R.id.fragment_home_main_frame);
+
+		FrameLayout frame = (FrameLayout) getActivity().findViewById(
+				R.id.fragment_home_main_frame);
 		frame.addView(new FallingNotesView(getActivity()), 0);
 	}
 }

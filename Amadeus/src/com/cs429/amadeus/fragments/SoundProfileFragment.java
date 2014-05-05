@@ -90,7 +90,7 @@ public class SoundProfileFragment extends Fragment {
 				.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View view) {
-						if(createSaveDialog()) {
+						if (createSaveDialog()) {
 							saveDialog.show();
 						}
 					}
@@ -146,12 +146,13 @@ public class SoundProfileFragment extends Fragment {
 
 	private boolean createSaveDialog() {
 		String error = saveProfile("test", true);
-		if(error != null) {
+		if (error != null) {
 			Log.e("TEST", "FUCKKKKK");
-			Toast.makeText(SoundProfileFragment.this.getActivity(), error, Toast.LENGTH_LONG).show();
+			Toast.makeText(SoundProfileFragment.this.getActivity(), error,
+					Toast.LENGTH_LONG).show();
 			return false;
 		}
-		
+
 		final EditText input = new EditText(getActivity());
 		saveDialog = new AlertDialog.Builder(getActivity());
 		saveDialog
@@ -173,7 +174,7 @@ public class SoundProfileFragment extends Fragment {
 								dialog.cancel();
 							}
 						});
-		
+
 		return true;
 	}
 
@@ -236,25 +237,23 @@ public class SoundProfileFragment extends Fragment {
 					.findViewById(R.id.fragment_sound_profile_add_item_high);
 			TextView filePathText = (TextView) item
 					.findViewById(R.id.fragment_sound_profile_add_item_file_path);
-			
-			try 
-			{
-				final float low = Float.parseFloat(lowText.getText().toString());
-				final float high = Float.parseFloat(highText.getText().toString());
+
+			try {
+				final float low = Float
+						.parseFloat(lowText.getText().toString());
+				final float high = Float.parseFloat(highText.getText()
+						.toString());
 				final String path = filePathText.getText().toString();
 				profile.addMapping(low, high, path);
-			}
-			catch(Exception e)
-			{
+			} catch (Exception e) {
 				return e.getMessage();
 			}
 		}
 
-		if(!isTest)
-		{
+		if (!isTest) {
 			OpenSaveHelper.saveSoundProfile(getActivity(), filePath, profile);
 		}
-		
+
 		return null;
 	}
 }

@@ -429,9 +429,8 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 
 		StaffLayout.initBitmaps(getResources());
 	}
-	
-	public static void initBitmaps(Resources res)
-	{
+
+	public static void initBitmaps(Resources res) {
 		wholeNoteBitmap = BitmapFactory.decodeResource(res,
 				R.drawable.whole_note);
 		halfNoteBitmap = BitmapFactory.decodeResource(res,
@@ -442,13 +441,12 @@ public class StaffLayout extends AbsoluteLayout implements OnTouchListener {
 				R.drawable.eighth_note_down);
 		sixteenthNoteBitmap = BitmapFactory.decodeResource(res,
 				R.drawable.sixteenth_note_down);
-		sharpBitmap = BitmapFactory.decodeResource(res,
-				R.drawable.sharp);
+		sharpBitmap = BitmapFactory.decodeResource(res, R.drawable.sharp);
 
 		trebleClefBitmap = BitmapFactory.decodeResource(res,
 				R.drawable.treble_clef);
-		bassClefBitmap = BitmapFactory.decodeResource(res,
-				R.drawable.bass_clef);
+		bassClefBitmap = BitmapFactory
+				.decodeResource(res, R.drawable.bass_clef);
 	}
 
 	private int calculateNoteSpacing() {

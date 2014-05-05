@@ -16,28 +16,29 @@ public class SoundProfile {
 	public SoundProfile() {
 	}
 
-	public void addMapping(float low, float high, String audioFilePath) throws Exception {
+	public void addMapping(float low, float high, String audioFilePath)
+			throws Exception {
 		if (low < 0 || high < 0) {
 			throw new Exception("A mapping contains negative values.");
 		}
-		
-		if(audioFilePath == null || audioFilePath.isEmpty()) {
+
+		if (audioFilePath == null || audioFilePath.isEmpty()) {
 			throw new Exception("A mapping's file path has not been set.");
 		}
-		
-		if(low > high) {
+
+		if (low > high) {
 			throw new Exception("A mapping's low > high.");
 		}
-		
-		if(overlapExists(low, high)) {
+
+		if (overlapExists(low, high)) {
 			throw new Exception("A range overlap exists.");
 		}
 
 		Range range = new Range(low, high);
 		rangeToFilePathMap.put(range, audioFilePath);
-		
+
 		int id = soundPool.load(audioFilePath, 0);
-		filePathToSoundIdMap.put(audioFilePath, id);	
+		filePathToSoundIdMap.put(audioFilePath, id);
 	}
 
 	public void play(float freq) {
@@ -59,20 +60,19 @@ public class SoundProfile {
 	public HashMap<Range, String> getMap() {
 		return rangeToFilePathMap;
 	}
-	
-	private boolean overlapExists(float low, float high)
-	{
+
+	private boolean overlapExists(float low, float high) {
 		for (Entry<Range, String> entry : rangeToFilePathMap.entrySet()) {
 			Range range = entry.getKey();
-			
+
 			boolean case1 = low <= range.low && high >= range.low;
 			boolean case2 = low <= range.high && high >= range.high;
 			boolean case3 = low >= range.low && high <= range.high;
-			if(case1 || case2 || case3) {
+			if (case1 || case2 || case3) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 

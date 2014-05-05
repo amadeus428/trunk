@@ -112,11 +112,11 @@ public class PlayAlongFragment extends Fragment {
 
 		initSystemServices();
 	}
-	
+
 	@Override
 	public void onStart() {
 		super.onStart();
-		
+
 		getActivity().bindService(new Intent(getActivity(), PdService.class),
 				pdConnection, Context.BIND_AUTO_CREATE);
 	}
